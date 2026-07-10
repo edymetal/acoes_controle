@@ -35,6 +35,9 @@ describe("calculatePortfolio", () => {
     expect(model.metrics.realizedProfit).toBeCloseTo(25);
     expect(model.metrics.unrealizedProfit).toBeCloseTo(150);
     expect(model.metrics.totalProfit).toBeCloseTo(175);
+    const sale = model.transactions.find((transaction) => transaction.id === "sell-1");
+    expect(sale?.costBasis).toBeCloseTo(75);
+    expect(sale?.realizedProfit).toBeCloseTo(25);
   });
 });
 
@@ -63,4 +66,3 @@ describe("getStrategySignal", () => {
     expect(signal.strength).toBe(1);
   });
 });
-

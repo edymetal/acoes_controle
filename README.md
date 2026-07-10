@@ -12,7 +12,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 
 - Dashboard com patrimônio, custo atual, compras acumuladas, lucro realizado, resultado em aberto e resultado total.
 - Carteira atual com quantidade, preço médio, cotação, custo, valor de mercado, participação e rentabilidade.
-- Histórico pesquisável e paginado de compras e vendas.
+- Histórico pesquisável e paginado, com lucro por venda, agrupamento por ação e resumo detalhado ao clicar no ticker.
 - Estratégia anual com intensidade de compra abaixo da média, proximidade da máxima e rompimentos.
 - Gráficos de distribuição da carteira e impacto por posição.
 - Interface responsiva para desktop, tablet e celular.
@@ -55,6 +55,7 @@ O motor consolida as movimentações cronologicamente usando custo médio móvel
 - compra: adiciona quantidade e custo;
 - venda: baixa a quantidade pelo preço médio vigente;
 - lucro realizado: valor da venda menos o custo baixado;
+- lucro por venda: receita daquela operação menos o custo médio baixado na data da venda;
 - resultado em aberto: valor de mercado menos o custo das posições atuais;
 - resultado total: lucro realizado mais resultado em aberto.
 
@@ -120,4 +121,3 @@ public/data/
 ```
 
 O planejamento detalhado e os critérios de aceite estão em [`PLANO_PROJETO.md`](PLANO_PROJETO.md).
-

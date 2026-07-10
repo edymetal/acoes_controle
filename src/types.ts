@@ -10,6 +10,11 @@ export interface Transaction {
   unitPrice: number;
 }
 
+export interface ProcessedTransaction extends Transaction {
+  costBasis: number | null;
+  realizedProfit: number | null;
+}
+
 export interface AnnualStats {
   min: number;
   average: number;
@@ -78,7 +83,7 @@ export interface StrategySignal {
 
 export interface PortfolioModel {
   positions: Position[];
-  transactions: Transaction[];
+  transactions: ProcessedTransaction[];
   metrics: {
     historicalPurchases: number;
     historicalSales: number;
@@ -94,4 +99,3 @@ export interface PortfolioModel {
   };
   warnings: string[];
 }
-

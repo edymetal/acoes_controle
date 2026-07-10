@@ -3,6 +3,7 @@ import type {
   PortfolioData,
   PortfolioModel,
   Position,
+  ProcessedTransaction,
   StrategySignal,
   Transaction,
 } from "../types";
@@ -26,6 +27,7 @@ export function calculatePortfolio(data: PortfolioData): PortfolioModel {
     if (a.type !== b.type) return a.type === "buy" ? -1 : 1;
     return a.id.localeCompare(b.id);
   });
+  const processedTransactions: ProcessedTransaction[] = [];
 
   for (const transaction of transactions) {
     const state = states.get(transaction.ticker) ?? { quantity: 0, cost: 0, realized: 0 };
@@ -34,6 +36,11 @@ export function calculatePortfolio(data: PortfolioData): PortfolioModel {
       state.quantity += transaction.quantity;
       state.cost += transaction.total;
       states.set(transaction.ticker, state);
+      processedTransactions.push({
+        ...transaction,
+        costBasis: transaction.total,
+        realizedProfit: null,
+      });
       continue;
     }
 
@@ -45,6 +52,7 @@ export function calculatePortfolio(data: PortfolioData): PortfolioModel {
     }
     if (matchedQuantity <= EPSILON || state.quantity <= EPSILON) {
       states.set(transaction.ticker, state);
+      processedTransactions.push({ ...transaction, costBasis: null, realizedProfit: null });
       continue;
     }
 
@@ -52,6 +60,11 @@ export function calculatePortfolio(data: PortfolioData): PortfolioModel {
     const disposedCost = averageCost * matchedQuantity;
     const matchedRevenue = transaction.total * (matchedQuantity / transaction.quantity);
     state.realized += matchedRevenue - disposedCost;
+    processedTransactions.push({
+      ...transaction,
+      costBasis: disposedCost,
+      realizedProfit: matchedRevenue - disposedCost,
+    });
     state.quantity -= matchedQuantity;
     state.cost -= disposedCost;
 
@@ -106,7 +119,7 @@ export function calculatePortfolio(data: PortfolioData): PortfolioModel {
 
   return {
     positions,
-    transactions: [...transactions].reverse(),
+    transactions: [...processedTransactions].reverse(),
     metrics: {
       historicalPurchases,
       historicalSales,
@@ -193,4 +206,3 @@ export function getStrategySignal(asset: Asset): StrategySignal {
 export function getTransactionsByTicker(transactions: Transaction[], ticker: string) {
   return ticker ? transactions.filter((transaction) => transaction.ticker === ticker) : transactions;
 }
-
