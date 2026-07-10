@@ -175,7 +175,7 @@ export function History({ model }: { model: PortfolioModel }) {
 
         {visible.length ? (
           <div className="table-wrap">
-            <table>
+            <table className={`history-table ${grouped ? "history-table--grouped" : ""}`}>
               <thead><tr><th>{grouped ? "Período" : "Data"}</th><th>Tipo</th><th>Ativo</th>{grouped && <th>Operações</th>}<th>Quantidade</th><th>{grouped ? "Preço médio" : "Preço unitário"}</th><th>Valor total</th><th>Custo descontado</th><th>Lucro realizado</th></tr></thead>
               <tbody>{visible.map((item) => (
                 <tr key={item.id}>
@@ -217,4 +217,3 @@ export function History({ model }: { model: PortfolioModel }) {
     </div>
   );
 }
-
