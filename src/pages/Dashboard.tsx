@@ -80,8 +80,8 @@ export function Dashboard({ data, model, onNavigate }: DashboardProps) {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={pnl} margin={{ top: 10, right: 10, left: 4, bottom: 0 }}>
                 <CartesianGrid vertical={false} stroke="#203149" strokeDasharray="4 5" />
-                <XAxis dataKey="ticker" axisLine={false} tickLine={false} tick={{ fill: "#8da0b9", fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} width={52} tick={{ fill: "#667b96", fontSize: 11 }} tickFormatter={(value) => `$${Math.round(Number(value))}`} />
+                <XAxis dataKey="ticker" axisLine={false} tickLine={false} tick={{ fill: "#a5b5c9", fontSize: 14 }} />
+                <YAxis axisLine={false} tickLine={false} width={58} tick={{ fill: "#8296ae", fontSize: 13 }} tickFormatter={(value) => `$${Math.round(Number(value))}`} />
                 <Tooltip formatter={(value) => formatCurrency(Number(value))} cursor={{ fill: "rgba(255,255,255,.025)" }} contentStyle={{ background: "#101d30", border: "1px solid #273851", borderRadius: 12 }} />
                 <Bar dataKey="value" radius={[5, 5, 3, 3]}>
                   {pnl.map((item) => <Cell key={item.ticker} fill={item.value >= 0 ? "#37dda2" : "#f8799b"} />)}
@@ -130,4 +130,3 @@ export function Dashboard({ data, model, onNavigate }: DashboardProps) {
     </div>
   );
 }
-
