@@ -1,0 +1,2823 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-10T19:21:37.119Z",
+  "source": {
+    "spreadsheetId": "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0",
+    "ranges": {
+      "purchases": "'Ações Hist'!F25:J1000",
+      "sales": "'Ações Hist'!AJ25:AM1000",
+      "assets": "'Ações Base'!H12:N110"
+    },
+    "currentQuotes": "Google Sheets",
+    "annualHistory": "Yahoo Finance — fechamentos diários de 1 ano"
+  },
+  "purchases": [
+    {
+      "id": "buy-25",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "TSLA",
+      "quantity": 0.36862,
+      "total": 68.54,
+      "unitPrice": 185.93673701915253
+    },
+    {
+      "id": "buy-26",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "GOOGL",
+      "quantity": 0.82076,
+      "total": 86.86,
+      "unitPrice": 105.82874409084263
+    },
+    {
+      "id": "buy-27",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "AMZN",
+      "quantity": 0.83629,
+      "total": 85.61,
+      "unitPrice": 102.36879551351804
+    },
+    {
+      "id": "buy-28",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "AAPL",
+      "quantity": 0.58939,
+      "total": 97.25,
+      "unitPrice": 165.00110283513465
+    },
+    {
+      "id": "buy-29",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "KO",
+      "quantity": 0.8216,
+      "total": 52.09,
+      "unitPrice": 63.400681596884134
+    },
+    {
+      "id": "buy-30",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "JNJ",
+      "quantity": 0.13148,
+      "total": 21.75,
+      "unitPrice": 165.4243991481594
+    },
+    {
+      "id": "buy-31",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "MCD",
+      "quantity": 0.29509,
+      "total": 85.4,
+      "unitPrice": 289.403232911993
+    },
+    {
+      "id": "buy-32",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "MSFT",
+      "quantity": 0.16409,
+      "total": 47.25,
+      "unitPrice": 287.9517338046194
+    },
+    {
+      "id": "buy-33",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "NKE",
+      "quantity": 0.49056,
+      "total": 61.8,
+      "unitPrice": 125.97847358121331
+    },
+    {
+      "id": "buy-34",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "DIS",
+      "quantity": 0.39345,
+      "total": 39.36,
+      "unitPrice": 100.03812428516964
+    },
+    {
+      "id": "buy-35",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "ADBE",
+      "quantity": 0.11771,
+      "total": 44.48,
+      "unitPrice": 377.8778353580834
+    },
+    {
+      "id": "buy-36",
+      "type": "buy",
+      "date": "2023-04-17",
+      "ticker": "NVDA",
+      "quantity": 0.11011,
+      "total": 29.61,
+      "unitPrice": 268.91290527654166
+    },
+    {
+      "id": "buy-37",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "PEP",
+      "quantity": 0.28,
+      "total": 52,
+      "unitPrice": 185.7142857142857
+    },
+    {
+      "id": "buy-38",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "PFE",
+      "quantity": 0.54931,
+      "total": 22,
+      "unitPrice": 40.050244852633305
+    },
+    {
+      "id": "buy-39",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "JPM",
+      "quantity": 0.15654,
+      "total": 22,
+      "unitPrice": 140.5391593203015
+    },
+    {
+      "id": "buy-40",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "V",
+      "quantity": 0.0945,
+      "total": 22,
+      "unitPrice": 232.8042328042328
+    },
+    {
+      "id": "buy-41",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "MA",
+      "quantity": 0.05907,
+      "total": 22,
+      "unitPrice": 372.43947858473
+    },
+    {
+      "id": "buy-42",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "UNH",
+      "quantity": 0.06568,
+      "total": 32,
+      "unitPrice": 487.21071863581
+    },
+    {
+      "id": "buy-43",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "BRK.B",
+      "quantity": 0.12096,
+      "total": 39,
+      "unitPrice": 322.42063492063494
+    },
+    {
+      "id": "buy-44",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "XOM",
+      "quantity": 0.282119,
+      "total": 32,
+      "unitPrice": 113.42731258795047
+    },
+    {
+      "id": "buy-45",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "T",
+      "quantity": 0.61562,
+      "total": 11,
+      "unitPrice": 17.86816542672428
+    },
+    {
+      "id": "buy-46",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "VOD",
+      "quantity": 0.9876,
+      "total": 11,
+      "unitPrice": 11.13811259619279
+    },
+    {
+      "id": "buy-47",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "INTC",
+      "quantity": 1.94186,
+      "total": 60,
+      "unitPrice": 30.898210993583472
+    },
+    {
+      "id": "buy-48",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "CSCO",
+      "quantity": 1.27043,
+      "total": 60,
+      "unitPrice": 47.22810387034311
+    },
+    {
+      "id": "buy-49",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "META",
+      "quantity": 0.27904,
+      "total": 60,
+      "unitPrice": 215.0229357798165
+    },
+    {
+      "id": "buy-50",
+      "type": "buy",
+      "date": "2023-04-20",
+      "ticker": "TSLA",
+      "quantity": 0.24344,
+      "total": 40,
+      "unitPrice": 164.31153466973382
+    },
+    {
+      "id": "buy-51",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "TSLA",
+      "quantity": 0.12374,
+      "total": 20,
+      "unitPrice": 161.62922256343947
+    },
+    {
+      "id": "buy-52",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "T",
+      "quantity": 0.56985,
+      "total": 10,
+      "unitPrice": 17.548477669562168
+    },
+    {
+      "id": "buy-53",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "VOD",
+      "quantity": 0.88903,
+      "total": 10,
+      "unitPrice": 11.248214345972578
+    },
+    {
+      "id": "buy-54",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "JNJ",
+      "quantity": 0.0606,
+      "total": 10,
+      "unitPrice": 165.01650165016503
+    },
+    {
+      "id": "buy-55",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "PFE",
+      "quantity": 0.2533,
+      "total": 10,
+      "unitPrice": 39.47887879984208
+    },
+    {
+      "id": "buy-56",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "V",
+      "quantity": 0.04325,
+      "total": 10,
+      "unitPrice": 231.21387283236996
+    },
+    {
+      "id": "buy-57",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "MA",
+      "quantity": 0.02706,
+      "total": 10,
+      "unitPrice": 369.5491500369549
+    },
+    {
+      "id": "buy-58",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "JPM",
+      "quantity": 0.07244,
+      "total": 10,
+      "unitPrice": 138.04527885146328
+    },
+    {
+      "id": "buy-59",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "DIS",
+      "quantity": 0.20333,
+      "total": 20,
+      "unitPrice": 98.36226823390547
+    },
+    {
+      "id": "buy-60",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "INTC",
+      "quantity": 0.34411,
+      "total": 10,
+      "unitPrice": 29.060474848159018
+    },
+    {
+      "id": "buy-61",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "META",
+      "quantity": 0.04784,
+      "total": 10,
+      "unitPrice": 209.03010033444815
+    },
+    {
+      "id": "buy-62",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "MSFT",
+      "quantity": 0.03607,
+      "total": 10,
+      "unitPrice": 277.2387025228722
+    },
+    {
+      "id": "buy-63",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "ADBE",
+      "quantity": 0.02699,
+      "total": 10,
+      "unitPrice": 370.50759540570584
+    },
+    {
+      "id": "buy-64",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "UNH",
+      "quantity": 0.04071,
+      "total": 20,
+      "unitPrice": 491.2797838368951
+    },
+    {
+      "id": "buy-65",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "BRK.B",
+      "quantity": 0.0616,
+      "total": 20,
+      "unitPrice": 324.67532467532465
+    },
+    {
+      "id": "buy-66",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "XOM",
+      "quantity": 0.08578,
+      "total": 10,
+      "unitPrice": 116.57729074376311
+    },
+    {
+      "id": "buy-67",
+      "type": "buy",
+      "date": "2023-05-02",
+      "ticker": "TSLA",
+      "quantity": 0.15562,
+      "total": 25,
+      "unitPrice": 160.64773165402903
+    },
+    {
+      "id": "buy-68",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "CVX",
+      "quantity": 0.1279,
+      "total": 20,
+      "unitPrice": 156.37216575449568
+    },
+    {
+      "id": "buy-69",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "IBM",
+      "quantity": 0.16325,
+      "total": 20,
+      "unitPrice": 122.5114854517611
+    },
+    {
+      "id": "buy-70",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "ORCL",
+      "quantity": 0.21102,
+      "total": 20,
+      "unitPrice": 94.77774618519571
+    },
+    {
+      "id": "buy-71",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "AZN",
+      "quantity": 0.26896,
+      "total": 20,
+      "unitPrice": 74.360499702558
+    },
+    {
+      "id": "buy-72",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "UPS",
+      "quantity": 0.11499,
+      "total": 20,
+      "unitPrice": 173.92816766675364
+    },
+    {
+      "id": "buy-73",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "PG",
+      "quantity": 0.12847,
+      "total": 20,
+      "unitPrice": 155.6783684906982
+    },
+    {
+      "id": "buy-74",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "CAT",
+      "quantity": 0.09506,
+      "total": 20,
+      "unitPrice": 210.39343572480539
+    },
+    {
+      "id": "buy-75",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "GE",
+      "quantity": 0.20099,
+      "total": 20,
+      "unitPrice": 99.50743818100403
+    },
+    {
+      "id": "buy-76",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "BAC",
+      "quantity": 0.73724,
+      "total": 20,
+      "unitPrice": 27.128207910585427
+    },
+    {
+      "id": "buy-77",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "NVS",
+      "quantity": 0.19137,
+      "total": 20,
+      "unitPrice": 104.50958875476825
+    },
+    {
+      "id": "buy-78",
+      "type": "buy",
+      "date": "2023-05-04",
+      "ticker": "TM",
+      "quantity": 0.14767,
+      "total": 20,
+      "unitPrice": 135.43712331550077
+    },
+    {
+      "id": "buy-79",
+      "type": "buy",
+      "date": "2023-05-17",
+      "ticker": "IBM",
+      "quantity": 0.15994,
+      "total": 20,
+      "unitPrice": 125.04689258471927
+    },
+    {
+      "id": "buy-80",
+      "type": "buy",
+      "date": "2023-05-17",
+      "ticker": "ORCL",
+      "quantity": 0.20046,
+      "total": 20,
+      "unitPrice": 99.77052778609199
+    },
+    {
+      "id": "buy-81",
+      "type": "buy",
+      "date": "2023-05-17",
+      "ticker": "TM",
+      "quantity": 0.07052,
+      "total": 10,
+      "unitPrice": 141.80374361883153
+    },
+    {
+      "id": "buy-82",
+      "type": "buy",
+      "date": "2023-05-17",
+      "ticker": "NVDA",
+      "quantity": 0.04025,
+      "total": 12,
+      "unitPrice": 298.1366459627329
+    },
+    {
+      "id": "buy-83",
+      "type": "buy",
+      "date": "2023-06-07",
+      "ticker": "IBM",
+      "quantity": 0.17189,
+      "total": 23,
+      "unitPrice": 133.806504159637
+    },
+    {
+      "id": "buy-84",
+      "type": "buy",
+      "date": "2023-06-07",
+      "ticker": "BAC",
+      "quantity": 0.42932,
+      "total": 12.63,
+      "unitPrice": 29.41861548495295
+    },
+    {
+      "id": "buy-85",
+      "type": "buy",
+      "date": "2023-06-07",
+      "ticker": "DIS",
+      "quantity": 0.16176,
+      "total": 15,
+      "unitPrice": 92.7299703264095
+    },
+    {
+      "id": "buy-86",
+      "type": "buy",
+      "date": "2023-06-07",
+      "ticker": "T",
+      "quantity": 0.44108,
+      "total": 7,
+      "unitPrice": 15.870136936610137
+    },
+    {
+      "id": "buy-87",
+      "type": "buy",
+      "date": "2023-06-07",
+      "ticker": "VOD",
+      "quantity": 0.71661,
+      "total": 7,
+      "unitPrice": 9.768214230892676
+    },
+    {
+      "id": "buy-88",
+      "type": "buy",
+      "date": "2023-06-20",
+      "ticker": "PG",
+      "quantity": 0.13438,
+      "total": 20,
+      "unitPrice": 148.8316713796696
+    },
+    {
+      "id": "buy-89",
+      "type": "buy",
+      "date": "2023-06-20",
+      "ticker": "CVX",
+      "quantity": 0.06513,
+      "total": 10,
+      "unitPrice": 153.53907569476434
+    },
+    {
+      "id": "buy-90",
+      "type": "buy",
+      "date": "2023-07-24",
+      "ticker": "AZN",
+      "quantity": 0.11569,
+      "total": 8,
+      "unitPrice": 69.15031549831446
+    },
+    {
+      "id": "buy-91",
+      "type": "buy",
+      "date": "2023-08-18",
+      "ticker": "PFE",
+      "quantity": 0.27307,
+      "total": 10,
+      "unitPrice": 36.62064672062109
+    },
+    {
+      "id": "buy-92",
+      "type": "buy",
+      "date": "2023-08-18",
+      "ticker": "DIS",
+      "quantity": 0.11665,
+      "total": 10,
+      "unitPrice": 85.72653236176596
+    },
+    {
+      "id": "buy-93",
+      "type": "buy",
+      "date": "2023-08-18",
+      "ticker": "VOD",
+      "quantity": 1.09551,
+      "total": 10,
+      "unitPrice": 9.128168615530667
+    },
+    {
+      "id": "buy-94",
+      "type": "buy",
+      "date": "2023-08-18",
+      "ticker": "NKE",
+      "quantity": 0.09602,
+      "total": 10,
+      "unitPrice": 104.14496979795877
+    },
+    {
+      "id": "buy-95",
+      "type": "buy",
+      "date": "2023-08-18",
+      "ticker": "T",
+      "quantity": 0.71123,
+      "total": 10,
+      "unitPrice": 14.060149318785765
+    },
+    {
+      "id": "buy-96",
+      "type": "buy",
+      "date": "2023-09-19",
+      "ticker": "NKE",
+      "quantity": 0.21073,
+      "total": 20,
+      "unitPrice": 94.90817633939164
+    },
+    {
+      "id": "buy-97",
+      "type": "buy",
+      "date": "2023-09-19",
+      "ticker": "DIS",
+      "quantity": 0.24281,
+      "total": 20,
+      "unitPrice": 82.36893043943824
+    },
+    {
+      "id": "buy-98",
+      "type": "buy",
+      "date": "2023-09-19",
+      "ticker": "PFE",
+      "quantity": 0.29439,
+      "total": 10,
+      "unitPrice": 33.9685451272122
+    },
+    {
+      "id": "buy-99",
+      "type": "buy",
+      "date": "2023-09-19",
+      "ticker": "UPS",
+      "quantity": 0.06321,
+      "total": 10,
+      "unitPrice": 158.20281601012496
+    },
+    {
+      "id": "buy-100",
+      "type": "buy",
+      "date": "2023-09-19",
+      "ticker": "KO",
+      "quantity": 0.17138,
+      "total": 10,
+      "unitPrice": 58.349865795308666
+    },
+    {
+      "id": "buy-108",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "NKE",
+      "quantity": 0.50881,
+      "total": 50,
+      "unitPrice": 98.26850887364635
+    },
+    {
+      "id": "buy-109",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "PFE",
+      "quantity": 1.14863,
+      "total": 30,
+      "unitPrice": 26.118071093389517
+    },
+    {
+      "id": "buy-110",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "PEP",
+      "quantity": 0.12338,
+      "total": 20,
+      "unitPrice": 162.10082671421623
+    },
+    {
+      "id": "buy-111",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "VOD",
+      "quantity": 2.2129,
+      "total": 20,
+      "unitPrice": 9.03791404943739
+    },
+    {
+      "id": "buy-112",
+      "type": "buy",
+      "date": "2024-03-18",
+      "ticker": "TSLA",
+      "quantity": 0.29017,
+      "total": 50,
+      "unitPrice": 172.3127821621808
+    },
+    {
+      "id": "buy-113",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "NKE",
+      "quantity": 0.34843,
+      "total": 25,
+      "unitPrice": 71.75042332749763
+    },
+    {
+      "id": "buy-114",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "MCD",
+      "quantity": 0.10087,
+      "total": 25,
+      "unitPrice": 247.84375929414097
+    },
+    {
+      "id": "buy-115",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "PFE",
+      "quantity": 0.8837,
+      "total": 25,
+      "unitPrice": 28.290143713930064
+    },
+    {
+      "id": "buy-116",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "PEP",
+      "quantity": 0.18393,
+      "total": 30,
+      "unitPrice": 163.10552927744249
+    },
+    {
+      "id": "buy-117",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "CSCO",
+      "quantity": 1.08885,
+      "total": 50,
+      "unitPrice": 45.92000734720117
+    },
+    {
+      "id": "buy-118",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "XOM",
+      "quantity": 0.1795,
+      "total": 20,
+      "unitPrice": 111.42061281337048
+    },
+    {
+      "id": "buy-119",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "VOD",
+      "quantity": 4.8462499999999995,
+      "total": 45,
+      "unitPrice": 9.285530049006965
+    },
+    {
+      "id": "buy-120",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "CVX",
+      "quantity": 0.19481,
+      "total": 30,
+      "unitPrice": 153.99620142703145
+    },
+    {
+      "id": "buy-121",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "JNJ",
+      "quantity": 0.33676,
+      "total": 50,
+      "unitPrice": 148.47369046205012
+    },
+    {
+      "id": "buy-122",
+      "type": "buy",
+      "date": "2024-07-10",
+      "ticker": "UPS",
+      "quantity": 0.37056,
+      "total": 50,
+      "unitPrice": 134.9309153713299
+    },
+    {
+      "id": "buy-123",
+      "type": "buy",
+      "date": "2024-07-25",
+      "ticker": "NVDA",
+      "quantity": 0.34158,
+      "total": 0,
+      "unitPrice": 0
+    },
+    {
+      "id": "buy-124",
+      "type": "buy",
+      "date": "2024-08-05",
+      "ticker": "INTC",
+      "quantity": 4.94071,
+      "total": 100,
+      "unitPrice": 20.240005991041773
+    },
+    {
+      "id": "buy-125",
+      "type": "buy",
+      "date": "2024-08-12",
+      "ticker": "UPS",
+      "quantity": 0.24005,
+      "total": 30,
+      "unitPrice": 124.97396375755051
+    },
+    {
+      "id": "buy-126",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "CVX",
+      "quantity": 0.27899,
+      "total": 40,
+      "unitPrice": 143.37431449155883
+    },
+    {
+      "id": "buy-127",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "TM",
+      "quantity": 0.21616,
+      "total": 40,
+      "unitPrice": 185.0481125092524
+    },
+    {
+      "id": "buy-128",
+      "type": "buy",
+      "date": "2024-09-12",
+      "ticker": "DIS",
+      "quantity": 0.44979,
+      "total": 40,
+      "unitPrice": 88.93038973743302
+    },
+    {
+      "id": "buy-129",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "ADBE",
+      "quantity": 0.04124,
+      "total": 20,
+      "unitPrice": 484.96605237633366
+    },
+    {
+      "id": "buy-130",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "AZN",
+      "quantity": 0.52633,
+      "total": 35,
+      "unitPrice": 66.49820454847719
+    },
+    {
+      "id": "buy-131",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "TM",
+      "quantity": 0.11459,
+      "total": 20,
+      "unitPrice": 174.53529976437736
+    },
+    {
+      "id": "buy-132",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "LLY",
+      "quantity": 0.01243,
+      "total": 10,
+      "unitPrice": 804.5052292839904
+    },
+    {
+      "id": "buy-133",
+      "type": "buy",
+      "date": "2024-11-13",
+      "ticker": "TM",
+      "quantity": 0.05803,
+      "total": 10,
+      "unitPrice": 172.32465965879717
+    },
+    {
+      "id": "buy-134",
+      "type": "buy",
+      "date": "2024-11-13",
+      "ticker": "AZN",
+      "quantity": 0.15378,
+      "total": 10,
+      "unitPrice": 65.02796202367018
+    },
+    {
+      "id": "buy-135",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "NVS",
+      "quantity": 0.37993,
+      "total": 40,
+      "unitPrice": 105.28255204906168
+    },
+    {
+      "id": "buy-143",
+      "type": "buy",
+      "date": "2025-01-02",
+      "ticker": "PEP",
+      "quantity": 0.09934,
+      "total": 15,
+      "unitPrice": 150.996577410912
+    },
+    {
+      "id": "buy-144",
+      "type": "buy",
+      "date": "2025-01-02",
+      "ticker": "JNJ",
+      "quantity": 0.06922,
+      "total": 10,
+      "unitPrice": 144.46691707598958
+    },
+    {
+      "id": "buy-145",
+      "type": "buy",
+      "date": "2025-01-02",
+      "ticker": "UPS",
+      "quantity": 0.12039,
+      "total": 15,
+      "unitPrice": 124.595066035385
+    },
+    {
+      "id": "buy-146",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "KO",
+      "quantity": 0.3229,
+      "total": 20,
+      "unitPrice": 61.93868070610095
+    },
+    {
+      "id": "buy-147",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "PG",
+      "quantity": 0.12065,
+      "total": 20,
+      "unitPrice": 165.76875259013676
+    },
+    {
+      "id": "buy-148",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "NVS",
+      "quantity": 0.20262,
+      "total": 20,
+      "unitPrice": 98.70693909781858
+    },
+    {
+      "id": "buy-149",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "ADBE",
+      "quantity": 0.04566,
+      "total": 20,
+      "unitPrice": 438.02014892685065
+    },
+    {
+      "id": "buy-150",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "LLY",
+      "quantity": 0.02658938,
+      "total": 20,
+      "unitPrice": 752.1800057015245
+    },
+    {
+      "id": "buy-151",
+      "type": "buy",
+      "date": "2025-02-18",
+      "ticker": "MSFT",
+      "quantity": 0.07353,
+      "total": 30,
+      "unitPrice": 407.9967360261118
+    },
+    {
+      "id": "buy-152",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "GOOGL",
+      "quantity": 0.12327,
+      "total": 20,
+      "unitPrice": 162.24547740731725
+    },
+    {
+      "id": "buy-153",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "TSLA",
+      "quantity": 0.12665,
+      "total": 30,
+      "unitPrice": 236.87327279905247
+    },
+    {
+      "id": "buy-154",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "LLY",
+      "quantity": 0.03735,
+      "total": 30,
+      "unitPrice": 803.2128514056225
+    },
+    {
+      "id": "buy-155",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "ADBE",
+      "quantity": 0.10559,
+      "total": 40,
+      "unitPrice": 378.823752249266
+    },
+    {
+      "id": "buy-156",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "UNH",
+      "quantity": 0.06263,
+      "total": 30,
+      "unitPrice": 479.00367236148804
+    },
+    {
+      "id": "buy-157",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "BAC",
+      "quantity": 1.01503,
+      "total": 40,
+      "unitPrice": 39.407702235401906
+    },
+    {
+      "id": "buy-158",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "CAT",
+      "quantity": 0.12031,
+      "total": 40,
+      "unitPrice": 332.474441027346
+    },
+    {
+      "id": "buy-159",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "MSFT",
+      "quantity": 0.03958,
+      "total": 15,
+      "unitPrice": 378.9792824658919
+    },
+    {
+      "id": "buy-160",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "NVDA",
+      "quantity": 0.12871,
+      "total": 15,
+      "unitPrice": 116.54106130059826
+    },
+    {
+      "id": "buy-161",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "ORCL",
+      "quantity": 0.10185,
+      "total": 15,
+      "unitPrice": 147.2754050073638
+    },
+    {
+      "id": "buy-162",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "AMZN",
+      "quantity": 0.07735,
+      "total": 15,
+      "unitPrice": 193.92372333548803
+    },
+    {
+      "id": "buy-163",
+      "type": "buy",
+      "date": "2025-03-14",
+      "ticker": "AAPL",
+      "quantity": 0.14118,
+      "total": 30,
+      "unitPrice": 212.4946876328092
+    },
+    {
+      "id": "buy-164",
+      "type": "buy",
+      "date": "2025-03-14",
+      "ticker": "ORCL",
+      "quantity": 0.20025,
+      "total": 30,
+      "unitPrice": 149.812734082397
+    },
+    {
+      "id": "buy-165",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "META",
+      "quantity": 0.07677,
+      "total": 40,
+      "unitPrice": 521.0368633580825
+    },
+    {
+      "id": "buy-166",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "AMZN",
+      "quantity": 0.16515,
+      "total": 30,
+      "unitPrice": 181.65304268846504
+    },
+    {
+      "id": "buy-167",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "CAT",
+      "quantity": 0.10077,
+      "total": 30,
+      "unitPrice": 297.70765108663295
+    },
+    {
+      "id": "buy-168",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "ORCL",
+      "quantity": 0.18902,
+      "total": 25,
+      "unitPrice": 132.26113638768385
+    },
+    {
+      "id": "buy-169",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "NVDA",
+      "quantity": 0.19265,
+      "total": 20,
+      "unitPrice": 103.81520892810798
+    },
+    {
+      "id": "buy-170",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "GOOGL",
+      "quantity": 0.16165,
+      "total": 25,
+      "unitPrice": 154.6551190844417
+    },
+    {
+      "id": "buy-171",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "AAPL",
+      "quantity": 0.09809,
+      "total": 20,
+      "unitPrice": 203.89438270975634
+    },
+    {
+      "id": "buy-172",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "BAC",
+      "quantity": 0.51245,
+      "total": 20,
+      "unitPrice": 39.02819787296322
+    },
+    {
+      "id": "buy-173",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "AMZN",
+      "quantity": 0.10989,
+      "total": 20,
+      "unitPrice": 182.000182000182
+    },
+    {
+      "id": "buy-174",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "XOM",
+      "quantity": 0.13963,
+      "total": 15,
+      "unitPrice": 107.42677075127122
+    },
+    {
+      "id": "buy-175",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "META",
+      "quantity": 0.02874,
+      "total": 15,
+      "unitPrice": 521.9206680584551
+    },
+    {
+      "id": "buy-176",
+      "type": "buy",
+      "date": "2025-05-21",
+      "ticker": "LLY",
+      "quantity": 0.03402,
+      "total": 25,
+      "unitPrice": 734.8618459729571
+    },
+    {
+      "id": "buy-177",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "PFE",
+      "quantity": 0.81383519,
+      "total": 20,
+      "unitPrice": 24.575000252815315
+    },
+    {
+      "id": "buy-178",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "PEP",
+      "quantity": 0.13595268,
+      "total": 20,
+      "unitPrice": 147.11000915906916
+    },
+    {
+      "id": "buy-179",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "ADBE",
+      "quantity": 0.28986,
+      "total": 20,
+      "unitPrice": 68.99882701994066
+    },
+    {
+      "id": "buy-180",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "UNH",
+      "quantity": 0.14789,
+      "total": 40,
+      "unitPrice": 270.4712962336872
+    },
+    {
+      "id": "buy-181",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "UPS",
+      "quantity": 0.46014087,
+      "total": 40,
+      "unitPrice": 86.92990040202254
+    },
+    {
+      "id": "buy-182",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "PG",
+      "quantity": 0.3835,
+      "total": 20,
+      "unitPrice": 52.15123859191656
+    },
+    {
+      "id": "buy-183",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "LLY",
+      "quantity": 0.01367016,
+      "total": 10,
+      "unitPrice": 731.5203333391854
+    },
+    {
+      "id": "buy-207",
+      "type": "buy",
+      "date": "2026-02-06",
+      "ticker": "META",
+      "quantity": 0.04552144,
+      "total": 30,
+      "unitPrice": 659.0301185551248
+    },
+    {
+      "id": "buy-208",
+      "type": "buy",
+      "date": "2026-02-06",
+      "ticker": "MA",
+      "quantity": 0.0924864,
+      "total": 50,
+      "unitPrice": 540.6200262957581
+    },
+    {
+      "id": "buy-209",
+      "type": "buy",
+      "date": "2026-02-06",
+      "ticker": "V",
+      "quantity": 0.15241579,
+      "total": 50,
+      "unitPrice": 328.0500005937705
+    },
+    {
+      "id": "buy-210",
+      "type": "buy",
+      "date": "2026-02-06",
+      "ticker": "MSFT",
+      "quantity": 0.12592555,
+      "total": 50,
+      "unitPrice": 397.0600088703206
+    },
+    {
+      "id": "buy-211",
+      "type": "buy",
+      "date": "2026-02-12",
+      "ticker": "IBM",
+      "quantity": 0.09680542,
+      "total": 25,
+      "unitPrice": 258.25000294405004
+    },
+    {
+      "id": "buy-212",
+      "type": "buy",
+      "date": "2026-02-12",
+      "ticker": "MA",
+      "quantity": 0.02819071,
+      "total": 15,
+      "unitPrice": 532.0901814817718
+    },
+    {
+      "id": "buy-213",
+      "type": "buy",
+      "date": "2026-02-12",
+      "ticker": "V",
+      "quantity": 0.04912345,
+      "total": 16,
+      "unitPrice": 325.7100224027425
+    },
+    {
+      "id": "buy-214",
+      "type": "buy",
+      "date": "2026-02-14",
+      "ticker": "IBM",
+      "quantity": 0.09515109,
+      "total": 25,
+      "unitPrice": 262.7400274657915
+    },
+    {
+      "id": "buy-215",
+      "type": "buy",
+      "date": "2026-02-25",
+      "ticker": "V",
+      "quantity": 0.07028753,
+      "total": 22,
+      "unitPrice": 313.0000442468244
+    },
+    {
+      "id": "buy-216",
+      "type": "buy",
+      "date": "2026-02-26",
+      "ticker": "MA",
+      "quantity": 0.04908312,
+      "total": 25,
+      "unitPrice": 509.34007455108804
+    },
+    {
+      "id": "buy-217",
+      "type": "buy",
+      "date": "2026-02-26",
+      "ticker": "IBM",
+      "quantity": 0.12150668,
+      "total": 29,
+      "unitPrice": 238.67000563261212
+    },
+    {
+      "id": "buy-218",
+      "type": "buy",
+      "date": "2026-03-05",
+      "ticker": "ORCL",
+      "quantity": 0.13071041,
+      "total": 20,
+      "unitPrice": 153.01000126921795
+    },
+    {
+      "id": "buy-219",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "BRK.B",
+      "quantity": 0.15611015,
+      "total": 75,
+      "unitPrice": 480.43000407084355
+    },
+    {
+      "id": "buy-220",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "JPM",
+      "quantity": 0.22798218,
+      "total": 65,
+      "unitPrice": 285.11000289584035
+    },
+    {
+      "id": "buy-221",
+      "type": "buy",
+      "date": "2026-04-02",
+      "ticker": "TSLA",
+      "quantity": 0.05552643,
+      "total": 20,
+      "unitPrice": 360.1888325973775
+    },
+    {
+      "id": "buy-222",
+      "type": "buy",
+      "date": "2026-04-02",
+      "ticker": "MSFT",
+      "quantity": 0.02693103,
+      "total": 10,
+      "unitPrice": 371.3188838302879
+    },
+    {
+      "id": "buy-223",
+      "type": "buy",
+      "date": "2026-04-02",
+      "ticker": "BRK.B",
+      "quantity": 0.02512306,
+      "total": 12,
+      "unitPrice": 477.6488214413372
+    },
+    {
+      "id": "buy-224",
+      "type": "buy",
+      "date": "2026-04-08",
+      "ticker": "MCD",
+      "quantity": 0.0653213,
+      "total": 20,
+      "unitPrice": 306.17884212347275
+    },
+    {
+      "id": "buy-225",
+      "type": "buy",
+      "date": "2026-04-15",
+      "ticker": "T",
+      "quantity": 2.34662828,
+      "total": 60,
+      "unitPrice": 25.568600068179524
+    },
+    {
+      "id": "buy-226",
+      "type": "buy",
+      "date": "2026-04-27",
+      "ticker": "MCD",
+      "quantity": 0.10197879,
+      "total": 30,
+      "unitPrice": 294.17881894852843
+    },
+    {
+      "id": "buy-227",
+      "type": "buy",
+      "date": "2026-05-13",
+      "ticker": "CSCO",
+      "quantity": 0.16892093,
+      "total": 17,
+      "unitPrice": 100.63880183468088
+    },
+    {
+      "id": "buy-228",
+      "type": "buy",
+      "date": "2026-05-27",
+      "ticker": "T",
+      "quantity": 1.11693513,
+      "total": 28,
+      "unitPrice": 25.068600000073413
+    },
+    {
+      "id": "buy-229",
+      "type": "buy",
+      "date": "2026-06-12",
+      "ticker": "SPCX",
+      "quantity": 0.7557684,
+      "total": 120,
+      "unitPrice": 158.7788004896738
+    },
+    {
+      "id": "buy-230",
+      "type": "buy",
+      "date": "2026-06-25",
+      "ticker": "PFE",
+      "quantity": 0.83402835,
+      "total": 20,
+      "unitPrice": 23.980000200233004
+    },
+    {
+      "id": "buy-231",
+      "type": "buy",
+      "date": "2026-06-25",
+      "ticker": "AMZN",
+      "quantity": 0.13157963,
+      "total": 30,
+      "unitPrice": 227.99881714213666
+    }
+  ],
+  "sales": [
+    {
+      "id": "sell-25",
+      "type": "sell",
+      "date": "2023-06-15",
+      "ticker": "TSLA",
+      "quantity": 0.36862,
+      "total": 86.73,
+      "unitPrice": 235.2829472085074
+    },
+    {
+      "id": "sell-26",
+      "type": "sell",
+      "date": "2023-08-18",
+      "ticker": "ADBE",
+      "quantity": 0.04733,
+      "total": 25,
+      "unitPrice": 528.2062117050497
+    },
+    {
+      "id": "sell-27",
+      "type": "sell",
+      "date": "2023-06-05",
+      "ticker": "NVDA",
+      "quantity": 0.09176999999999999,
+      "total": 63,
+      "unitPrice": 686.4988558352403
+    },
+    {
+      "id": "sell-28",
+      "type": "sell",
+      "date": "2023-07-18",
+      "ticker": "INTC",
+      "quantity": 0.83862,
+      "total": 35,
+      "unitPrice": 41.73523169015764
+    },
+    {
+      "id": "sell-29",
+      "type": "sell",
+      "date": "2023-07-18",
+      "ticker": "TSLA",
+      "quantity": 0.24344,
+      "total": 68.27,
+      "unitPrice": 280.4387117975682
+    },
+    {
+      "id": "sell-30",
+      "type": "sell",
+      "date": "2023-05-16",
+      "ticker": "META",
+      "quantity": 0.05867,
+      "total": 14,
+      "unitPrice": 238.6228055224135
+    },
+    {
+      "id": "sell-31",
+      "type": "sell",
+      "date": "2023-08-18",
+      "ticker": "CSCO",
+      "quantity": 0.18125,
+      "total": 10,
+      "unitPrice": 55.17241379310345
+    },
+    {
+      "id": "sell-108",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "GOOGL",
+      "quantity": 0.6211599999999999,
+      "total": 88,
+      "unitPrice": 141.67042307939985
+    },
+    {
+      "id": "sell-109",
+      "type": "sell",
+      "date": "2024-11-06",
+      "ticker": "AMZN",
+      "quantity": 0.75322,
+      "total": 124,
+      "unitPrice": 164.6265367356151
+    },
+    {
+      "id": "sell-110",
+      "type": "sell",
+      "date": "2024-12-09",
+      "ticker": "AAPL",
+      "quantity": 0.47141000000000005,
+      "total": 98,
+      "unitPrice": 207.88697736577498
+    },
+    {
+      "id": "sell-111",
+      "type": "sell",
+      "date": "2024-09-27",
+      "ticker": "MCD",
+      "quantity": 0.16381,
+      "total": 50,
+      "unitPrice": 305.23167083816617
+    },
+    {
+      "id": "sell-112",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "MSFT",
+      "quantity": 0.12082999999999999,
+      "total": 52,
+      "unitPrice": 430.3566994951585
+    },
+    {
+      "id": "sell-113",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "DIS",
+      "quantity": 0.6013,
+      "total": 65,
+      "unitPrice": 108.09911857641777
+    },
+    {
+      "id": "sell-114",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "JPM",
+      "quantity": 0.10382,
+      "total": 19,
+      "unitPrice": 183.00905413215182
+    },
+    {
+      "id": "sell-115",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "V",
+      "quantity": 0.05982,
+      "total": 17,
+      "unitPrice": 284.1858910063524
+    },
+    {
+      "id": "sell-116",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "MA",
+      "quantity": 0.04002,
+      "total": 19,
+      "unitPrice": 474.7626186906547
+    },
+    {
+      "id": "sell-117",
+      "type": "sell",
+      "date": "2024-11-08",
+      "ticker": "UNH",
+      "quantity": 0.02113,
+      "total": 13,
+      "unitPrice": 615.2389966871747
+    },
+    {
+      "id": "sell-118",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "BRK.B",
+      "quantity": 0.10598,
+      "total": 46,
+      "unitPrice": 434.04415927533495
+    },
+    {
+      "id": "sell-119",
+      "type": "sell",
+      "date": "2024-09-05",
+      "ticker": "T",
+      "quantity": 0.48308,
+      "total": 10,
+      "unitPrice": 20.700505092324253
+    },
+    {
+      "id": "sell-120",
+      "type": "sell",
+      "date": "2024-11-12",
+      "ticker": "CSCO",
+      "quantity": 0.68128,
+      "total": 40,
+      "unitPrice": 58.71301080319399
+    },
+    {
+      "id": "sell-121",
+      "type": "sell",
+      "date": "2024-07-09",
+      "ticker": "META",
+      "quantity": 0.22655,
+      "total": 97,
+      "unitPrice": 428.16155374089607
+    },
+    {
+      "id": "sell-122",
+      "type": "sell",
+      "date": "2024-07-09",
+      "ticker": "TSLA",
+      "quantity": 0.12374,
+      "total": 32.800000000000004,
+      "unitPrice": 265.07192500404074
+    },
+    {
+      "id": "sell-123",
+      "type": "sell",
+      "date": "2024-11-15",
+      "ticker": "T",
+      "quantity": 0.53232,
+      "total": 12,
+      "unitPrice": 22.54283137962128
+    },
+    {
+      "id": "sell-124",
+      "type": "sell",
+      "date": "2024-11-06",
+      "ticker": "TSLA",
+      "quantity": 0.15561999999999998,
+      "total": 42.39,
+      "unitPrice": 272.39429379257166
+    },
+    {
+      "id": "sell-125",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "IBM",
+      "quantity": 0.26997,
+      "total": 50,
+      "unitPrice": 185.20576360336335
+    },
+    {
+      "id": "sell-126",
+      "type": "sell",
+      "date": "2024-09-05",
+      "ticker": "ORCL",
+      "quantity": 0.23119,
+      "total": 37,
+      "unitPrice": 160.04152428738266
+    },
+    {
+      "id": "sell-127",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "CAT",
+      "quantity": 0.05512,
+      "total": 18,
+      "unitPrice": 326.5602322206096
+    },
+    {
+      "id": "sell-128",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "GE",
+      "quantity": 0.15016000000000002,
+      "total": 23.5,
+      "unitPrice": 156.49973361747467
+    },
+    {
+      "id": "sell-129",
+      "type": "sell",
+      "date": "2024-11-15",
+      "ticker": "BAC",
+      "quantity": 0.73724,
+      "total": 31.88,
+      "unitPrice": 43.24236340947317
+    },
+    {
+      "id": "sell-130",
+      "type": "sell",
+      "date": "2024-02-26",
+      "ticker": "TM",
+      "quantity": 0.12595,
+      "total": 30,
+      "unitPrice": 238.18975784041285
+    },
+    {
+      "id": "sell-131",
+      "type": "sell",
+      "date": "2024-09-04",
+      "ticker": "IBM",
+      "quantity": 0.07852,
+      "total": 16,
+      "unitPrice": 203.76974019358124
+    },
+    {
+      "id": "sell-132",
+      "type": "sell",
+      "date": "2024-11-12",
+      "ticker": "ORCL",
+      "quantity": 0.11635000000000001,
+      "total": 22,
+      "unitPrice": 189.08465835840136
+    },
+    {
+      "id": "sell-133",
+      "type": "sell",
+      "date": "2024-11-15",
+      "ticker": "BAC",
+      "quantity": 0.11072,
+      "total": 5.12,
+      "unitPrice": 46.24277456647399
+    },
+    {
+      "id": "sell-134",
+      "type": "sell",
+      "date": "2024-11-06",
+      "ticker": "TSLA",
+      "quantity": 0.13713,
+      "total": 41.5,
+      "unitPrice": 302.632538467148
+    },
+    {
+      "id": "sell-135",
+      "type": "sell",
+      "date": "2024-11-06",
+      "ticker": "JPM",
+      "quantity": 0.05321,
+      "total": 13,
+      "unitPrice": 244.31497838752114
+    },
+    {
+      "id": "sell-136",
+      "type": "sell",
+      "date": "2024-11-06",
+      "ticker": "CSCO",
+      "quantity": 0.39942,
+      "total": 23,
+      "unitPrice": 57.58349606930049
+    },
+    {
+      "id": "sell-143",
+      "type": "sell",
+      "date": "2025-01-21",
+      "ticker": "CSCO",
+      "quantity": 0.32774,
+      "total": 20,
+      "unitPrice": 61.02398242509307
+    },
+    {
+      "id": "sell-144",
+      "type": "sell",
+      "date": "2025-02-18",
+      "ticker": "JPM",
+      "quantity": 0.03574,
+      "total": 10,
+      "unitPrice": 279.79854504756577
+    },
+    {
+      "id": "sell-145",
+      "type": "sell",
+      "date": "2025-02-18",
+      "ticker": "T",
+      "quantity": 0.76599,
+      "total": 20,
+      "unitPrice": 26.11000143605008
+    },
+    {
+      "id": "sell-146",
+      "type": "sell",
+      "date": "2025-05-21",
+      "ticker": "VOD",
+      "quantity": 5.71837,
+      "total": 60,
+      "unitPrice": 10.492500485278146
+    },
+    {
+      "id": "sell-147",
+      "type": "sell",
+      "date": "2025-06-23",
+      "ticker": "MSFT",
+      "quantity": 0.06157,
+      "total": 30,
+      "unitPrice": 487.25028422933246
+    },
+    {
+      "id": "sell-148",
+      "type": "sell",
+      "date": "2025-08-28",
+      "ticker": "GOOGL",
+      "quantity": 0.18859917,
+      "total": 40,
+      "unitPrice": 212.0900107884886
+    },
+    {
+      "id": "sell-149",
+      "type": "sell",
+      "date": "2025-08-28",
+      "ticker": "BAC",
+      "quantity": 0.59394179,
+      "total": 30,
+      "unitPrice": 50.51000031501403
+    },
+    {
+      "id": "sell-150",
+      "type": "sell",
+      "date": "2026-02-13",
+      "ticker": "AZN",
+      "quantity": 0.53238,
+      "total": 0,
+      "unitPrice": 0
+    },
+    {
+      "id": "sell-207",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "TM",
+      "quantity": 0.1856359,
+      "total": 45,
+      "unitPrice": 242.41000797798273
+    },
+    {
+      "id": "sell-208",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "NVS",
+      "quantity": 0.32255983,
+      "total": 50,
+      "unitPrice": 155.01000233042038
+    },
+    {
+      "id": "sell-209",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "CAT",
+      "quantity": 0.1530307,
+      "total": 110,
+      "unitPrice": 718.8100165522343
+    },
+    {
+      "id": "sell-210",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "AZN",
+      "quantity": 0.15583606,
+      "total": 30,
+      "unitPrice": 192.5100005736798
+    },
+    {
+      "id": "sell-211",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "XOM",
+      "quantity": 0.20140986,
+      "total": 30,
+      "unitPrice": 148.9500067176453
+    },
+    {
+      "id": "sell-212",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "PEP",
+      "quantity": 0.40296296,
+      "total": 68,
+      "unitPrice": 168.75000124080884
+    },
+    {
+      "id": "sell-213",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "JNJ",
+      "quantity": 0.29229998,
+      "total": 70,
+      "unitPrice": 239.48000270133443
+    },
+    {
+      "id": "sell-214",
+      "type": "sell",
+      "date": "2026-02-06",
+      "ticker": "KO",
+      "quantity": 0.3811944,
+      "total": 30,
+      "unitPrice": 78.70000188880005
+    },
+    {
+      "id": "sell-215",
+      "type": "sell",
+      "date": "2026-02-12",
+      "ticker": "MCD",
+      "quantity": 0.04838514,
+      "total": 16,
+      "unitPrice": 330.6800393674587
+    },
+    {
+      "id": "sell-216",
+      "type": "sell",
+      "date": "2026-02-13",
+      "ticker": "PFE",
+      "quantity": 1.79911771,
+      "total": 50,
+      "unitPrice": 27.791400041301355
+    },
+    {
+      "id": "sell-217",
+      "type": "sell",
+      "date": "2026-02-13",
+      "ticker": "TM",
+      "quantity": 0.06054979,
+      "total": 15,
+      "unitPrice": 247.73000864247425
+    },
+    {
+      "id": "sell-218",
+      "type": "sell",
+      "date": "2026-02-13",
+      "ticker": "NVS",
+      "quantity": 0.09209233,
+      "total": 15,
+      "unitPrice": 162.88001400333775
+    },
+    {
+      "id": "sell-219",
+      "type": "sell",
+      "date": "2026-02-25",
+      "ticker": "CVX",
+      "quantity": 0.3266017,
+      "total": 60,
+      "unitPrice": 183.710005183684
+    },
+    {
+      "id": "sell-220",
+      "type": "sell",
+      "date": "2026-02-25",
+      "ticker": "CAT",
+      "quantity": 0.02989264,
+      "total": 23,
+      "unitPrice": 769.4201649636833
+    },
+    {
+      "id": "sell-221",
+      "type": "sell",
+      "date": "2026-02-25",
+      "ticker": "NVDA",
+      "quantity": 0.40545334,
+      "total": 80,
+      "unitPrice": 197.3100036615804
+    },
+    {
+      "id": "sell-222",
+      "type": "sell",
+      "date": "2026-02-25",
+      "ticker": "AAPL",
+      "quantity": 0.12758356,
+      "total": 35,
+      "unitPrice": 274.33001555999846
+    },
+    {
+      "id": "sell-223",
+      "type": "sell",
+      "date": "2026-03-19",
+      "ticker": "XOM",
+      "quantity": 0.09422702,
+      "total": 15,
+      "unitPrice": 159.1900072824122
+    },
+    {
+      "id": "sell-224",
+      "type": "sell",
+      "date": "2026-04-02",
+      "ticker": "AZN",
+      "quantity": 0.07420188,
+      "total": 15,
+      "unitPrice": 202.15121234125067
+    },
+    {
+      "id": "sell-225",
+      "type": "sell",
+      "date": "2026-04-02",
+      "ticker": "VOD",
+      "quantity": 0.98741376,
+      "total": 15,
+      "unitPrice": 15.191200090223575
+    },
+    {
+      "id": "sell-226",
+      "type": "sell",
+      "date": "2026-04-02",
+      "ticker": "JNJ",
+      "quantity": 0.06162158,
+      "total": 15,
+      "unitPrice": 243.42121704766413
+    },
+    {
+      "id": "sell-227",
+      "type": "sell",
+      "date": "2026-04-08",
+      "ticker": "INTC",
+      "quantity": 5.3217605,
+      "total": 310,
+      "unitPrice": 58.251400077098545
+    },
+    {
+      "id": "sell-228",
+      "type": "sell",
+      "date": "2026-04-21",
+      "ticker": "AMZN",
+      "quantity": 0.19827799,
+      "total": 50,
+      "unitPrice": 252.17120669823214
+    },
+    {
+      "id": "sell-229",
+      "type": "sell",
+      "date": "2026-04-21",
+      "ticker": "GOOGL",
+      "quantity": 0.11882792,
+      "total": 40,
+      "unitPrice": 336.621225045427
+    },
+    {
+      "id": "sell-230",
+      "type": "sell",
+      "date": "2026-04-27",
+      "ticker": "INTC",
+      "quantity": 0.33588767,
+      "total": 28,
+      "unitPrice": 83.36120227336716
+    },
+    {
+      "id": "sell-231",
+      "type": "sell",
+      "date": "2026-05-13",
+      "ticker": "UNH",
+      "quantity": 0.1499808,
+      "total": 60,
+      "unitPrice": 400.051206554439
+    },
+    {
+      "id": "sell-232",
+      "type": "sell",
+      "date": "2026-05-13",
+      "ticker": "CSCO",
+      "quantity": 0.1693729,
+      "total": 17,
+      "unitPrice": 100.37024813296578
+    },
+    {
+      "id": "sell-233",
+      "type": "sell",
+      "date": "2026-05-13",
+      "ticker": "CSCO",
+      "quantity": 0.16928696,
+      "total": 17,
+      "unitPrice": 100.4212019638134
+    },
+    {
+      "id": "sell-234",
+      "type": "sell",
+      "date": "2026-05-13",
+      "ticker": "NVDA",
+      "quantity": 0.04852201,
+      "total": 11,
+      "unitPrice": 226.70124341510174
+    },
+    {
+      "id": "sell-235",
+      "type": "sell",
+      "date": "2026-05-13",
+      "ticker": "KO",
+      "quantity": 0.18686652,
+      "total": 15,
+      "unitPrice": 80.27120106908396
+    },
+    {
+      "id": "sell-236",
+      "type": "sell",
+      "date": "2026-05-27",
+      "ticker": "LLY",
+      "quantity": 0.06907214,
+      "total": 75,
+      "unitPrice": 1085.8212877145545
+    },
+    {
+      "id": "sell-237",
+      "type": "sell",
+      "date": "2026-05-27",
+      "ticker": "CAT",
+      "quantity": 0.01213229,
+      "total": 11,
+      "unitPrice": 906.6713703678365
+    },
+    {
+      "id": "sell-238",
+      "type": "sell",
+      "date": "2026-05-27",
+      "ticker": "CSCO",
+      "quantity": 0.09218041,
+      "total": 11,
+      "unitPrice": 119.33121147974933
+    },
+    {
+      "id": "sell-239",
+      "type": "sell",
+      "date": "2026-05-27",
+      "ticker": "AAPL",
+      "quantity": 0.03533101,
+      "total": 11,
+      "unitPrice": 311.3412268712386
+    },
+    {
+      "id": "sell-240",
+      "type": "sell",
+      "date": "2026-06-25",
+      "ticker": "INTC",
+      "quantity": 0.14660358,
+      "total": 19,
+      "unitPrice": 129.60120073466146
+    },
+    {
+      "id": "sell-241",
+      "type": "sell",
+      "date": "2026-06-25",
+      "ticker": "BAC",
+      "quantity": 0.20544005,
+      "total": 12,
+      "unitPrice": 58.41120073714935
+    },
+    {
+      "id": "sell-242",
+      "type": "sell",
+      "date": "2026-06-25",
+      "ticker": "JPM",
+      "quantity": 0.08566924,
+      "total": 29,
+      "unitPrice": 338.5112322695988
+    },
+    {
+      "id": "sell-243",
+      "type": "sell",
+      "date": "2026-06-25",
+      "ticker": "BRK.B",
+      "quantity": 0.132361,
+      "total": 65,
+      "unitPrice": 491.0812097218969
+    },
+    {
+      "id": "sell-244",
+      "type": "sell",
+      "date": "2026-07-02",
+      "ticker": "V",
+      "quantity": 0.1807759,
+      "total": 65,
+      "unitPrice": 359.561202571803
+    }
+  ],
+  "assets": [
+    {
+      "ticker": "TSLA",
+      "name": "TESLA",
+      "sector": "Automóveis",
+      "currentPrice": 408.84,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 302.6300048828125,
+        "average": 402.33099982852025,
+        "max": 489.8800048828125,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "name": "GOOGLE",
+      "sector": "Tecnologia",
+      "currentPrice": 356.01,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 177.6199951171875,
+        "average": 296.2185911148313,
+        "max": 402.6199951171875,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "DIS",
+      "name": "DISNEY",
+      "sector": "Entretendimento",
+      "currentPrice": 96.22,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 92.41999816894531,
+        "average": 108.32134921967037,
+        "max": 122.94000244140625,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "AMZN",
+      "name": "AMAZON",
+      "sector": "Varejo",
+      "currentPrice": 245.37,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 198.7899932861328,
+        "average": 232.15757933117095,
+        "max": 274.989990234375,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "KO",
+      "name": "COCA COLA",
+      "sector": "Bebidas",
+      "currentPrice": 83.5,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 65.66999816894531,
+        "average": 73.54009928022113,
+        "max": 84.13999938964844,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "name": "MICROSOFT",
+      "sector": "Tecnologia",
+      "currentPrice": 385.4,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 352.8299865722656,
+        "average": 456.5639873686291,
+        "max": 542.0700073242188,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "name": "APPLE",
+      "sector": "Tecnologia",
+      "currentPrice": 316.06,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 202.3800048828125,
+        "average": 262.52315424359034,
+        "max": 316.2749938964844,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "JNJ",
+      "name": "JOHNSON & JOHNSON",
+      "sector": "Farmacêuticos",
+      "currentPrice": 256.55,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 155.1699981689453,
+        "average": 210.98091270810082,
+        "max": 267.239990234375,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "JPM",
+      "name": "JPMORGAN",
+      "sector": "Financeiro",
+      "currentPrice": 336.45,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 282.8399963378906,
+        "average": 306.45711335681733,
+        "max": 339.2200012207031,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "NKE",
+      "name": "NIKE",
+      "sector": "Vestuário",
+      "currentPrice": 44.52,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 40.75,
+        "average": 60.40037683456663,
+        "max": 79.23999786376953,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "MCD",
+      "name": "MCDONALDS",
+      "sector": "Restaurantes",
+      "currentPrice": 276.32,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 264.5400085449219,
+        "average": 303.4567065768772,
+        "max": 341.05999755859375,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA",
+      "sector": "Tecnologia",
+      "currentPrice": 210.22,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 164.07000732421875,
+        "average": 188.32535746740916,
+        "max": 235.74000549316406,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "V",
+      "name": "VISA",
+      "sector": "Financeiro",
+      "currentPrice": 348.35,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 295.5199890136719,
+        "average": 332.55606345524865,
+        "max": 362.1300048828125,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "UNH",
+      "name": "UnitedHealth",
+      "sector": "Saúde",
+      "currentPrice": 424.89,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 237.77000427246094,
+        "average": 330.61549583313956,
+        "max": 431.67999267578125,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "ADBE",
+      "name": "ADOBE",
+      "sector": "Tecnologia",
+      "currentPrice": 224.15,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 193.41000366210938,
+        "average": 299.86575365823415,
+        "max": 372.8699951171875,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "BRK.B",
+      "name": "Berkshire Hathaway",
+      "sector": "Holding",
+      "currentPrice": 493.37,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 459.1099853515625,
+        "average": 488.90726168193515,
+        "max": 513.8099975585938,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "XOM",
+      "name": "Exxon Mobil",
+      "sector": "Petróleo",
+      "currentPrice": 138.26,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 105.83000183105469,
+        "average": 131.01468243674626,
+        "max": 171.47000122070312,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "META",
+      "name": "META",
+      "sector": "Tecnologia",
+      "currentPrice": 669.81,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 525.719970703125,
+        "average": 664.1554945688399,
+        "max": 790,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "PEP",
+      "name": "PepsiCo",
+      "sector": "Bebidas",
+      "currentPrice": 137.35,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 133.80999755859375,
+        "average": 148.80468223208473,
+        "max": 170.49000549316406,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "CSCO",
+      "name": "CISCO",
+      "sector": "Tecnologia",
+      "currentPrice": 120.38,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 66.19999694824219,
+        "average": 82.40013888525584,
+        "max": 130,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "T",
+      "name": "AT&T",
+      "sector": "Telecomunicações",
+      "currentPrice": 21.21,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 20.479999542236328,
+        "average": 26.117876961117698,
+        "max": 29.6200008392334,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "INTC",
+      "name": "INTEL",
+      "sector": "Tecnologia",
+      "currentPrice": 109.75,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 19.309999465942383,
+        "average": 54.40206347571479,
+        "max": 140.94000244140625,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "PFE",
+      "name": "Pfizer",
+      "sector": "Farmacêuticos",
+      "currentPrice": 24.29,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 23.290000915527344,
+        "average": 25.6183531927684,
+        "max": 28.549999237060547,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "MA",
+      "name": "Mastercard",
+      "sector": "Financeiro",
+      "currentPrice": 524.84,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 471.54998779296875,
+        "average": 539.2033320835659,
+        "max": 598.9600219726562,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "VOD",
+      "name": "Vodafone",
+      "sector": "Telecomunicações",
+      "currentPrice": 14.74,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 10.800000190734863,
+        "average": 13.347242052592929,
+        "max": 16.31999969482422,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "CVX",
+      "name": "Chevron",
+      "sector": "Petróleo",
+      "currentPrice": 175.11,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 146.75,
+        "average": 169.16261903066484,
+        "max": 211.14999389648438,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "IBM",
+      "name": "IBM",
+      "sector": "Tecnologia",
+      "currentPrice": 289.36,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 214.63999938964844,
+        "average": 271.3082932971773,
+        "max": 329.2300109863281,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "ORCL",
+      "name": "ORACLE",
+      "sector": "Tecnologia",
+      "currentPrice": 141.16,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 136.47999572753906,
+        "average": 207.51206292046442,
+        "max": 328.3299865722656,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "AZN",
+      "name": "ASTRAZENECA",
+      "sector": "Farmacêuticos",
+      "currentPrice": 172.55,
+      "exchange": "NASDAQ",
+      "annual": {
+        "min": 137.44000244140625,
+        "average": 177.7457539391896,
+        "max": 209.47999572753906,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "UPS",
+      "name": "UPS",
+      "sector": "Transporte",
+      "currentPrice": 112.81,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 82.58000183105469,
+        "average": 98.91432553245907,
+        "max": 120,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "PG",
+      "name": "P&G",
+      "sector": "Produtos de Consumo",
+      "currentPrice": 147.65,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 138.0399932861328,
+        "average": 149.95611148410373,
+        "max": 167.1999969482422,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "CAT",
+      "name": "CATERPILLAR",
+      "sector": "Bens Industriais",
+      "currentPrice": 954.25,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 404.6400146484375,
+        "average": 650.5459915645539,
+        "max": 1064.9000244140625,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "GE",
+      "name": "GENERAL ELECTRIC",
+      "sector": "Bens Industriais",
+      "currentPrice": 359.95,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 252.57000732421875,
+        "average": 303.3138494945708,
+        "max": 378.67999267578125,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "BAC",
+      "name": "BANK OF AMERICA",
+      "sector": "Financeiro",
+      "currentPrice": 59.75,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 44.91999816894531,
+        "average": 51.88930558401441,
+        "max": 59.900001525878906,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "NVS",
+      "name": "NOVARTIS",
+      "sector": "Saúde",
+      "currentPrice": 154.29,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 113.5,
+        "average": 139.64545567830405,
+        "max": 168.6199951171875,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "TM",
+      "name": "TOYOTA",
+      "sector": "Automóveis",
+      "currentPrice": 176.48,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 166.5,
+        "average": 201.50825337001257,
+        "max": 248.2899932861328,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "LLY",
+      "name": "Eli Lilly",
+      "sector": "Saúde",
+      "currentPrice": 1190.7,
+      "exchange": "NYSE",
+      "annual": {
+        "min": 625.6500244140625,
+        "average": 943.6656779940166,
+        "max": 1235.56005859375,
+        "observations": 252,
+        "currency": "USD"
+      }
+    },
+    {
+      "ticker": "SPCX",
+      "name": "SPACEX",
+      "sector": "Tecnologia",
+      "currentPrice": 148.31,
+      "exchange": "NASDAQ",
+      "annual": null
+    }
+  ],
+  "integrity": {
+    "purchaseRows": 170,
+    "saleRows": 82,
+    "assetRows": 38,
+    "annualRows": 37,
+    "warnings": [
+      "Histórico anual indisponível para SPCX: histórico insuficiente."
+    ]
+  }
+}

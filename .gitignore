@@ -1,0 +1,17 @@
+# Credenciais e segredos locais
+auth/
+*.pem
+.env
+.env.*
+!.env.example
+
+# Dependências e builds
+node_modules/
+dist/
+coverage/
+
+# Arquivos locais
+.DS_Store
+Thumbs.db
+*.log
+
