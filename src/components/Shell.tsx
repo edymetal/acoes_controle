@@ -24,10 +24,13 @@ interface ShellProps {
   page: PageId;
   onPageChange: (page: PageId) => void;
   updatedAt: string;
+  isRefreshing: boolean;
+  refreshMessage: { kind: "success" | "warning" | "error"; text: string } | null;
+  onRefresh: () => void;
   children: ReactNode;
 }
 
-export function Shell({ page, onPageChange, updatedAt, children }: ShellProps) {
+export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
 
   return (
@@ -67,9 +70,10 @@ export function Shell({ page, onPageChange, updatedAt, children }: ShellProps) {
           <div className="sync-status">
             <span className="sync-status__dot" aria-hidden="true" />
             <span><small>Atualizado em</small><strong>{formatDateTime(updatedAt)}</strong></span>
-            <button type="button" onClick={() => window.location.reload()} aria-label="Atualizar página" title="Atualizar página"><RefreshCw size={17} /></button>
+            <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label="Atualizar dados" title="Atualizar dados"><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
           </div>
         </header>
+        {refreshMessage && <div className={`refresh-message refresh-message--${refreshMessage.kind}`} role="status">{refreshMessage.text}</div>}
         <main className="content">{children}</main>
       </div>
     </div>

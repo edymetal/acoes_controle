@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { batchGetValues } from "./google-sheets-client.mjs";
 
@@ -83,7 +83,7 @@ function mapSales(rows, warnings) {
   });
 }
 
-function mapAssets(rows, warnings) {
+function mapAssets(rows, warnings, previousAnnualByTicker) {
   const seen = new Set();
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
@@ -113,9 +113,12 @@ function mapAssets(rows, warnings) {
       && annualMax > 0
       && annualMin <= annualAverage
       && annualAverage <= annualMax;
-    if (!hasAnnualStats) {
-      warnings.push(`Preços anuais inválidos para ${symbol} na linha ${index + 12} da aba Ações Base.`);
-    }
+    const previousAnnual = previousAnnualByTicker.get(symbol) ?? null;
+    if (!hasAnnualStats) warnings.push(
+      previousAnnual
+        ? `Preços anuais indisponíveis para ${symbol}; mantidos os últimos valores válidos.`
+        : `Preços anuais inválidos para ${symbol} na linha ${index + 12} da aba Ações Base.`,
+    );
 
     return [{
       ticker: symbol,
@@ -129,13 +132,27 @@ function mapAssets(rows, warnings) {
         max: annualMax,
         observations: 365,
         currency: "USD",
-      } : null,
+      } : previousAnnual,
     }];
   });
 }
 
+async function loadPreviousAnnualStats() {
+  try {
+    const previous = JSON.parse(await readFile(OUTPUT_PATH, "utf8"));
+    return new Map(
+      (previous.assets ?? [])
+        .filter((asset) => asset?.ticker && asset?.annual)
+        .map((asset) => [asset.ticker, asset.annual]),
+    );
+  } catch {
+    return new Map();
+  }
+}
+
 async function main() {
   const warnings = [];
+  const previousAnnualByTicker = await loadPreviousAnnualStats();
   const response = await batchGetValues({
     spreadsheetId: SPREADSHEET_ID,
     ranges: Object.values(RANGES),
@@ -145,7 +162,7 @@ async function main() {
   const [purchaseRange, saleRange, assetRange] = response.valueRanges;
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
-  const assets = mapAssets(assetRange?.values ?? [], warnings);
+  const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker);
 
   const output = {
     schemaVersion: 1,

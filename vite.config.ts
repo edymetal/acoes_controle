@@ -23,8 +23,19 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,json}"],
+        globPatterns: ["**/*.{js,css,html,svg,png}"],
         cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            urlPattern: /\/data\/portfolio\.json(?:\?.*)?$/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "portfolio-data",
+              networkTimeoutSeconds: 8,
+              expiration: { maxEntries: 2, maxAgeSeconds: 24 * 60 * 60 },
+            },
+          },
+        ],
       },
     }),
   ],

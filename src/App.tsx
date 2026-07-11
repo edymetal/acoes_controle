@@ -10,6 +10,21 @@ const History = lazy(() => import("./pages/History").then((module) => ({ default
 const Strategy = lazy(() => import("./pages/Strategy").then((module) => ({ default: module.Strategy })));
 
 const validPages: PageId[] = ["dashboard", "portfolio", "history", "strategy"];
+type RefreshMessage = { kind: "success" | "warning" | "error"; text: string };
+
+async function fetchPortfolio(cacheBust = false, signal?: AbortSignal) {
+  const suffix = cacheBust ? `?refresh=${Date.now()}` : "";
+  const response = await fetch(`${import.meta.env.BASE_URL}data/portfolio.json${suffix}`, {
+    cache: "no-store",
+    signal,
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const payload = await response.json() as PortfolioData;
+  if (payload.schemaVersion !== 1 || !Array.isArray(payload.assets)) {
+    throw new Error("O arquivo de dados está em um formato incompatível.");
+  }
+  return payload;
+}
 
 function initialPage(): PageId {
   const hash = window.location.hash.replace("#", "") as PageId;
@@ -20,19 +35,14 @@ export default function App() {
   const [page, setPage] = useState<PageId>(initialPage);
   const [data, setData] = useState<PortfolioData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshMessage, setRefreshMessage] = useState<RefreshMessage | null>(null);
   const model = useMemo(() => data ? calculatePortfolio(data) : null, [data]);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${import.meta.env.BASE_URL}data/portfolio.json`, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json() as Promise<PortfolioData>;
-      })
+    fetchPortfolio(false, controller.signal)
       .then((payload) => {
-        if (payload.schemaVersion !== 1 || !Array.isArray(payload.assets)) {
-          throw new Error("O arquivo de dados está em um formato incompatível.");
-        }
         setData(payload);
       })
       .catch((reason: unknown) => {
@@ -41,6 +51,23 @@ export default function App() {
       });
     return () => controller.abort();
   }, []);
+
+  const refreshData = async () => {
+    setIsRefreshing(true);
+    setRefreshMessage(null);
+    try {
+      const payload = await fetchPortfolio(true);
+      setData(payload);
+      const hasSheetWarnings = payload.integrity.warnings.length > 0;
+      setRefreshMessage(hasSheetWarnings
+        ? { kind: "warning", text: "Não foi possível obter todas as informações da planilha. Os últimos dados válidos foram mantidos." }
+        : { kind: "success", text: "Dados atualizados com sucesso." });
+    } catch {
+      setRefreshMessage({ kind: "error", text: "Não foi possível buscar as informações da planilha. Os dados exibidos foram mantidos." });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const navigate = (nextPage: PageId) => {
     setPage(nextPage);
@@ -62,7 +89,7 @@ export default function App() {
   }
 
   return (
-    <Shell page={page} onPageChange={navigate} updatedAt={data.generatedAt}>
+    <Shell page={page} onPageChange={navigate} updatedAt={data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData}>
       <Suspense fallback={<div className="page-loader"><LoaderCircle size={24} /> Carregando painel…</div>}>
         {page === "dashboard" && <Dashboard data={data} model={model} onNavigate={navigate} />}
         {page === "portfolio" && <Portfolio model={model} />}

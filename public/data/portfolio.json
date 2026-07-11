@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-11T06:40:37.095Z",
+  "generatedAt": "2026-07-11T15:20:48.388Z",
   "source": {
     "spreadsheetId": "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0",
     "ranges": {
@@ -2292,7 +2292,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 302.63,
-        "average": 402.3246428571427,
+        "average": 402.6929880478086,
         "max": 489.88,
         "observations": 365,
         "currency": "USD"
@@ -2305,8 +2305,8 @@
       "currentPrice": 357.18,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 177.62,
-        "average": 296.2213095238095,
+        "min": 180.19,
+        "average": 296.6938247011951,
         "max": 402.62,
         "observations": 365,
         "currency": "USD"
@@ -2320,7 +2320,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 92.42,
-        "average": 108.3193650793651,
+        "average": 108.26661354581674,
         "max": 122.94,
         "observations": 365,
         "currency": "USD"
@@ -2334,7 +2334,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 198.79,
-        "average": 232.15623015873,
+        "average": 232.19565737051775,
         "max": 274.99,
         "observations": 365,
         "currency": "USD"
@@ -2348,7 +2348,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 65.67,
-        "average": 73.49511999999999,
+        "average": 73.51008032128513,
         "max": 84.14,
         "observations": 365,
         "currency": "USD"
@@ -2362,7 +2362,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 352.83,
-        "average": 456.55940476190517,
+        "average": 456.3804382470123,
         "max": 542.07,
         "observations": 365,
         "currency": "USD"
@@ -2376,7 +2376,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 202.38,
-        "average": 262.51936507936523,
+        "average": 262.7190039840639,
         "max": 316.22,
         "observations": 365,
         "currency": "USD"
@@ -2390,7 +2390,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 155.17,
-        "average": 210.9821825396826,
+        "average": 211.19450199203195,
         "max": 267.24,
         "observations": 365,
         "currency": "USD"
@@ -2404,7 +2404,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 282.84,
-        "average": 306.4578174603174,
+        "average": 306.53059760956177,
         "max": 339.22,
         "observations": 365,
         "currency": "USD"
@@ -2418,7 +2418,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 40.75,
-        "average": 60.399761904761895,
+        "average": 60.343107569721106,
         "max": 79.24,
         "observations": 365,
         "currency": "USD"
@@ -2432,7 +2432,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 264.54,
-        "average": 303.45035714285723,
+        "average": 303.47051792828694,
         "max": 341.06,
         "observations": 365,
         "currency": "USD"
@@ -2446,7 +2446,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 164.07,
-        "average": 188.32976190476194,
+        "average": 188.4262948207172,
         "max": 235.74,
         "observations": 365,
         "currency": "USD"
@@ -2460,7 +2460,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 295.52,
-        "average": 332.5661507936509,
+        "average": 332.47326693227103,
         "max": 362.13,
         "observations": 365,
         "currency": "USD"
@@ -2474,7 +2474,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 237.77,
-        "average": 330.61365079365095,
+        "average": 330.7375697211157,
         "max": 431.68,
         "observations": 365,
         "currency": "USD"
@@ -2488,7 +2488,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 193.41,
-        "average": 299.8649206349208,
+        "average": 299.5798007968129,
         "max": 372.87,
         "observations": 365,
         "currency": "USD"
@@ -2502,7 +2502,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 459.11,
-        "average": 488.9085714285716,
+        "average": 488.9509561752989,
         "max": 513.81,
         "observations": 365,
         "currency": "USD"
@@ -2516,7 +2516,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 105.83,
-        "average": 131.01706349206347,
+        "average": 131.08115537848605,
         "max": 171.47,
         "observations": 365,
         "currency": "USD"
@@ -2530,7 +2530,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 525.72,
-        "average": 664.1573015873018,
+        "average": 663.9059760956179,
         "max": 790,
         "observations": 365,
         "currency": "USD"
@@ -2544,7 +2544,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 133.81,
-        "average": 148.8048015873016,
+        "average": 148.85549800796815,
         "max": 170.49,
         "observations": 365,
         "currency": "USD"
@@ -2558,7 +2558,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 66.2,
-        "average": 82.40265873015876,
+        "average": 82.45701195219127,
         "max": 130,
         "observations": 365,
         "currency": "USD"
@@ -2572,7 +2572,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 20.48,
-        "average": 26.11753968253969,
+        "average": 26.111553784860565,
         "max": 29.62,
         "observations": 365,
         "currency": "USD"
@@ -2586,7 +2586,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 19.31,
-        "average": 54.40182539682542,
+        "average": 54.52366533864544,
         "max": 140.94,
         "observations": 365,
         "currency": "USD"
@@ -2600,7 +2600,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 23.29,
-        "average": 25.61793650793651,
+        "average": 25.61729083665339,
         "max": 28.55,
         "observations": 365,
         "currency": "USD"
@@ -2614,7 +2614,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 471.55,
-        "average": 539.2132936507937,
+        "average": 539.116454183267,
         "max": 598.96,
         "observations": 365,
         "currency": "USD"
@@ -2628,7 +2628,7 @@
       "exchange": "NASDAQ",
       "annual": {
         "min": 10.8,
-        "average": 13.347222222222223,
+        "average": 13.356932270916335,
         "max": 16.32,
         "observations": 365,
         "currency": "USD"
@@ -2642,7 +2642,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 146.75,
-        "average": 169.16035714285718,
+        "average": 169.22007968127494,
         "max": 211.15,
         "observations": 365,
         "currency": "USD"
@@ -2656,7 +2656,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 214.64,
-        "average": 271.3022222222222,
+        "average": 271.2379681274901,
         "max": 329.23,
         "observations": 365,
         "currency": "USD"
@@ -2670,7 +2670,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 136.48,
-        "average": 207.51107142857137,
+        "average": 207.4015537848605,
         "max": 328.33,
         "observations": 365,
         "currency": "USD"
@@ -2698,7 +2698,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 82.58,
-        "average": 98.91285714285718,
+        "average": 98.89689243027891,
         "max": 120,
         "observations": 365,
         "currency": "USD"
@@ -2712,7 +2712,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 138.04,
-        "average": 149.9535714285714,
+        "average": 149.91956175298802,
         "max": 167.2,
         "observations": 365,
         "currency": "USD"
@@ -2726,7 +2726,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 404.64,
-        "average": 650.5478968253968,
+        "average": 651.5129083665338,
         "max": 1064.9,
         "observations": 365,
         "currency": "USD"
@@ -2739,8 +2739,8 @@
       "currentPrice": 359.27,
       "exchange": "NYSE",
       "annual": {
-        "min": 252.57,
-        "average": 303.31079365079347,
+        "min": 255.42,
+        "average": 303.51294820717106,
         "max": 378.68,
         "observations": 365,
         "currency": "USD"
@@ -2754,7 +2754,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 44.92,
-        "average": 51.88912698412697,
+        "average": 51.90872509960158,
         "max": 59.9,
         "observations": 365,
         "currency": "USD"
@@ -2768,7 +2768,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 113.5,
-        "average": 139.64448412698414,
+        "average": 139.70788844621515,
         "max": 168.62,
         "observations": 365,
         "currency": "USD"
@@ -2782,7 +2782,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 166.5,
-        "average": 201.50789682539684,
+        "average": 201.63187250996017,
         "max": 248.29,
         "observations": 365,
         "currency": "USD"
@@ -2796,7 +2796,7 @@
       "exchange": "NYSE",
       "annual": {
         "min": 625.65,
-        "average": 943.6544841269827,
+        "average": 944.2640637450185,
         "max": 1235.56,
         "observations": 365,
         "currency": "USD"
