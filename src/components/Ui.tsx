@@ -6,13 +6,14 @@ import { toneForValue } from "../lib/format";
 interface MetricCardProps {
   label: string;
   value: string;
+  secondaryValue?: string;
   icon: ReactNode;
   helper?: string;
   change?: number;
   accent?: "blue" | "green" | "violet" | "amber";
 }
 
-export function MetricCard({ label, value, icon, helper, change, accent = "blue" }: MetricCardProps) {
+export function MetricCard({ label, value, secondaryValue, icon, helper, change, accent = "blue" }: MetricCardProps) {
   const tone = change === undefined ? "neutral" : toneForValue(change);
   return (
     <article className={`metric-card metric-card--${accent}`}>
@@ -20,7 +21,7 @@ export function MetricCard({ label, value, icon, helper, change, accent = "blue"
         <span>{label}</span>
         <span className="metric-card__icon">{icon}</span>
       </div>
-      <strong>{value}</strong>
+      <div className="metric-card__value"><strong>{value}</strong>{secondaryValue && <small>{secondaryValue}</small>}</div>
       {(helper || change !== undefined) && (
         <div className={`metric-card__helper value--${tone}`}>
           {change !== undefined && (tone === "positive" ? <ArrowUpRight size={15} /> : tone === "negative" ? <ArrowDownRight size={15} /> : <Minus size={15} />)}
@@ -71,4 +72,3 @@ export function EmptyState({ title, description }: { title: string; description:
 export function Value({ value, children }: { value: number; children: ReactNode }) {
   return <span className={`value--${toneForValue(value)}`}>{children}</span>;
 }
-

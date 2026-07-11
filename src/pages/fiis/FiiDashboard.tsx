@@ -2,12 +2,12 @@ import { ArrowRight, BadgeDollarSign, Building2, CircleDollarSign, Layers3, Tren
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import type { PageId } from "../../components/Shell";
 import { MetricCard, Section, Value } from "../../components/Ui";
-import { formatBrl, formatDate, formatNumber, formatPercent } from "../../lib/format";
+import { formatBrl, formatDate, formatNumber, formatPercent, formatUsdFromBrl } from "../../lib/format";
 import type { PortfolioModel } from "../../types";
 
 const CHART_COLORS = ["#56d8ff", "#7c8cff", "#37dda2", "#b584ff", "#ffb86b", "#f8799b", "#4eb6a5", "#8ca5c7"];
 
-export function FiiDashboard({ model, onNavigate }: { model: PortfolioModel; onNavigate: (page: PageId) => void }) {
+export function FiiDashboard({ model, usdRate, onNavigate }: { model: PortfolioModel; usdRate: number | null; onNavigate: (page: PageId) => void }) {
   const { metrics, positions, transactions } = model;
   const allocation = positions.slice(0, 7).map((position) => ({ name: position.ticker, value: position.marketValue }));
 
@@ -18,6 +18,7 @@ export function FiiDashboard({ model, onNavigate }: { model: PortfolioModel; onN
         <div>
           <span className="eyebrow">VALOR ATUAL DA CARTEIRA DE FIIs</span>
           <strong>{formatBrl(metrics.marketValue)}</strong>
+          <small className="hero-card__converted">{formatUsdFromBrl(metrics.marketValue, usdRate)}</small>
           <p><Value value={metrics.unrealizedProfit}>{formatBrl(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas cotas abertas</span></p>
         </div>
         <div className="hero-card__summary">
@@ -28,10 +29,10 @@ export function FiiDashboard({ model, onNavigate }: { model: PortfolioModel; onN
       </section>
 
       <section className="metrics-grid">
-        <MetricCard label="Total histórico comprado" value={formatBrl(metrics.historicalPurchases)} icon={<WalletCards size={19} />} helper="Aportes acumulados em FIIs" accent="blue" />
-        <MetricCard label="Lucro realizado" value={formatBrl(metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Em cotas vendidas" change={metrics.realizedProfit} accent="green" />
-        <MetricCard label="Resultado em aberto" value={formatBrl(metrics.unrealizedProfit)} icon={<TrendingUp size={19} />} helper={formatPercent(metrics.openReturn)} change={metrics.unrealizedProfit} accent="violet" />
-        <MetricCard label="Resultado total" value={formatBrl(metrics.totalProfit)} icon={<CircleDollarSign size={19} />} helper={`${formatPercent(metrics.totalReturnOnPurchases)} sobre compras`} change={metrics.totalProfit} accent="amber" />
+        <MetricCard label="Total histórico comprado" value={formatBrl(metrics.historicalPurchases)} secondaryValue={formatUsdFromBrl(metrics.historicalPurchases, usdRate)} icon={<WalletCards size={19} />} helper="Aportes acumulados em FIIs" accent="blue" />
+        <MetricCard label="Lucro realizado" value={formatBrl(metrics.realizedProfit)} secondaryValue={formatUsdFromBrl(metrics.realizedProfit, usdRate)} icon={<BadgeDollarSign size={19} />} helper="Em cotas vendidas" change={metrics.realizedProfit} accent="green" />
+        <MetricCard label="Resultado em aberto" value={formatBrl(metrics.unrealizedProfit)} secondaryValue={formatUsdFromBrl(metrics.unrealizedProfit, usdRate)} icon={<TrendingUp size={19} />} helper={formatPercent(metrics.openReturn)} change={metrics.unrealizedProfit} accent="violet" />
+        <MetricCard label="Resultado total" value={formatBrl(metrics.totalProfit)} secondaryValue={formatUsdFromBrl(metrics.totalProfit, usdRate)} icon={<CircleDollarSign size={19} />} helper={`${formatPercent(metrics.totalReturnOnPurchases)} sobre compras`} change={metrics.totalProfit} accent="amber" />
       </section>
 
       <section className="dashboard-grid dashboard-grid--lower">

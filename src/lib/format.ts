@@ -9,6 +9,9 @@ export const formatCurrency = (value: number, compact = false, currency = "USD")
 
 export const formatBrl = (value: number, compact = false) => formatCurrency(value, compact, "BRL");
 
+export const formatUsdFromBrl = (value: number, brlPerUsd: number | null) =>
+  brlPerUsd && brlPerUsd > 0 ? formatCurrency(value / brlPerUsd) : "US$ —";
+
 export const formatNumber = (value: number, digits = 4) =>
   new Intl.NumberFormat("pt-BR", {
     minimumFractionDigits: 0,

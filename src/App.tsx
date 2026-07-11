@@ -136,9 +136,9 @@ export default function App() {
         {page === "history" && <History model={model} />}
         {page === "strategy" && <Strategy data={data} settings={settings} />}
         {page === "settings" && <Settings settings={settings} onSave={updateSettings} />}
-        {page === "fii-dashboard" && fiiModel && <FiiDashboard model={fiiModel} onNavigate={navigate} />}
-        {page === "fii-portfolio" && fiiModel && <FiiPortfolio model={fiiModel} />}
-        {page === "fii-history" && fiiModel && <FiiHistory model={fiiModel} />}
+        {page === "fii-dashboard" && fiiModel && <FiiDashboard model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} onNavigate={navigate} />}
+        {page === "fii-portfolio" && fiiModel && <FiiPortfolio model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} />}
+        {page === "fii-history" && fiiModel && <FiiHistory model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} />}
         {page.startsWith("fii-") && !fiiModel && (
           <div className="state-screen__card state-screen__card--error state-screen__card--inline">
             {fiiError ? <><AlertTriangle size={30} /><h2>Dados de FIIs indisponíveis</h2><p>O módulo de ações continua disponível normalmente.</p><code>{fiiError}</code></> : <><LoaderCircle className="spin" size={30} /><h2>Carregando FIIs…</h2></>}

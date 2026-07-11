@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { BriefcaseBusiness, Search, SlidersHorizontal, TrendingUp, WalletCards } from "lucide-react";
 import { EmptyState, MetricCard, Section, Value } from "../../components/Ui";
-import { formatBrl, formatNumber, formatPercent } from "../../lib/format";
+import { formatBrl, formatNumber, formatPercent, formatUsdFromBrl } from "../../lib/format";
 import type { PortfolioModel } from "../../types";
 
-export function FiiPortfolio({ model }: { model: PortfolioModel }) {
+export function FiiPortfolio({ model, usdRate }: { model: PortfolioModel; usdRate: number | null }) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("market-desc");
   const positions = useMemo(() => {
@@ -19,9 +19,9 @@ export function FiiPortfolio({ model }: { model: PortfolioModel }) {
 
   return <div className="page-stack">
     <section className="metrics-grid metrics-grid--three">
-      <MetricCard label="Custo das posições" value={formatBrl(model.metrics.openCost)} icon={<WalletCards size={19} />} helper="Base de custo das cotas" accent="blue" />
-      <MetricCard label="Valor de mercado" value={formatBrl(model.metrics.marketValue)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} fundos na carteira`} accent="violet" />
-      <MetricCard label="Resultado em aberto" value={formatBrl(model.metrics.unrealizedProfit)} icon={<TrendingUp size={19} />} helper={formatPercent(model.metrics.openReturn)} change={model.metrics.unrealizedProfit} accent="green" />
+      <MetricCard label="Custo das posições" value={formatBrl(model.metrics.openCost)} secondaryValue={formatUsdFromBrl(model.metrics.openCost, usdRate)} icon={<WalletCards size={19} />} helper="Base de custo das cotas" accent="blue" />
+      <MetricCard label="Valor de mercado" value={formatBrl(model.metrics.marketValue)} secondaryValue={formatUsdFromBrl(model.metrics.marketValue, usdRate)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} fundos na carteira`} accent="violet" />
+      <MetricCard label="Resultado em aberto" value={formatBrl(model.metrics.unrealizedProfit)} secondaryValue={formatUsdFromBrl(model.metrics.unrealizedProfit, usdRate)} icon={<TrendingUp size={19} />} helper={formatPercent(model.metrics.openReturn)} change={model.metrics.unrealizedProfit} accent="green" />
     </section>
     <Section title="Posições em FIIs" subtitle="Custo médio móvel e cotação atual em reais">
       <div className="toolbar">

@@ -7,6 +7,7 @@ const data: FiiData = {
   schemaVersion: 1,
   generatedAt: "2026-07-11T12:00:00.000Z",
   source: { spreadsheetId: "sheet", ranges: {}, currentQuotes: "Google Sheets" },
+  exchangeRate: { brlPerUsd: 5, source: "'Dólar'!G5" },
   purchases: [
     { id: "fii-buy-1", type: "buy", date: "2025-01-01", ticker: "TEST11", quantity: 10, unitPrice: 100, total: 1_000 },
     { id: "fii-buy-2", type: "buy", date: "2025-02-01", ticker: "TEST11", quantity: 10, unitPrice: 120, total: 1_200 },

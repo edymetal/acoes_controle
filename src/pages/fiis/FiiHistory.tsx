@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { BadgeDollarSign, Filter, HandCoins, Search, ShoppingCart } from "lucide-react";
 import { EmptyState, MetricCard, Section, Value } from "../../components/Ui";
-import { formatBrl, formatDate, formatNumber } from "../../lib/format";
+import { formatBrl, formatDate, formatNumber, formatUsdFromBrl } from "../../lib/format";
 import type { PortfolioModel, TransactionType } from "../../types";
 
-export function FiiHistory({ model }: { model: PortfolioModel }) {
+export function FiiHistory({ model, usdRate }: { model: PortfolioModel; usdRate: number | null }) {
   const [search, setSearch] = useState("");
   const [type, setType] = useState<"all" | TransactionType>("all");
   const [ticker, setTicker] = useState("");
@@ -16,9 +16,9 @@ export function FiiHistory({ model }: { model: PortfolioModel }) {
 
   return <div className="page-stack">
     <section className="metrics-grid metrics-grid--three">
-      <MetricCard label="Total comprado" value={formatBrl(model.metrics.historicalPurchases)} icon={<ShoppingCart size={19} />} helper={`${model.transactions.filter((item) => item.type === "buy").length} compras`} accent="blue" />
-      <MetricCard label="Total vendido" value={formatBrl(model.metrics.historicalSales)} icon={<HandCoins size={19} />} helper={`${model.transactions.filter((item) => item.type === "sell").length} vendas`} accent="violet" />
-      <MetricCard label="Lucro realizado" value={formatBrl(model.metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Custo médio descontado" change={model.metrics.realizedProfit} accent="green" />
+      <MetricCard label="Total comprado" value={formatBrl(model.metrics.historicalPurchases)} secondaryValue={formatUsdFromBrl(model.metrics.historicalPurchases, usdRate)} icon={<ShoppingCart size={19} />} helper={`${model.transactions.filter((item) => item.type === "buy").length} compras`} accent="blue" />
+      <MetricCard label="Total vendido" value={formatBrl(model.metrics.historicalSales)} secondaryValue={formatUsdFromBrl(model.metrics.historicalSales, usdRate)} icon={<HandCoins size={19} />} helper={`${model.transactions.filter((item) => item.type === "sell").length} vendas`} accent="violet" />
+      <MetricCard label="Lucro realizado" value={formatBrl(model.metrics.realizedProfit)} secondaryValue={formatUsdFromBrl(model.metrics.realizedProfit, usdRate)} icon={<BadgeDollarSign size={19} />} helper="Custo médio descontado" change={model.metrics.realizedProfit} accent="green" />
     </section>
     <Section title="Histórico de FIIs" subtitle="Compras e vendas processadas exclusivamente a partir da aba FII Hist">
       <div className="toolbar toolbar--history">

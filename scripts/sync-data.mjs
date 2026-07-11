@@ -12,6 +12,7 @@ const FII_RANGES = {
   purchases: "'FII Hist'!F24:I1000",
   sales: "'FII Hist'!AJ85:AN1000",
   assets: "'FII BASE'!A16:G1000",
+  usdRate: "'Dólar'!G5",
 };
 const OUTPUT_PATH = path.resolve("public/data/portfolio.json");
 const FII_OUTPUT_PATH = path.resolve("public/data/fiis.json");
@@ -255,7 +256,7 @@ async function main() {
     valueRenderOption: "UNFORMATTED_VALUE",
     dateTimeRenderOption: "SERIAL_NUMBER",
   });
-  const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange] = response.valueRanges;
+  const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange] = response.valueRanges;
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
   const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker);
@@ -263,6 +264,8 @@ async function main() {
   const fiiPurchases = mapFiiPurchases(fiiPurchaseRange?.values ?? [], fiiWarnings);
   const fiiSales = mapFiiSales(fiiSaleRange?.values ?? [], fiiWarnings);
   const fiiAssets = mapFiiAssets(fiiAssetRange?.values ?? [], fiiWarnings);
+  const brlPerUsd = numeric(usdRateRange?.values?.[0]?.[0]);
+  if (brlPerUsd === null || brlPerUsd <= 0) fiiWarnings.push("Cotação do dólar inválida na célula Dólar!G5.");
 
   const output = {
     schemaVersion: 1,
@@ -292,6 +295,10 @@ async function main() {
       spreadsheetId: SPREADSHEET_ID,
       ranges: FII_RANGES,
       currentQuotes: "Google Sheets",
+    },
+    exchangeRate: {
+      brlPerUsd: brlPerUsd !== null && brlPerUsd > 0 ? brlPerUsd : null,
+      source: FII_RANGES.usdRate,
     },
     purchases: fiiPurchases,
     sales: fiiSales,

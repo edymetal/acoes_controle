@@ -100,10 +100,12 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .metrics-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .metric-card { position: relative; overflow: hidden; min-height: 155px; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; border: 1px solid var(--border-soft); border-radius: 15px; background: linear-gradient(145deg, rgba(17, 31, 50, .96), rgba(12, 25, 42, .96)); }
 .metric-card::after { content: ""; position: absolute; right: -33px; bottom: -48px; width: 110px; height: 110px; border-radius: 50%; background: var(--card-accent); opacity: .06; }
+.metric-card__value { display: flex; flex-direction: column; gap: 3px; }
+.metric-card__value > strong { margin-top: 11px; font-size: clamp(24px, 2.2vw, 31px); letter-spacing: -.035em; }
+.metric-card__value > small, .hero-card__converted { color: #7f94ae; font-size: 12px; font-weight: 600; letter-spacing: .01em; }
 .metric-card--blue { --card-accent: var(--blue); }.metric-card--green { --card-accent: var(--green); }.metric-card--violet { --card-accent: var(--violet); }.metric-card--amber { --card-accent: var(--amber); }
 .metric-card__top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
 .metric-card__icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; color: var(--card-accent); background: color-mix(in srgb, var(--card-accent) 10%, transparent); }
-.metric-card > strong { margin-top: 11px; font-size: clamp(24px, 2.2vw, 31px); letter-spacing: -.035em; }
 .metric-card__helper { display: flex; align-items: center; gap: 5px; margin-top: 7px; font-size: 13px; }
 
 .panel { min-width: 0; padding: 20px; border: 1px solid var(--border-soft); border-radius: 16px; background: linear-gradient(155deg, rgba(15, 29, 47, .96), rgba(11, 23, 39, .96)); box-shadow: 0 16px 44px rgba(0, 0, 0, .12); }

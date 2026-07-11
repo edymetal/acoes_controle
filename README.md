@@ -49,6 +49,7 @@ A credencial nunca é incluída no JavaScript do navegador. Localmente ela perma
 | Compras de FIIs | `FII Hist` | `F24:I1000` |
 | Vendas de FIIs | `FII Hist` | `AJ85:AN1000` |
 | Fundos e cotações atuais | `FII BASE` | `A16:G1000` |
+| Cotação do dólar para conversão dos FIIs | `Dólar` | `G5` |
 
 Planilha: `1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0`
 

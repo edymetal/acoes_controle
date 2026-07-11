@@ -61,6 +61,10 @@ export interface FiiData {
     ranges: Record<string, string>;
     currentQuotes: string;
   };
+  exchangeRate: {
+    brlPerUsd: number | null;
+    source: string;
+  };
   purchases: Transaction[];
   sales: Transaction[];
   assets: Asset[];
