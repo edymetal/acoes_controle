@@ -51,7 +51,7 @@ O sistema apresentará posição atual, histórico de compras e vendas, capital 
 - Planilha: `1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0`.
 - Compras: aba `Ações Hist`, intervalo `F25:J1000`.
 - Vendas: aba `Ações Hist`, intervalo `AJ25:AM1000`.
-- Cotações e dados anuais: aba `Ações Base`, intervalo `H12:N110`.
+- Cotações e dados anuais: aba `Ações Base`, intervalo `H12:Q1000`.
 - Os cabeçalhos imediatamente anteriores aos intervalos serão usados para validar o mapeamento real das colunas.
 - Linhas vazias, fórmulas sem resultado e valores inválidos serão descartados ou sinalizados no relatório de sincronização.
 
@@ -161,4 +161,3 @@ Para preço atual `P`, média `M`, mínima `L` e máxima `H`:
 - Testes automatizados.
 - Workflows de atualização e publicação.
 - Documentação técnica e operacional.
-

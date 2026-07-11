@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-10T19:21:37.119Z",
+  "generatedAt": "2026-07-11T06:40:37.095Z",
   "source": {
     "spreadsheetId": "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0",
     "ranges": {
       "purchases": "'Ações Hist'!F25:J1000",
       "sales": "'Ações Hist'!AJ25:AM1000",
-      "assets": "'Ações Base'!H12:N110"
+      "assets": "'Ações Base'!H12:Q1000"
     },
     "currentQuotes": "Google Sheets",
-    "annualHistory": "Yahoo Finance — fechamentos diários de 1 ano"
+    "annualHistory": "Google Sheets — mínimo, média e máximo dos últimos 365 dias"
   },
   "purchases": [
     {
@@ -2288,13 +2288,13 @@
       "ticker": "TSLA",
       "name": "TESLA",
       "sector": "Automóveis",
-      "currentPrice": 408.84,
+      "currentPrice": 407.76,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 302.6300048828125,
-        "average": 402.33099982852025,
-        "max": 489.8800048828125,
-        "observations": 252,
+        "min": 302.63,
+        "average": 402.3246428571427,
+        "max": 489.88,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2302,13 +2302,13 @@
       "ticker": "GOOGL",
       "name": "GOOGLE",
       "sector": "Tecnologia",
-      "currentPrice": 356.01,
+      "currentPrice": 357.18,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 177.6199951171875,
-        "average": 296.2185911148313,
-        "max": 402.6199951171875,
-        "observations": 252,
+        "min": 177.62,
+        "average": 296.2213095238095,
+        "max": 402.62,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2316,13 +2316,13 @@
       "ticker": "DIS",
       "name": "DISNEY",
       "sector": "Entretendimento",
-      "currentPrice": 96.22,
+      "currentPrice": 95.62,
       "exchange": "NYSE",
       "annual": {
-        "min": 92.41999816894531,
-        "average": 108.32134921967037,
-        "max": 122.94000244140625,
-        "observations": 252,
+        "min": 92.42,
+        "average": 108.3193650793651,
+        "max": 122.94,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2330,13 +2330,13 @@
       "ticker": "AMZN",
       "name": "AMAZON",
       "sector": "Varejo",
-      "currentPrice": 245.37,
+      "currentPrice": 245.34,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 198.7899932861328,
-        "average": 232.15757933117095,
-        "max": 274.989990234375,
-        "observations": 252,
+        "min": 198.79,
+        "average": 232.15623015873,
+        "max": 274.99,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2344,13 +2344,13 @@
       "ticker": "KO",
       "name": "COCA COLA",
       "sector": "Bebidas",
-      "currentPrice": 83.5,
+      "currentPrice": 83.49,
       "exchange": "NYSE",
       "annual": {
-        "min": 65.66999816894531,
-        "average": 73.54009928022113,
-        "max": 84.13999938964844,
-        "observations": 252,
+        "min": 65.67,
+        "average": 73.49511999999999,
+        "max": 84.14,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2358,13 +2358,13 @@
       "ticker": "MSFT",
       "name": "MICROSOFT",
       "sector": "Tecnologia",
-      "currentPrice": 385.4,
+      "currentPrice": 385.1,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 352.8299865722656,
-        "average": 456.5639873686291,
-        "max": 542.0700073242188,
-        "observations": 252,
+        "min": 352.83,
+        "average": 456.55940476190517,
+        "max": 542.07,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2372,13 +2372,13 @@
       "ticker": "AAPL",
       "name": "APPLE",
       "sector": "Tecnologia",
-      "currentPrice": 316.06,
+      "currentPrice": 315.32,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 202.3800048828125,
-        "average": 262.52315424359034,
-        "max": 316.2749938964844,
-        "observations": 252,
+        "min": 202.38,
+        "average": 262.51936507936523,
+        "max": 316.22,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2386,13 +2386,13 @@
       "ticker": "JNJ",
       "name": "JOHNSON & JOHNSON",
       "sector": "Farmacêuticos",
-      "currentPrice": 256.55,
+      "currentPrice": 256.98,
       "exchange": "NYSE",
       "annual": {
-        "min": 155.1699981689453,
-        "average": 210.98091270810082,
-        "max": 267.239990234375,
-        "observations": 252,
+        "min": 155.17,
+        "average": 210.9821825396826,
+        "max": 267.24,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2400,13 +2400,13 @@
       "ticker": "JPM",
       "name": "JPMORGAN",
       "sector": "Financeiro",
-      "currentPrice": 336.45,
+      "currentPrice": 336.47,
       "exchange": "NYSE",
       "annual": {
-        "min": 282.8399963378906,
-        "average": 306.45711335681733,
-        "max": 339.2200012207031,
-        "observations": 252,
+        "min": 282.84,
+        "average": 306.4578174603174,
+        "max": 339.22,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2414,13 +2414,13 @@
       "ticker": "NKE",
       "name": "NIKE",
       "sector": "Vestuário",
-      "currentPrice": 44.52,
+      "currentPrice": 44.37,
       "exchange": "NYSE",
       "annual": {
         "min": 40.75,
-        "average": 60.40037683456663,
-        "max": 79.23999786376953,
-        "observations": 252,
+        "average": 60.399761904761895,
+        "max": 79.24,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2428,13 +2428,13 @@
       "ticker": "MCD",
       "name": "MCDONALDS",
       "sector": "Restaurantes",
-      "currentPrice": 276.32,
+      "currentPrice": 274.6,
       "exchange": "NYSE",
       "annual": {
-        "min": 264.5400085449219,
-        "average": 303.4567065768772,
-        "max": 341.05999755859375,
-        "observations": 252,
+        "min": 264.54,
+        "average": 303.45035714285723,
+        "max": 341.06,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2442,13 +2442,13 @@
       "ticker": "NVDA",
       "name": "NVIDIA",
       "sector": "Tecnologia",
-      "currentPrice": 210.22,
+      "currentPrice": 210.96,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 164.07000732421875,
-        "average": 188.32535746740916,
-        "max": 235.74000549316406,
-        "observations": 252,
+        "min": 164.07,
+        "average": 188.32976190476194,
+        "max": 235.74,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2456,13 +2456,13 @@
       "ticker": "V",
       "name": "VISA",
       "sector": "Financeiro",
-      "currentPrice": 348.35,
+      "currentPrice": 348.97,
       "exchange": "NYSE",
       "annual": {
-        "min": 295.5199890136719,
-        "average": 332.55606345524865,
-        "max": 362.1300048828125,
-        "observations": 252,
+        "min": 295.52,
+        "average": 332.5661507936509,
+        "max": 362.13,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2470,13 +2470,13 @@
       "ticker": "UNH",
       "name": "UnitedHealth",
       "sector": "Saúde",
-      "currentPrice": 424.89,
+      "currentPrice": 424.62,
       "exchange": "NYSE",
       "annual": {
-        "min": 237.77000427246094,
-        "average": 330.61549583313956,
-        "max": 431.67999267578125,
-        "observations": 252,
+        "min": 237.77,
+        "average": 330.61365079365095,
+        "max": 431.68,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2484,13 +2484,13 @@
       "ticker": "ADBE",
       "name": "ADOBE",
       "sector": "Tecnologia",
-      "currentPrice": 224.15,
+      "currentPrice": 223.64,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 193.41000366210938,
-        "average": 299.86575365823415,
-        "max": 372.8699951171875,
-        "observations": 252,
+        "min": 193.41,
+        "average": 299.8649206349208,
+        "max": 372.87,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2498,13 +2498,13 @@
       "ticker": "BRK.B",
       "name": "Berkshire Hathaway",
       "sector": "Holding",
-      "currentPrice": 493.37,
+      "currentPrice": 493.71,
       "exchange": "NYSE",
       "annual": {
-        "min": 459.1099853515625,
-        "average": 488.90726168193515,
-        "max": 513.8099975585938,
-        "observations": 252,
+        "min": 459.11,
+        "average": 488.9085714285716,
+        "max": 513.81,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2512,13 +2512,13 @@
       "ticker": "XOM",
       "name": "Exxon Mobil",
       "sector": "Petróleo",
-      "currentPrice": 138.26,
+      "currentPrice": 138.88,
       "exchange": "NYSE",
       "annual": {
-        "min": 105.83000183105469,
-        "average": 131.01468243674626,
-        "max": 171.47000122070312,
-        "observations": 252,
+        "min": 105.83,
+        "average": 131.01706349206347,
+        "max": 171.47,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2526,13 +2526,13 @@
       "ticker": "META",
       "name": "META",
       "sector": "Tecnologia",
-      "currentPrice": 669.81,
+      "currentPrice": 669.21,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 525.719970703125,
-        "average": 664.1554945688399,
+        "min": 525.72,
+        "average": 664.1573015873018,
         "max": 790,
-        "observations": 252,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2540,13 +2540,13 @@
       "ticker": "PEP",
       "name": "PepsiCo",
       "sector": "Bebidas",
-      "currentPrice": 137.35,
+      "currentPrice": 137.38,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 133.80999755859375,
-        "average": 148.80468223208473,
-        "max": 170.49000549316406,
-        "observations": 252,
+        "min": 133.81,
+        "average": 148.8048015873016,
+        "max": 170.49,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2554,13 +2554,13 @@
       "ticker": "CSCO",
       "name": "CISCO",
       "sector": "Tecnologia",
-      "currentPrice": 120.38,
+      "currentPrice": 121.31,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 66.19999694824219,
-        "average": 82.40013888525584,
+        "min": 66.2,
+        "average": 82.40265873015876,
         "max": 130,
-        "observations": 252,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2568,13 +2568,13 @@
       "ticker": "T",
       "name": "AT&T",
       "sector": "Telecomunicações",
-      "currentPrice": 21.21,
+      "currentPrice": 21.13,
       "exchange": "NYSE",
       "annual": {
-        "min": 20.479999542236328,
-        "average": 26.117876961117698,
-        "max": 29.6200008392334,
-        "observations": 252,
+        "min": 20.48,
+        "average": 26.11753968253969,
+        "max": 29.62,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2582,13 +2582,13 @@
       "ticker": "INTC",
       "name": "INTEL",
       "sector": "Tecnologia",
-      "currentPrice": 109.75,
+      "currentPrice": 109.84,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 19.309999465942383,
-        "average": 54.40206347571479,
-        "max": 140.94000244140625,
-        "observations": 252,
+        "min": 19.31,
+        "average": 54.40182539682542,
+        "max": 140.94,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2596,13 +2596,13 @@
       "ticker": "PFE",
       "name": "Pfizer",
       "sector": "Farmacêuticos",
-      "currentPrice": 24.29,
+      "currentPrice": 24.17,
       "exchange": "NYSE",
       "annual": {
-        "min": 23.290000915527344,
-        "average": 25.6183531927684,
-        "max": 28.549999237060547,
-        "observations": 252,
+        "min": 23.29,
+        "average": 25.61793650793651,
+        "max": 28.55,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2610,13 +2610,13 @@
       "ticker": "MA",
       "name": "Mastercard",
       "sector": "Financeiro",
-      "currentPrice": 524.84,
+      "currentPrice": 526.74,
       "exchange": "NYSE",
       "annual": {
-        "min": 471.54998779296875,
-        "average": 539.2033320835659,
-        "max": 598.9600219726562,
-        "observations": 252,
+        "min": 471.55,
+        "average": 539.2132936507937,
+        "max": 598.96,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2624,13 +2624,13 @@
       "ticker": "VOD",
       "name": "Vodafone",
       "sector": "Telecomunicações",
-      "currentPrice": 14.74,
+      "currentPrice": 14.72,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 10.800000190734863,
-        "average": 13.347242052592929,
-        "max": 16.31999969482422,
-        "observations": 252,
+        "min": 10.8,
+        "average": 13.347222222222223,
+        "max": 16.32,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2638,13 +2638,13 @@
       "ticker": "CVX",
       "name": "Chevron",
       "sector": "Petróleo",
-      "currentPrice": 175.11,
+      "currentPrice": 176.4,
       "exchange": "NYSE",
       "annual": {
         "min": 146.75,
-        "average": 169.16261903066484,
-        "max": 211.14999389648438,
-        "observations": 252,
+        "average": 169.16035714285718,
+        "max": 211.15,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2652,13 +2652,13 @@
       "ticker": "IBM",
       "name": "IBM",
       "sector": "Tecnologia",
-      "currentPrice": 289.36,
+      "currentPrice": 287.56,
       "exchange": "NYSE",
       "annual": {
-        "min": 214.63999938964844,
-        "average": 271.3082932971773,
-        "max": 329.2300109863281,
-        "observations": 252,
+        "min": 214.64,
+        "average": 271.3022222222222,
+        "max": 329.23,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2666,13 +2666,13 @@
       "ticker": "ORCL",
       "name": "ORACLE",
       "sector": "Tecnologia",
-      "currentPrice": 141.16,
+      "currentPrice": 140.64,
       "exchange": "NYSE",
       "annual": {
-        "min": 136.47999572753906,
-        "average": 207.51206292046442,
-        "max": 328.3299865722656,
-        "observations": 252,
+        "min": 136.48,
+        "average": 207.51107142857137,
+        "max": 328.33,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2680,13 +2680,13 @@
       "ticker": "AZN",
       "name": "ASTRAZENECA",
       "sector": "Farmacêuticos",
-      "currentPrice": 172.55,
+      "currentPrice": 171.61,
       "exchange": "NASDAQ",
       "annual": {
-        "min": 137.44000244140625,
-        "average": 177.7457539391896,
-        "max": 209.47999572753906,
-        "observations": 252,
+        "min": 139.7,
+        "average": 178.40364406779656,
+        "max": 209.48,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2694,13 +2694,13 @@
       "ticker": "UPS",
       "name": "UPS",
       "sector": "Transporte",
-      "currentPrice": 112.81,
+      "currentPrice": 112.47,
       "exchange": "NYSE",
       "annual": {
-        "min": 82.58000183105469,
-        "average": 98.91432553245907,
+        "min": 82.58,
+        "average": 98.91285714285718,
         "max": 120,
-        "observations": 252,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2708,13 +2708,13 @@
       "ticker": "PG",
       "name": "P&G",
       "sector": "Produtos de Consumo",
-      "currentPrice": 147.65,
+      "currentPrice": 147.04,
       "exchange": "NYSE",
       "annual": {
-        "min": 138.0399932861328,
-        "average": 149.95611148410373,
-        "max": 167.1999969482422,
-        "observations": 252,
+        "min": 138.04,
+        "average": 149.9535714285714,
+        "max": 167.2,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2722,13 +2722,13 @@
       "ticker": "CAT",
       "name": "CATERPILLAR",
       "sector": "Bens Industriais",
-      "currentPrice": 954.25,
+      "currentPrice": 952.41,
       "exchange": "NYSE",
       "annual": {
-        "min": 404.6400146484375,
-        "average": 650.5459915645539,
-        "max": 1064.9000244140625,
-        "observations": 252,
+        "min": 404.64,
+        "average": 650.5478968253968,
+        "max": 1064.9,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2736,13 +2736,13 @@
       "ticker": "GE",
       "name": "GENERAL ELECTRIC",
       "sector": "Bens Industriais",
-      "currentPrice": 359.95,
+      "currentPrice": 359.27,
       "exchange": "NYSE",
       "annual": {
-        "min": 252.57000732421875,
-        "average": 303.3138494945708,
-        "max": 378.67999267578125,
-        "observations": 252,
+        "min": 252.57,
+        "average": 303.31079365079347,
+        "max": 378.68,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2750,13 +2750,13 @@
       "ticker": "BAC",
       "name": "BANK OF AMERICA",
       "sector": "Financeiro",
-      "currentPrice": 59.75,
+      "currentPrice": 59.67,
       "exchange": "NYSE",
       "annual": {
-        "min": 44.91999816894531,
-        "average": 51.88930558401441,
-        "max": 59.900001525878906,
-        "observations": 252,
+        "min": 44.92,
+        "average": 51.88912698412697,
+        "max": 59.9,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2764,13 +2764,13 @@
       "ticker": "NVS",
       "name": "NOVARTIS",
       "sector": "Saúde",
-      "currentPrice": 154.29,
+      "currentPrice": 154.05,
       "exchange": "NYSE",
       "annual": {
         "min": 113.5,
-        "average": 139.64545567830405,
-        "max": 168.6199951171875,
-        "observations": 252,
+        "average": 139.64448412698414,
+        "max": 168.62,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2778,13 +2778,13 @@
       "ticker": "TM",
       "name": "TOYOTA",
       "sector": "Automóveis",
-      "currentPrice": 176.48,
+      "currentPrice": 176.45,
       "exchange": "NYSE",
       "annual": {
         "min": 166.5,
-        "average": 201.50825337001257,
-        "max": 248.2899932861328,
-        "observations": 252,
+        "average": 201.50789682539684,
+        "max": 248.29,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2792,13 +2792,13 @@
       "ticker": "LLY",
       "name": "Eli Lilly",
       "sector": "Saúde",
-      "currentPrice": 1190.7,
+      "currentPrice": 1188.58,
       "exchange": "NYSE",
       "annual": {
-        "min": 625.6500244140625,
-        "average": 943.6656779940166,
-        "max": 1235.56005859375,
-        "observations": 252,
+        "min": 625.65,
+        "average": 943.6544841269827,
+        "max": 1235.56,
+        "observations": 365,
         "currency": "USD"
       }
     },
@@ -2806,18 +2806,22 @@
       "ticker": "SPCX",
       "name": "SPACEX",
       "sector": "Tecnologia",
-      "currentPrice": 148.31,
+      "currentPrice": 145.3,
       "exchange": "NASDAQ",
-      "annual": null
+      "annual": {
+        "min": 145.3,
+        "average": 163.88368421052633,
+        "max": 201.8,
+        "observations": 365,
+        "currency": "USD"
+      }
     }
   ],
   "integrity": {
     "purchaseRows": 170,
     "saleRows": 82,
     "assetRows": 38,
-    "annualRows": 37,
-    "warnings": [
-      "Histórico anual indisponível para SPCX: histórico insuficiente."
-    ]
+    "annualRows": 38,
+    "warnings": []
   }
 }

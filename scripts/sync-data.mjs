@@ -6,7 +6,7 @@ const SPREADSHEET_ID = "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0";
 const RANGES = {
   purchases: "'Ações Hist'!F25:J1000",
   sales: "'Ações Hist'!AJ25:AM1000",
-  assets: "'Ações Base'!H12:N110",
+  assets: "'Ações Base'!H12:Q1000",
 };
 const OUTPUT_PATH = path.resolve("public/data/portfolio.json");
 
@@ -89,6 +89,11 @@ function mapAssets(rows, warnings) {
     if (!row?.length) return [];
     const symbol = ticker(row[0]);
     const currentPrice = numeric(row[5]);
+    const annualMin = numeric(row[6]);
+    const annualAverage = numeric(row[7]);
+    const annualMax = numeric(row[8]);
+
+    if (!symbol && text(row[6]).toUpperCase() === "MINIMO") return [];
 
     if (!symbol || currentPrice === null || currentPrice < 0) {
       warnings.push(`Ativo inválido na linha ${index + 12} da aba Ações Base.`);
@@ -100,58 +105,33 @@ function mapAssets(rows, warnings) {
     }
     seen.add(symbol);
 
+    const hasAnnualStats = annualMin !== null
+      && annualMin > 0
+      && annualAverage !== null
+      && annualAverage > 0
+      && annualMax !== null
+      && annualMax > 0
+      && annualMin <= annualAverage
+      && annualAverage <= annualMax;
+    if (!hasAnnualStats) {
+      warnings.push(`Preços anuais inválidos para ${symbol} na linha ${index + 12} da aba Ações Base.`);
+    }
+
     return [{
       ticker: symbol,
       name: text(row[1]) || symbol,
       sector: text(row[3]) || "Não informado",
       currentPrice,
-      exchange: text(row[6]) || "Não informada",
-      annual: null,
+      exchange: text(row[9]) || "Não informada",
+      annual: hasAnnualStats ? {
+        min: annualMin,
+        average: annualAverage,
+        max: annualMax,
+        observations: 365,
+        currency: "USD",
+      } : null,
     }];
   });
-}
-
-async function fetchAnnualStats(symbol) {
-  const encodedTicker = encodeURIComponent(symbol.replace(".", "-"));
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodedTicker}?range=1y&interval=1d&events=history&includeAdjustedClose=true`;
-  const response = await fetch(url, {
-    headers: { "User-Agent": "acoes-controle/1.0" },
-    signal: AbortSignal.timeout(15_000),
-  });
-
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await response.json();
-  const result = payload?.chart?.result?.[0];
-  const closes = result?.indicators?.quote?.[0]?.close
-    ?? result?.indicators?.adjclose?.[0]?.adjclose
-    ?? [];
-  const validCloses = closes.filter((value) => typeof value === "number" && Number.isFinite(value));
-
-  if (validCloses.length < 20) throw new Error("histórico insuficiente");
-
-  return {
-    min: Math.min(...validCloses),
-    average: validCloses.reduce((sum, value) => sum + value, 0) / validCloses.length,
-    max: Math.max(...validCloses),
-    observations: validCloses.length,
-    currency: result?.meta?.currency ?? "USD",
-  };
-}
-
-async function enrichAnnualStats(assets, warnings) {
-  const queue = [...assets];
-  const workers = Array.from({ length: Math.min(6, queue.length) }, async () => {
-    while (queue.length) {
-      const asset = queue.shift();
-      if (!asset) break;
-      try {
-        asset.annual = await fetchAnnualStats(asset.ticker);
-      } catch (error) {
-        warnings.push(`Histórico anual indisponível para ${asset.ticker}: ${error.message}.`);
-      }
-    }
-  });
-  await Promise.all(workers);
 }
 
 async function main() {
@@ -167,8 +147,6 @@ async function main() {
   const sales = mapSales(saleRange?.values ?? [], warnings);
   const assets = mapAssets(assetRange?.values ?? [], warnings);
 
-  await enrichAnnualStats(assets, warnings);
-
   const output = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
@@ -176,7 +154,7 @@ async function main() {
       spreadsheetId: SPREADSHEET_ID,
       ranges: RANGES,
       currentQuotes: "Google Sheets",
-      annualHistory: "Yahoo Finance — fechamentos diários de 1 ano",
+      annualHistory: "Google Sheets — mínimo, média e máximo dos últimos 365 dias",
     },
     purchases,
     sales,

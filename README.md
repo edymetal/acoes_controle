@@ -42,7 +42,7 @@ A credencial nunca é incluída no JavaScript do navegador. Localmente ela perma
 |---|---|---|
 | Compras | `Ações Hist` | `F25:J1000` |
 | Vendas | `Ações Hist` | `AJ25:AM1000` |
-| Ativos e cotações | `Ações Base` | `H12:N110` |
+| Ativos, cotações e preços dos últimos 365 dias | `Ações Base` | `H12:Q1000` |
 
 Planilha: `1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0`
 
