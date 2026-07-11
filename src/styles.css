@@ -173,6 +173,19 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .state-screen { min-height: 100vh; display: grid; place-items: center; padding: 25px; background: radial-gradient(circle at center, rgba(47, 100, 150, .13), transparent 28rem), var(--bg); }.loader-mark { display: flex; flex-direction: column; align-items: center; gap: 14px; color: var(--muted); font-size: 12px; }.loader-mark svg { color: var(--blue); animation: spin 1s linear infinite; }.state-screen__card { width: min(430px, 100%); display: flex; flex-direction: column; align-items: center; padding: 30px; border: 1px solid var(--border); border-radius: 17px; background: var(--surface); text-align: center; }.state-screen__card svg { color: var(--red); }.state-screen__card h1 { margin: 12px 0 5px; font-size: 21px; }.state-screen__card p { margin: 0; color: var(--muted); font-size: 12px; }.state-screen__card code { margin: 15px 0; padding: 8px 10px; border-radius: 7px; color: #e3aaba; background: rgba(248,121,155,.07); font-size: 10px; }.state-screen__card button { display: flex; align-items: center; gap: 7px; padding: 9px 13px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-3); cursor: pointer; }.brand--center { position: absolute; top: 28px; left: 28px; }.brand--center .brand__mark { color: var(--bg); }.brand--center > span:last-child { display: flex; flex-direction: column; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+.auth-screen { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 20% 20%, rgba(86, 216, 255, .15), transparent 23rem), radial-gradient(circle at 85% 82%, rgba(124, 140, 255, .13), transparent 27rem), var(--bg); }
+.auth-card { width: min(460px, 100%); display: flex; flex-direction: column; align-items: center; padding: 34px; border: 1px solid rgba(110, 188, 235, .23); border-radius: 22px; background: linear-gradient(145deg, rgba(19, 39, 62, .97), rgba(10, 22, 38, .98)); box-shadow: 0 30px 90px rgba(0, 0, 0, .34); text-align: center; }
+.auth-card__brand { align-self: flex-start; padding: 0; }
+.auth-card__icon { width: 58px; height: 58px; display: grid; place-items: center; margin: 31px 0 17px; border: 1px solid rgba(55, 221, 162, .25); border-radius: 18px; color: var(--green); background: rgba(55, 221, 162, .09); }
+.auth-card .eyebrow { margin: 0; font-size: 11px; }
+.auth-card h1 { max-width: 330px; margin: 10px 0 10px; font-size: clamp(25px, 6vw, 32px); letter-spacing: -.04em; line-height: 1.08; }
+.auth-card > p:not(.eyebrow):not(.auth-card__message) { max-width: 350px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.auth-card__message { width: 100%; margin: 20px 0 0; padding: 10px 12px; border: 1px solid rgba(248, 121, 155, .3); border-radius: 10px; color: #ffafbf; background: rgba(248, 121, 155, .08); font-size: 13px; }
+.google-login-button { width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 27px; padding: 13px 18px; border: 1px solid rgba(86, 216, 255, .34); border-radius: 11px; color: #e9f9ff; background: linear-gradient(135deg, rgba(86, 216, 255, .18), rgba(124, 140, 255, .16)); box-shadow: 0 10px 28px rgba(45, 120, 180, .16); cursor: pointer; font-size: 14px; font-weight: 800; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+.google-login-button:hover:not(:disabled) { border-color: rgba(86, 216, 255, .7); background: linear-gradient(135deg, rgba(86, 216, 255, .27), rgba(124, 140, 255, .22)); transform: translateY(-1px); }
+.google-login-button:disabled { cursor: wait; opacity: .72; }
+.auth-card__allowed { margin-top: 17px; color: var(--muted-2); font-size: 11px; }
+
 @media (max-width: 1180px) {
   .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .strategy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
