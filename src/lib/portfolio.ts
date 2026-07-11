@@ -4,9 +4,11 @@ import type {
   PortfolioModel,
   Position,
   ProcessedTransaction,
+  StrategySettings,
   StrategySignal,
   Transaction,
 } from "../types";
+import { DEFAULT_STRATEGY_SETTINGS } from "./settings";
 
 const EPSILON = 0.0000001;
 
@@ -138,7 +140,7 @@ export function calculatePortfolio(data: PortfolioData): PortfolioModel {
   };
 }
 
-export function getStrategySignal(asset: Asset): StrategySignal {
+export function getStrategySignal(asset: Asset, settings: StrategySettings = DEFAULT_STRATEGY_SETTINGS): StrategySignal {
   const annual = asset.annual;
   if (!annual || annual.min <= 0 || annual.average <= 0 || annual.max <= 0) {
     return {
@@ -154,12 +156,15 @@ export function getStrategySignal(asset: Asset): StrategySignal {
   const price = asset.currentPrice;
   const distanceToAverage = (price - annual.average) / annual.average;
   const distanceToHigh = (price - annual.max) / annual.max;
+  const sellDistance = settings.sellDistanceFromHighPercent / 100;
+  const buyDistance = settings.buyDistanceBelowAveragePercent / 100;
+  const strongBreakoutDistance = settings.strongBreakoutAboveHighPercent / 100;
 
   if (price > annual.max) {
-    const strength = 0.7 + clamp(distanceToHigh / 0.1) * 0.3;
+    const strength = 0.7 + clamp(distanceToHigh / Math.max(strongBreakoutDistance, EPSILON)) * 0.3;
     return {
       kind: "breakout",
-      label: distanceToHigh >= 0.03 ? "Rompimento forte" : "Rompimento",
+      label: distanceToHigh >= strongBreakoutDistance ? "Rompimento forte" : "Rompimento",
       description: `Cotação ${Math.abs(distanceToHigh * 100).toFixed(1)}% acima da máxima anual.`,
       strength,
       distanceToAverage,
@@ -167,11 +172,11 @@ export function getStrategySignal(asset: Asset): StrategySignal {
     };
   }
 
-  if (price >= annual.max * 0.95) {
-    const proximity = clamp((price - annual.max * 0.95) / (annual.max * 0.05));
+  if (price >= annual.max * (1 - sellDistance)) {
+    const proximity = clamp((price - annual.max * (1 - sellDistance)) / (annual.max * sellDistance));
     return {
-      kind: "near-high",
-      label: "Próxima da máxima",
+      kind: "sell",
+      label: "Venda",
       description: `Faltam ${Math.abs(distanceToHigh * 100).toFixed(1)}% para a máxima anual.`,
       strength: 0.45 + proximity * 0.25,
       distanceToAverage,
@@ -179,7 +184,7 @@ export function getStrategySignal(asset: Asset): StrategySignal {
     };
   }
 
-  if (price < annual.average) {
+  if (price < annual.average && Math.abs(distanceToAverage) >= buyDistance) {
     const interval = annual.average - annual.min;
     const strength = interval > EPSILON ? clamp((annual.average - price) / interval) : 1;
     const label = strength >= 0.75 ? "Compra forte" : strength >= 0.4 ? "Compra" : "Abaixo da média";

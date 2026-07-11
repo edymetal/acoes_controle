@@ -70,7 +70,13 @@ export interface Position {
   annual: AnnualStats | null;
 }
 
-export type StrategyKind = "buy" | "near-high" | "breakout" | "neutral" | "unavailable";
+export type StrategyKind = "buy" | "sell" | "breakout" | "neutral" | "unavailable";
+
+export interface StrategySettings {
+  sellDistanceFromHighPercent: number;
+  buyDistanceBelowAveragePercent: number;
+  strongBreakoutAboveHighPercent: number;
+}
 
 export interface StrategySignal {
   kind: StrategyKind;

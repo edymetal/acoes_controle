@@ -3,14 +3,14 @@ import { AlertTriangle, ArrowUpRight, Search, Sparkles, Target, TrendingDown } f
 import { EmptyState, MetricCard, SignalBadge } from "../components/Ui";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
-import type { PortfolioData, StrategyKind } from "../types";
+import type { PortfolioData, StrategyKind, StrategySettings } from "../types";
 
 type FilterKind = "all" | StrategyKind;
 
-export function Strategy({ data }: { data: PortfolioData }) {
+export function Strategy({ data, settings }: { data: PortfolioData; settings: StrategySettings }) {
   const [filter, setFilter] = useState<FilterKind>("all");
   const [search, setSearch] = useState("");
-  const signals = useMemo(() => data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset) })), [data.assets]);
+  const signals = useMemo(() => data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings) })), [data.assets, settings]);
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return signals
@@ -18,7 +18,7 @@ export function Strategy({ data }: { data: PortfolioData }) {
       .sort((a, b) => b.signal.strength - a.signal.strength || a.asset.ticker.localeCompare(b.asset.ticker));
   }, [signals, filter, search]);
   const buyCount = signals.filter(({ signal }) => signal.kind === "buy").length;
-  const nearHighCount = signals.filter(({ signal }) => signal.kind === "near-high").length;
+  const sellCount = signals.filter(({ signal }) => signal.kind === "sell").length;
   const breakoutCount = signals.filter(({ signal }) => signal.kind === "breakout").length;
 
   return (
@@ -30,7 +30,7 @@ export function Strategy({ data }: { data: PortfolioData }) {
 
       <section className="metrics-grid metrics-grid--three">
         <MetricCard label="Abaixo da média" value={String(buyCount)} icon={<TrendingDown size={19} />} helper="Possíveis pontos de compra" accent="green" />
-        <MetricCard label="Próximas da máxima" value={String(nearHighCount)} icon={<Target size={19} />} helper="Até 5% da máxima anual" accent="amber" />
+        <MetricCard label="Sinal de venda" value={String(sellCount)} icon={<Target size={19} />} helper={`Até ${settings.sellDistanceFromHighPercent}% da máxima anual`} accent="amber" />
         <MetricCard label="Em rompimento" value={String(breakoutCount)} icon={<ArrowUpRight size={19} />} helper="Acima da máxima anual" accent="violet" />
       </section>
 
@@ -38,7 +38,7 @@ export function Strategy({ data }: { data: PortfolioData }) {
         <div className="strategy-toolbar">
           <label className="search-field"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar ativo" /></label>
           <div className="segmented-control" role="group" aria-label="Filtrar sinais">
-            {([['all', 'Todos'], ['buy', 'Compra'], ['near-high', 'Próx. máxima'], ['breakout', 'Rompimento'], ['neutral', 'Neutros']] as Array<[FilterKind, string]>).map(([id, label]) => <button type="button" className={filter === id ? "active" : ""} onClick={() => setFilter(id)} key={id}>{label}</button>)}
+            {([['all', 'Todos'], ['buy', 'Compra'], ['sell', 'Venda'], ['breakout', 'Rompimento'], ['neutral', 'Neutros']] as Array<[FilterKind, string]>).map(([id, label]) => <button type="button" className={filter === id ? "active" : ""} onClick={() => setFilter(id)} key={id}>{label}</button>)}
           </div>
         </div>
 
@@ -65,4 +65,3 @@ export function Strategy({ data }: { data: PortfolioData }) {
     </div>
   );
 }
-

@@ -4,26 +4,27 @@ import type { PageId } from "../components/Shell";
 import { MetricCard, Section, SignalBadge, Value } from "../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
-import type { PortfolioData, PortfolioModel } from "../types";
+import type { PortfolioData, PortfolioModel, StrategySettings } from "../types";
 
 const CHART_COLORS = ["#56d8ff", "#7c8cff", "#37dda2", "#b584ff", "#ffb86b", "#f8799b", "#4eb6a5", "#8ca5c7"];
 
 interface DashboardProps {
   data: PortfolioData;
   model: PortfolioModel;
+  settings: StrategySettings;
   onNavigate: (page: PageId) => void;
 }
 
-export function Dashboard({ data, model, onNavigate }: DashboardProps) {
+export function Dashboard({ data, model, settings, onNavigate }: DashboardProps) {
   const { metrics, positions, transactions } = model;
   const allocation = positions.slice(0, 7).map((position) => ({ name: position.ticker, value: position.marketValue }));
   const pnl = [...positions]
     .sort((a, b) => Math.abs(b.unrealized) - Math.abs(a.unrealized))
     .slice(0, 7)
     .map((position) => ({ ticker: position.ticker, value: position.unrealized }));
-  const strategy = data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset) }));
+  const strategy = data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings) }));
   const buySignals = strategy.filter((item) => item.signal.kind === "buy").sort((a, b) => b.signal.strength - a.signal.strength);
-  const breakoutSignals = strategy.filter((item) => item.signal.kind === "breakout" || item.signal.kind === "near-high");
+  const breakoutSignals = strategy.filter((item) => item.signal.kind === "breakout" || item.signal.kind === "sell");
 
   return (
     <div className="page-stack">
@@ -95,7 +96,7 @@ export function Dashboard({ data, model, onNavigate }: DashboardProps) {
       <section className="dashboard-grid dashboard-grid--lower">
         <Section
           title="Sinais em destaque"
-          subtitle={`${buySignals.length} abaixo da média · ${breakoutSignals.length} próximos ou acima da máxima`}
+          subtitle={`${buySignals.length} sinais de compra · ${breakoutSignals.length} sinais de venda ou rompimento`}
           action={<button className="text-button" type="button" onClick={() => onNavigate("strategy")}>Ver estratégia <ArrowRight size={15} /></button>}
         >
           <div className="signal-list">

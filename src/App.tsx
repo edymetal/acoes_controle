@@ -2,14 +2,16 @@ import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { AlertTriangle, BarChart3, LoaderCircle, RotateCcw } from "lucide-react";
 import { Shell, type PageId } from "./components/Shell";
 import { calculatePortfolio } from "./lib/portfolio";
-import type { PortfolioData } from "./types";
+import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
+import type { PortfolioData, StrategySettings } from "./types";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then((module) => ({ default: module.Dashboard })));
 const Portfolio = lazy(() => import("./pages/Portfolio").then((module) => ({ default: module.Portfolio })));
 const History = lazy(() => import("./pages/History").then((module) => ({ default: module.History })));
 const Strategy = lazy(() => import("./pages/Strategy").then((module) => ({ default: module.Strategy })));
+const Settings = lazy(() => import("./pages/Settings").then((module) => ({ default: module.Settings })));
 
-const validPages: PageId[] = ["dashboard", "portfolio", "history", "strategy"];
+const validPages: PageId[] = ["dashboard", "portfolio", "history", "strategy", "settings"];
 type RefreshMessage = { kind: "success" | "warning" | "error"; text: string };
 
 async function fetchPortfolio(cacheBust = false, signal?: AbortSignal) {
@@ -37,6 +39,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshMessage, setRefreshMessage] = useState<RefreshMessage | null>(null);
+  const [settings, setSettings] = useState(loadStrategySettings);
   const model = useMemo(() => data ? calculatePortfolio(data) : null, [data]);
 
   useEffect(() => {
@@ -75,6 +78,10 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const updateSettings = (nextSettings: StrategySettings) => {
+    setSettings(saveStrategySettings(nextSettings));
+  };
+
   if (error) {
     return (
       <main className="state-screen">
@@ -91,10 +98,11 @@ export default function App() {
   return (
     <Shell page={page} onPageChange={navigate} updatedAt={data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData}>
       <Suspense fallback={<div className="page-loader"><LoaderCircle size={24} /> Carregando painel…</div>}>
-        {page === "dashboard" && <Dashboard data={data} model={model} onNavigate={navigate} />}
+        {page === "dashboard" && <Dashboard data={data} model={model} settings={settings} onNavigate={navigate} />}
         {page === "portfolio" && <Portfolio model={model} />}
         {page === "history" && <History model={model} />}
-        {page === "strategy" && <Strategy data={data} />}
+        {page === "strategy" && <Strategy data={data} settings={settings} />}
+        {page === "settings" && <Settings settings={settings} onSave={updateSettings} />}
       </Suspense>
     </Shell>
   );

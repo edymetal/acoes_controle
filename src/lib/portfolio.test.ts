@@ -57,7 +57,27 @@ describe("getStrategySignal", () => {
   });
 
   it("identifica proximidade da máxima", () => {
-    expect(getStrategySignal({ ...base, currentPrice: 29 }).kind).toBe("near-high");
+    expect(getStrategySignal({ ...base, currentPrice: 29 }).kind).toBe("sell");
+  });
+
+  it("respeita a distancia configurada para venda", () => {
+    const settings = {
+      sellDistanceFromHighPercent: 2,
+      buyDistanceBelowAveragePercent: 0,
+      strongBreakoutAboveHighPercent: 3,
+    };
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings).kind).toBe("neutral");
+    expect(getStrategySignal({ ...base, currentPrice: 29.5 }, settings).kind).toBe("sell");
+  });
+
+  it("respeita a distancia minima abaixo da media para compra", () => {
+    const settings = {
+      sellDistanceFromHighPercent: 5,
+      buyDistanceBelowAveragePercent: 10,
+      strongBreakoutAboveHighPercent: 3,
+    };
+    expect(getStrategySignal({ ...base, currentPrice: 17 }, settings).kind).toBe("neutral");
+    expect(getStrategySignal({ ...base, currentPrice: 16 }, settings).kind).toBe("buy");
   });
 
   it("identifica rompimento da máxima", () => {

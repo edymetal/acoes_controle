@@ -6,18 +6,20 @@ import {
   Clock3,
   LayoutDashboard,
   RefreshCw,
+  Settings2,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
 
-export type PageId = "dashboard" | "portfolio" | "history" | "strategy";
+export type PageId = "dashboard" | "portfolio" | "history" | "strategy" | "settings";
 
 const pages: Array<{ id: PageId; label: string; description: string; icon: ReactNode }> = [
   { id: "dashboard", label: "Dashboard", description: "Visão consolidada da sua carteira", icon: <LayoutDashboard size={19} /> },
   { id: "portfolio", label: "Carteira", description: "Posições e resultado em aberto", icon: <BriefcaseBusiness size={19} /> },
   { id: "history", label: "Movimentações", description: "Histórico completo de compras e vendas", icon: <Clock3 size={19} /> },
   { id: "strategy", label: "Estratégia anual", description: "Sinais pela faixa de preço de 12 meses", icon: <Sparkles size={19} /> },
+  { id: "settings", label: "Configurações", description: "Personalize os limites dos sinais", icon: <Settings2 size={19} /> },
 ];
 
 interface ShellProps {
