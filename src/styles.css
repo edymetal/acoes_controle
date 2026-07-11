@@ -36,10 +36,11 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .brand > span:last-child { display: flex; flex-direction: column; }
 .brand strong { font-size: 19px; letter-spacing: -.02em; }
 .brand small { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
-.main-nav { display: flex; flex-direction: column; gap: 6px; margin-top: 44px; }
+.main-nav { min-height: 0; display: flex; flex-direction: column; gap: 6px; margin-top: 34px; overflow-y: auto; }
 .main-nav { scrollbar-width: none; }
 .main-nav::-webkit-scrollbar { display: none; }
 .main-nav__label { padding: 0 13px 9px; color: #617a98; font-size: 12px; font-weight: 800; letter-spacing: .14em; }
+.main-nav__label--section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-soft); }
 .main-nav button { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 13px; border: 1px solid transparent; border-radius: 11px; color: var(--muted); background: transparent; cursor: pointer; text-align: left; transition: .18s ease; }
 .main-nav button { font-size: 15px; }
 .main-nav button:hover { color: var(--text); background: rgba(116, 151, 196, .07); }
@@ -68,6 +69,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .refresh-message--success { color: var(--green); border-color: rgba(55, 221, 162, .3); background: rgba(55, 221, 162, .08); }
 .refresh-message--warning { color: #f5c76b; border-color: rgba(245, 199, 107, .3); background: rgba(245, 199, 107, .08); }
 .refresh-message--error { color: #ff8f8f; border-color: rgba(255, 111, 111, .3); background: rgba(255, 111, 111, .08); }
+.fii-data-warning { margin: 0; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .content { padding: 28px clamp(20px, 3.5vw, 52px) 52px; max-width: 1640px; margin-inline: auto; }
 .page-stack { display: flex; flex-direction: column; gap: 20px; animation: page-in .3s ease; }
@@ -77,6 +79,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
 .hero-card { overflow: hidden; position: relative; display: flex; justify-content: space-between; gap: 25px; padding: 28px 30px; border: 1px solid rgba(91, 183, 236, .2); border-radius: 18px; background: linear-gradient(115deg, rgba(23, 58, 88, .82), rgba(18, 31, 54, .92) 55%, rgba(34, 32, 67, .76)); box-shadow: 0 20px 60px rgba(0, 0, 0, .16); }
 .hero-card::after { content: ""; position: absolute; width: 300px; height: 300px; right: -110px; top: -170px; border-radius: 50%; background: rgba(86, 216, 255, .1); filter: blur(2px); }
+.hero-card--fii { border-color: rgba(55, 221, 162, .22); background: linear-gradient(115deg, rgba(17, 72, 69, .72), rgba(18, 38, 54, .92) 55%, rgba(29, 39, 65, .78)); }
+.hero-card--fii::after { background: rgba(55, 221, 162, .1); }
+.ticker-avatar--fii { color: #bdf8e4; background: rgba(55, 221, 162, .12); }
+.state-screen__card--inline { min-height: 280px; margin: 0 auto; }
 .hero-card > div:first-child { display: flex; flex-direction: column; }
 .hero-card > div:first-child > strong { margin: 7px 0 4px; font-size: clamp(32px, 4vw, 48px); letter-spacing: -.05em; }
 .hero-card p { margin: 0; color: var(--muted); font-size: 15px; }

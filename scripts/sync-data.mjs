@@ -8,7 +8,13 @@ const RANGES = {
   sales: "'Ações Hist'!AJ25:AM1000",
   assets: "'Ações Base'!H12:Q1000",
 };
+const FII_RANGES = {
+  purchases: "'FII Hist'!F24:I1000",
+  sales: "'FII Hist'!AJ85:AN1000",
+  assets: "'FII BASE'!A16:G1000",
+};
 const OUTPUT_PATH = path.resolve("public/data/portfolio.json");
+const FII_OUTPUT_PATH = path.resolve("public/data/fiis.json");
 
 function excelSerialToIsoDate(serial) {
   if (typeof serial !== "number" || !Number.isFinite(serial)) return null;
@@ -137,6 +143,96 @@ function mapAssets(rows, warnings, previousAnnualByTicker) {
   });
 }
 
+function mapFiiPurchases(rows, warnings) {
+  return rows.flatMap((row, index) => {
+    if (!row?.length) return [];
+    if (text(row[0]).toUpperCase() === "DATA" && text(row[1]).toUpperCase() === "CODIGO") return [];
+    const date = excelSerialToIsoDate(row[0]);
+    const symbol = ticker(row[1]);
+    const quantity = numeric(row[2]);
+    const unitPrice = numeric(row[3]);
+
+    if ((!symbol && !date) || (quantity === null && unitPrice === null) || (quantity === 0 && unitPrice === 0)) return [];
+    if (!date || !symbol || quantity === null || quantity <= 0 || unitPrice === null || unitPrice < 0) {
+      warnings.push(`Compra de FII inválida na linha ${index + 24}.`);
+      return [];
+    }
+
+    return [{
+      id: `fii-buy-${index + 24}`,
+      type: "buy",
+      date,
+      ticker: symbol,
+      quantity,
+      total: quantity * unitPrice,
+      unitPrice,
+    }];
+  });
+}
+
+function mapFiiSales(rows, warnings) {
+  return rows.flatMap((row, index) => {
+    if (!row?.length) return [];
+    if (text(row[0]).toUpperCase() === "DATA" && text(row[1]).toUpperCase() === "CODIGO") return [];
+    const date = excelSerialToIsoDate(row[0]);
+    const symbol = ticker(row[1]);
+    const quantity = numeric(row[2]);
+    const unitPrice = numeric(row[3]);
+    const sheetTotal = numeric(row[4]);
+
+    if ((!symbol && !date) || (quantity === 0 && unitPrice === 0 && sheetTotal === 0)) return [];
+    if (!date || !symbol || quantity === null || quantity <= 0 || (unitPrice === null && sheetTotal === null)) {
+      warnings.push(`Venda de FII inválida na linha ${index + 85}.`);
+      return [];
+    }
+    const total = sheetTotal ?? quantity * (unitPrice ?? 0);
+    if (total < 0) {
+      warnings.push(`Venda de FII inválida na linha ${index + 85}.`);
+      return [];
+    }
+
+    return [{
+      id: `fii-sell-${index + 85}`,
+      type: "sell",
+      date,
+      ticker: symbol,
+      quantity,
+      total,
+      unitPrice: unitPrice ?? total / quantity,
+    }];
+  });
+}
+
+function mapFiiAssets(rows, warnings) {
+  const seen = new Set();
+  return rows.flatMap((row, index) => {
+    if (!row?.length) return [];
+    const symbol = ticker(row[0]);
+    const currentPrice = numeric(row[6]);
+
+    if (text(row[0]).toUpperCase() === "CODIGO") return [];
+    if (!symbol && currentPrice === null) return [];
+    if (!symbol || currentPrice === null || currentPrice < 0) {
+      warnings.push(`FII inválido na linha ${index + 16} da aba FII BASE.`);
+      return [];
+    }
+    if (seen.has(symbol)) {
+      warnings.push(`FII duplicado na base: ${symbol}.`);
+      return [];
+    }
+    seen.add(symbol);
+
+    return [{
+      ticker: symbol,
+      name: text(row[1]) || symbol,
+      sector: text(row[4]) || "Não informado",
+      currentPrice,
+      exchange: "B3",
+      annual: null,
+    }];
+  });
+}
+
 async function loadPreviousAnnualStats() {
   try {
     const previous = JSON.parse(await readFile(OUTPUT_PATH, "utf8"));
@@ -155,14 +251,18 @@ async function main() {
   const previousAnnualByTicker = await loadPreviousAnnualStats();
   const response = await batchGetValues({
     spreadsheetId: SPREADSHEET_ID,
-    ranges: Object.values(RANGES),
+    ranges: [...Object.values(RANGES), ...Object.values(FII_RANGES)],
     valueRenderOption: "UNFORMATTED_VALUE",
     dateTimeRenderOption: "SERIAL_NUMBER",
   });
-  const [purchaseRange, saleRange, assetRange] = response.valueRanges;
+  const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange] = response.valueRanges;
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
   const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker);
+  const fiiWarnings = [];
+  const fiiPurchases = mapFiiPurchases(fiiPurchaseRange?.values ?? [], fiiWarnings);
+  const fiiSales = mapFiiSales(fiiSaleRange?.values ?? [], fiiWarnings);
+  const fiiAssets = mapFiiAssets(fiiAssetRange?.values ?? [], fiiWarnings);
 
   const output = {
     schemaVersion: 1,
@@ -185,10 +285,35 @@ async function main() {
     },
   };
 
+  const fiiOutput = {
+    schemaVersion: 1,
+    generatedAt: output.generatedAt,
+    source: {
+      spreadsheetId: SPREADSHEET_ID,
+      ranges: FII_RANGES,
+      currentQuotes: "Google Sheets",
+    },
+    purchases: fiiPurchases,
+    sales: fiiSales,
+    assets: fiiAssets,
+    integrity: {
+      purchaseRows: fiiPurchases.length,
+      saleRows: fiiSales.length,
+      assetRows: fiiAssets.length,
+      warnings: fiiWarnings,
+    },
+  };
+
   await mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
-  await writeFile(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`, "utf8");
+  await Promise.all([
+    writeFile(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`, "utf8"),
+    writeFile(FII_OUTPUT_PATH, `${JSON.stringify(fiiOutput, null, 2)}\n`, "utf8"),
+  ]);
   console.log(
     `Dados sincronizados: ${purchases.length} compras, ${sales.length} vendas, ${assets.length} ativos, ${warnings.length} avisos.`,
+  );
+  console.log(
+    `FIIs sincronizados: ${fiiPurchases.length} compras, ${fiiSales.length} vendas, ${fiiAssets.length} fundos, ${fiiWarnings.length} avisos.`,
   );
 }
 

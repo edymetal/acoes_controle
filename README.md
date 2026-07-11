@@ -1,6 +1,6 @@
-# Controle de Ações
+# Controle de Investimentos
 
-Dashboard moderno para acompanhar uma carteira de ações americanas a partir de uma planilha Google Sheets privada. O site é estático, responsivo e publicado gratuitamente no GitHub Pages.
+Dashboard moderno para acompanhar, em áreas separadas, uma carteira de ações americanas e uma carteira de fundos imobiliários (FIIs) a partir de uma planilha Google Sheets privada. O site é estático, responsivo e publicado gratuitamente no GitHub Pages.
 
 O site pode ser instalado como aplicativo pelo Chrome no celular. Após abrir a página publicada, use **Adicionar à tela inicial** ou **Instalar app** no menu do navegador.
 
@@ -18,6 +18,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Estratégia anual com intensidade de compra abaixo da média, proximidade da máxima e rompimentos.
 - Gráficos de distribuição da carteira e impacto por posição.
 - Interface responsiva para desktop, tablet e celular.
+- Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
 - Atualização automática a cada 6 horas pelo GitHub Actions.
 
 ## Arquitetura segura
@@ -45,6 +46,9 @@ A credencial nunca é incluída no JavaScript do navegador. Localmente ela perma
 | Compras | `Ações Hist` | `F25:J1000` |
 | Vendas | `Ações Hist` | `AJ25:AM1000` |
 | Ativos, cotações e preços dos últimos 365 dias | `Ações Base` | `H12:Q1000` |
+| Compras de FIIs | `FII Hist` | `F24:I1000` |
+| Vendas de FIIs | `FII Hist` | `AJ85:AN1000` |
+| Fundos e cotações atuais | `FII BASE` | `A16:G1000` |
 
 Planilha: `1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0`
 
@@ -118,6 +122,7 @@ scripts/
   sync-data.mjs
 public/data/
   portfolio.json    dados sanitizados consumidos pelo site
+  fiis.json         dados de FIIs, mantidos separados das ações
 .github/workflows/
   deploy-pages.yml
 ```

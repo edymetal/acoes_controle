@@ -1,11 +1,13 @@
-export const formatCurrency = (value: number, compact = false) =>
+export const formatCurrency = (value: number, compact = false, currency = "USD") =>
   new Intl.NumberFormat("pt-BR", {
     style: "currency",
-    currency: "USD",
+    currency,
     notation: compact ? "compact" : "standard",
     minimumFractionDigits: compact ? 0 : 2,
     maximumFractionDigits: compact ? 1 : 2,
   }).format(value);
+
+export const formatBrl = (value: number, compact = false) => formatCurrency(value, compact, "BRL");
 
 export const formatNumber = (value: number, digits = 4) =>
   new Intl.NumberFormat("pt-BR", {
@@ -31,4 +33,3 @@ export const formatDateTime = (value: string) =>
 
 export const toneForValue = (value: number) =>
   value > 0.000001 ? "positive" : value < -0.000001 ? "negative" : "neutral";
-

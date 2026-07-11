@@ -1,0 +1,3512 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-11T16:50:33.578Z",
+  "source": {
+    "spreadsheetId": "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0",
+    "ranges": {
+      "purchases": "'FII Hist'!F24:I1000",
+      "sales": "'FII Hist'!AJ85:AN1000",
+      "assets": "'FII BASE'!A16:G1000"
+    },
+    "currentQuotes": "Google Sheets"
+  },
+  "purchases": [
+    {
+      "id": "fii-buy-24",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 232,
+      "unitPrice": 116
+    },
+    {
+      "id": "fii-buy-26",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "HGRU11",
+      "quantity": 2,
+      "total": 253.2,
+      "unitPrice": 126.6
+    },
+    {
+      "id": "fii-buy-27",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "BRCR11",
+      "quantity": 2,
+      "total": 171.3,
+      "unitPrice": 85.65
+    },
+    {
+      "id": "fii-buy-28",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "MXRF11",
+      "quantity": 25,
+      "total": 263.5,
+      "unitPrice": 10.54
+    },
+    {
+      "id": "fii-buy-29",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "GGRC11",
+      "quantity": 20,
+      "total": 274.6,
+      "unitPrice": 13.73
+    },
+    {
+      "id": "fii-buy-30",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "HFOF11",
+      "quantity": 2,
+      "total": 202.78,
+      "unitPrice": 101.39
+    },
+    {
+      "id": "fii-buy-31",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "VINO11",
+      "quantity": 2,
+      "total": 23.28,
+      "unitPrice": 11.64
+    },
+    {
+      "id": "fii-buy-32",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "RBVA11",
+      "quantity": 2,
+      "total": 216,
+      "unitPrice": 108
+    },
+    {
+      "id": "fii-buy-33",
+      "type": "buy",
+      "date": "2020-09-10",
+      "ticker": "XPLG11",
+      "quantity": 2,
+      "total": 230.96,
+      "unitPrice": 115.48
+    },
+    {
+      "id": "fii-buy-39",
+      "type": "buy",
+      "date": "2021-04-05",
+      "ticker": "HCTR11",
+      "quantity": 3,
+      "total": 459.63,
+      "unitPrice": 153.21
+    },
+    {
+      "id": "fii-buy-40",
+      "type": "buy",
+      "date": "2021-04-05",
+      "ticker": "TORD11",
+      "quantity": 2,
+      "total": 23.68,
+      "unitPrice": 11.84
+    },
+    {
+      "id": "fii-buy-41",
+      "type": "buy",
+      "date": "2021-04-05",
+      "ticker": "CPTS11",
+      "quantity": 20,
+      "total": 205.79999999999998,
+      "unitPrice": 10.29
+    },
+    {
+      "id": "fii-buy-42",
+      "type": "buy",
+      "date": "2021-05-05",
+      "ticker": "TORD11",
+      "quantity": 2,
+      "total": 20.98,
+      "unitPrice": 10.49
+    },
+    {
+      "id": "fii-buy-43",
+      "type": "buy",
+      "date": "2021-06-04",
+      "ticker": "RECT11",
+      "quantity": 6,
+      "total": 496.5,
+      "unitPrice": 82.75
+    },
+    {
+      "id": "fii-buy-44",
+      "type": "buy",
+      "date": "2021-06-04",
+      "ticker": "HABT11",
+      "quantity": 4,
+      "total": 500.76,
+      "unitPrice": 125.19
+    },
+    {
+      "id": "fii-buy-45",
+      "type": "buy",
+      "date": "2021-06-04",
+      "ticker": "RECR11",
+      "quantity": 5,
+      "total": 509.85,
+      "unitPrice": 101.97
+    },
+    {
+      "id": "fii-buy-46",
+      "type": "buy",
+      "date": "2021-06-04",
+      "ticker": "DEVA11",
+      "quantity": 5,
+      "total": 549.5,
+      "unitPrice": 109.9
+    },
+    {
+      "id": "fii-buy-47",
+      "type": "buy",
+      "date": "2021-06-04",
+      "ticker": "TGAR11",
+      "quantity": 3,
+      "total": 407.09999999999997,
+      "unitPrice": 135.7
+    },
+    {
+      "id": "fii-buy-48",
+      "type": "buy",
+      "date": "2021-06-04",
+      "ticker": "MFII11",
+      "quantity": 5,
+      "total": 566.95,
+      "unitPrice": 113.39
+    },
+    {
+      "id": "fii-buy-49",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "FIIB11",
+      "quantity": 1,
+      "total": 500.85,
+      "unitPrice": 500.85
+    },
+    {
+      "id": "fii-buy-50",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "TORD11",
+      "quantity": 45,
+      "total": 466.65,
+      "unitPrice": 10.37
+    },
+    {
+      "id": "fii-buy-51",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "BCIA11",
+      "quantity": 5,
+      "total": 494.45,
+      "unitPrice": 98.89
+    },
+    {
+      "id": "fii-buy-52",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "TGAR11",
+      "quantity": 1,
+      "total": 134.59,
+      "unitPrice": 134.59
+    },
+    {
+      "id": "fii-buy-53",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "NSLU11",
+      "quantity": 2,
+      "total": 486,
+      "unitPrice": 243
+    },
+    {
+      "id": "fii-buy-54",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "HCRI11",
+      "quantity": 1,
+      "total": 399.5,
+      "unitPrice": 399.5
+    },
+    {
+      "id": "fii-buy-55",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 230.16,
+      "unitPrice": 115.08
+    },
+    {
+      "id": "fii-buy-57",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "HGRU11",
+      "quantity": 2,
+      "total": 245,
+      "unitPrice": 122.5
+    },
+    {
+      "id": "fii-buy-58",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "BRCR11",
+      "quantity": 4,
+      "total": 333.64,
+      "unitPrice": 83.41
+    },
+    {
+      "id": "fii-buy-59",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "MXRF11",
+      "quantity": 23,
+      "total": 239.66,
+      "unitPrice": 10.42
+    },
+    {
+      "id": "fii-buy-60",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "GGRC11",
+      "quantity": 20,
+      "total": 248.2,
+      "unitPrice": 12.41
+    },
+    {
+      "id": "fii-buy-61",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "HFOF11",
+      "quantity": 3,
+      "total": 294.57,
+      "unitPrice": 98.19
+    },
+    {
+      "id": "fii-buy-62",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "VINO11",
+      "quantity": 35,
+      "total": 407.40000000000003,
+      "unitPrice": 11.64
+    },
+    {
+      "id": "fii-buy-63",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "RBVA11",
+      "quantity": 3,
+      "total": 334.77,
+      "unitPrice": 111.59
+    },
+    {
+      "id": "fii-buy-64",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "XPLG11",
+      "quantity": 3,
+      "total": 342.21,
+      "unitPrice": 114.07
+    },
+    {
+      "id": "fii-buy-65",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "CPTS11",
+      "quantity": 30,
+      "total": 303.59999999999997,
+      "unitPrice": 10.12
+    },
+    {
+      "id": "fii-buy-66",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "BCFF11",
+      "quantity": 52,
+      "total": 509.6,
+      "unitPrice": 9.8
+    },
+    {
+      "id": "fii-buy-67",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "HGLG11",
+      "quantity": 3,
+      "total": 502.59000000000003,
+      "unitPrice": 167.53
+    },
+    {
+      "id": "fii-buy-68",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "RZTR11",
+      "quantity": 5,
+      "total": 509.90000000000003,
+      "unitPrice": 101.98
+    },
+    {
+      "id": "fii-buy-69",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "RBRF11",
+      "quantity": 60,
+      "total": 527.4,
+      "unitPrice": 8.79
+    },
+    {
+      "id": "fii-buy-70",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "XPSF11",
+      "quantity": 50,
+      "total": 487,
+      "unitPrice": 9.74
+    },
+    {
+      "id": "fii-buy-74",
+      "type": "buy",
+      "date": "2021-06-10",
+      "ticker": "RECT11",
+      "quantity": 1,
+      "total": 79.49,
+      "unitPrice": 79.49
+    },
+    {
+      "id": "fii-buy-75",
+      "type": "buy",
+      "date": "2021-06-30",
+      "ticker": "AIEC11",
+      "quantity": 6,
+      "total": 493.02,
+      "unitPrice": 82.17
+    },
+    {
+      "id": "fii-buy-76",
+      "type": "buy",
+      "date": "2021-06-30",
+      "ticker": "CEOC11",
+      "quantity": 7,
+      "total": 478.87,
+      "unitPrice": 68.41
+    },
+    {
+      "id": "fii-buy-77",
+      "type": "buy",
+      "date": "2021-06-30",
+      "ticker": "CXCO11",
+      "quantity": 5,
+      "total": 506.95,
+      "unitPrice": 101.39
+    },
+    {
+      "id": "fii-buy-78",
+      "type": "buy",
+      "date": "2021-06-30",
+      "ticker": "HOFC11",
+      "quantity": 9,
+      "total": 512.1,
+      "unitPrice": 56.9
+    },
+    {
+      "id": "fii-buy-85",
+      "type": "buy",
+      "date": "2022-01-06",
+      "ticker": "RBRF11",
+      "quantity": 20,
+      "total": 145.6,
+      "unitPrice": 7.28
+    },
+    {
+      "id": "fii-buy-87",
+      "type": "buy",
+      "date": "2022-01-06",
+      "ticker": "MXRF11",
+      "quantity": 4,
+      "total": 39.72,
+      "unitPrice": 9.93
+    },
+    {
+      "id": "fii-buy-88",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "ABCP11",
+      "quantity": 7,
+      "total": 508.90000000000003,
+      "unitPrice": 72.7
+    },
+    {
+      "id": "fii-buy-89",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "VISC11",
+      "quantity": 5,
+      "total": 505.45000000000005,
+      "unitPrice": 101.09
+    },
+    {
+      "id": "fii-buy-90",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "TRXF11",
+      "quantity": 5,
+      "total": 506,
+      "unitPrice": 101.2
+    },
+    {
+      "id": "fii-buy-92",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "NSLU11",
+      "quantity": 3,
+      "total": 657,
+      "unitPrice": 219
+    },
+    {
+      "id": "fii-buy-93",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "RBRL11",
+      "quantity": 5,
+      "total": 474.4,
+      "unitPrice": 94.88
+    },
+    {
+      "id": "fii-buy-95",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "BLMG11",
+      "quantity": 5,
+      "total": 466.55,
+      "unitPrice": 93.31
+    },
+    {
+      "id": "fii-buy-96",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "EURO11",
+      "quantity": 2,
+      "total": 407.74,
+      "unitPrice": 203.87
+    },
+    {
+      "id": "fii-buy-97",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "AIEC11",
+      "quantity": 7,
+      "total": 513.1,
+      "unitPrice": 73.3
+    },
+    {
+      "id": "fii-buy-98",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "VINO11",
+      "quantity": 23,
+      "total": 267.72,
+      "unitPrice": 11.64
+    },
+    {
+      "id": "fii-buy-99",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "KNSC11",
+      "quantity": 50,
+      "total": 499.5,
+      "unitPrice": 9.99
+    },
+    {
+      "id": "fii-buy-101",
+      "type": "buy",
+      "date": "2022-01-11",
+      "ticker": "MXRF11",
+      "quantity": 4,
+      "total": 39.88,
+      "unitPrice": 9.97
+    },
+    {
+      "id": "fii-buy-102",
+      "type": "buy",
+      "date": "2022-01-17",
+      "ticker": "URPR11",
+      "quantity": 5,
+      "total": 581.75,
+      "unitPrice": 116.35
+    },
+    {
+      "id": "fii-buy-103",
+      "type": "buy",
+      "date": "2022-01-17",
+      "ticker": "DEVA11",
+      "quantity": 4,
+      "total": 407.36,
+      "unitPrice": 101.84
+    },
+    {
+      "id": "fii-buy-104",
+      "type": "buy",
+      "date": "2022-02-01",
+      "ticker": "KISU11",
+      "quantity": 32,
+      "total": 249.92,
+      "unitPrice": 7.81
+    },
+    {
+      "id": "fii-buy-106",
+      "type": "buy",
+      "date": "2022-02-01",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 200.64,
+      "unitPrice": 100.32
+    },
+    {
+      "id": "fii-buy-107",
+      "type": "buy",
+      "date": "2022-02-01",
+      "ticker": "RBVA11",
+      "quantity": 2,
+      "total": 194.8,
+      "unitPrice": 97.4
+    },
+    {
+      "id": "fii-buy-108",
+      "type": "buy",
+      "date": "2022-02-01",
+      "ticker": "RECT11",
+      "quantity": 4,
+      "total": 280.68,
+      "unitPrice": 70.17
+    },
+    {
+      "id": "fii-buy-109",
+      "type": "buy",
+      "date": "2022-02-01",
+      "ticker": "HFOF11",
+      "quantity": 2,
+      "total": 156.06,
+      "unitPrice": 78.03
+    },
+    {
+      "id": "fii-buy-110",
+      "type": "buy",
+      "date": "2022-02-01",
+      "ticker": "TRXF11",
+      "quantity": 1,
+      "total": 100.83,
+      "unitPrice": 100.83
+    },
+    {
+      "id": "fii-buy-111",
+      "type": "buy",
+      "date": "2022-02-01",
+      "ticker": "MXRF11",
+      "quantity": 4,
+      "total": 38.28,
+      "unitPrice": 9.57
+    },
+    {
+      "id": "fii-buy-113",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "HCTR11",
+      "quantity": 2,
+      "total": 246.82,
+      "unitPrice": 123.41
+    },
+    {
+      "id": "fii-buy-114",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "XPSF11",
+      "quantity": 30,
+      "total": 216.9,
+      "unitPrice": 7.23
+    },
+    {
+      "id": "fii-buy-115",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "BCFF11",
+      "quantity": 28,
+      "total": 274.40000000000003,
+      "unitPrice": 9.8
+    },
+    {
+      "id": "fii-buy-116",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "XPML11",
+      "quantity": 3,
+      "total": 271.53000000000003,
+      "unitPrice": 90.51
+    },
+    {
+      "id": "fii-buy-117",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "HSML11",
+      "quantity": 3,
+      "total": 231.78000000000003,
+      "unitPrice": 77.26
+    },
+    {
+      "id": "fii-buy-118",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "GGRC11",
+      "quantity": 20,
+      "total": 209.4,
+      "unitPrice": 10.47
+    },
+    {
+      "id": "fii-buy-119",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "XPLG11",
+      "quantity": 3,
+      "total": 276,
+      "unitPrice": 92
+    },
+    {
+      "id": "fii-buy-120",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "TGAR11",
+      "quantity": 2,
+      "total": 223.98,
+      "unitPrice": 111.99
+    },
+    {
+      "id": "fii-buy-121",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "HGRU11",
+      "quantity": 2,
+      "total": 226.2,
+      "unitPrice": 113.1
+    },
+    {
+      "id": "fii-buy-122",
+      "type": "buy",
+      "date": "2022-02-25",
+      "ticker": "CACR11",
+      "quantity": 5,
+      "total": 540,
+      "unitPrice": 108
+    },
+    {
+      "id": "fii-buy-123",
+      "type": "buy",
+      "date": "2022-03-02",
+      "ticker": "URPR11",
+      "quantity": 5,
+      "total": 573.8000000000001,
+      "unitPrice": 114.76
+    },
+    {
+      "id": "fii-buy-125",
+      "type": "buy",
+      "date": "2022-03-02",
+      "ticker": "MXRF11",
+      "quantity": 4,
+      "total": 36.68,
+      "unitPrice": 9.17
+    },
+    {
+      "id": "fii-buy-126",
+      "type": "buy",
+      "date": "2022-03-09",
+      "ticker": "CACR11",
+      "quantity": 5,
+      "total": 534.85,
+      "unitPrice": 106.97
+    },
+    {
+      "id": "fii-buy-128",
+      "type": "buy",
+      "date": "2022-03-09",
+      "ticker": "HABT11",
+      "quantity": 5,
+      "total": 524,
+      "unitPrice": 104.8
+    },
+    {
+      "id": "fii-buy-129",
+      "type": "buy",
+      "date": "2022-03-09",
+      "ticker": "HCTR11",
+      "quantity": 3,
+      "total": 362.19,
+      "unitPrice": 120.73
+    },
+    {
+      "id": "fii-buy-130",
+      "type": "buy",
+      "date": "2022-03-09",
+      "ticker": "ARRI11",
+      "quantity": 20,
+      "total": 197.39999999999998,
+      "unitPrice": 9.87
+    },
+    {
+      "id": "fii-buy-131",
+      "type": "buy",
+      "date": "2022-03-09",
+      "ticker": "JPPA11",
+      "quantity": 2,
+      "total": 196.8,
+      "unitPrice": 98.4
+    },
+    {
+      "id": "fii-buy-132",
+      "type": "buy",
+      "date": "2022-03-09",
+      "ticker": "DEVA11",
+      "quantity": 1,
+      "total": 100.4,
+      "unitPrice": 100.4
+    },
+    {
+      "id": "fii-buy-133",
+      "type": "buy",
+      "date": "2022-03-09",
+      "ticker": "MXRF11",
+      "quantity": 3,
+      "total": 27.36,
+      "unitPrice": 9.12
+    },
+    {
+      "id": "fii-buy-134",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "VSLH11",
+      "quantity": 54,
+      "total": 511.38000000000005,
+      "unitPrice": 9.47
+    },
+    {
+      "id": "fii-buy-135",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "ARRI11",
+      "quantity": 30,
+      "total": 294.6,
+      "unitPrice": 9.82
+    },
+    {
+      "id": "fii-buy-136",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "URPR11",
+      "quantity": 5,
+      "total": 579.9,
+      "unitPrice": 115.98
+    },
+    {
+      "id": "fii-buy-137",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "JPPA11",
+      "quantity": 3,
+      "total": 294.75,
+      "unitPrice": 98.25
+    },
+    {
+      "id": "fii-buy-138",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "VGIP11",
+      "quantity": 5,
+      "total": 504.90000000000003,
+      "unitPrice": 100.98
+    },
+    {
+      "id": "fii-buy-139",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "KNSC11",
+      "quantity": 50,
+      "total": 471,
+      "unitPrice": 9.42
+    },
+    {
+      "id": "fii-buy-140",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "BCRI11",
+      "quantity": 5,
+      "total": 554.25,
+      "unitPrice": 110.85
+    },
+    {
+      "id": "fii-buy-141",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "RECR11",
+      "quantity": 5,
+      "total": 498.1,
+      "unitPrice": 99.62
+    },
+    {
+      "id": "fii-buy-142",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "VCJR11",
+      "quantity": 5,
+      "total": 476.8,
+      "unitPrice": 95.36
+    },
+    {
+      "id": "fii-buy-143",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "HSAF11",
+      "quantity": 4,
+      "total": 379.4,
+      "unitPrice": 94.85
+    },
+    {
+      "id": "fii-buy-144",
+      "type": "buy",
+      "date": "2022-03-10",
+      "ticker": "URPR11",
+      "quantity": 5,
+      "total": 580.9000000000001,
+      "unitPrice": 116.18
+    },
+    {
+      "id": "fii-buy-146",
+      "type": "buy",
+      "date": "2022-03-18",
+      "ticker": "VGHF11",
+      "quantity": 75,
+      "total": 750.75,
+      "unitPrice": 10.01
+    },
+    {
+      "id": "fii-buy-147",
+      "type": "buy",
+      "date": "2022-03-18",
+      "ticker": "HCTR11",
+      "quantity": 4,
+      "total": 465.4,
+      "unitPrice": 116.35
+    },
+    {
+      "id": "fii-buy-148",
+      "type": "buy",
+      "date": "2022-03-18",
+      "ticker": "HABT11",
+      "quantity": 5,
+      "total": 524,
+      "unitPrice": 104.8
+    },
+    {
+      "id": "fii-buy-149",
+      "type": "buy",
+      "date": "2022-03-18",
+      "ticker": "VSLH11",
+      "quantity": 53,
+      "total": 498.73,
+      "unitPrice": 9.41
+    },
+    {
+      "id": "fii-buy-150",
+      "type": "buy",
+      "date": "2022-03-18",
+      "ticker": "URPR11",
+      "quantity": 6,
+      "total": 697.8,
+      "unitPrice": 116.3
+    },
+    {
+      "id": "fii-buy-151",
+      "type": "buy",
+      "date": "2022-04-01",
+      "ticker": "VGHF11",
+      "quantity": 72,
+      "total": 745.92,
+      "unitPrice": 10.36
+    },
+    {
+      "id": "fii-buy-152",
+      "type": "buy",
+      "date": "2022-04-01",
+      "ticker": "VSLH11",
+      "quantity": 64,
+      "total": 609.92,
+      "unitPrice": 9.53
+    },
+    {
+      "id": "fii-buy-153",
+      "type": "buy",
+      "date": "2022-04-01",
+      "ticker": "HABT11",
+      "quantity": 9,
+      "total": 947.6999999999999,
+      "unitPrice": 105.3
+    },
+    {
+      "id": "fii-buy-154",
+      "type": "buy",
+      "date": "2022-04-01",
+      "ticker": "HCTR11",
+      "quantity": 4,
+      "total": 475.2,
+      "unitPrice": 118.8
+    },
+    {
+      "id": "fii-buy-155",
+      "type": "buy",
+      "date": "2022-04-22",
+      "ticker": "HCTR11",
+      "quantity": 3,
+      "total": 321.51,
+      "unitPrice": 107.17
+    },
+    {
+      "id": "fii-buy-156",
+      "type": "buy",
+      "date": "2022-04-22",
+      "ticker": "VSLH11",
+      "quantity": 5,
+      "total": 46.6,
+      "unitPrice": 9.32
+    },
+    {
+      "id": "fii-buy-157",
+      "type": "buy",
+      "date": "2022-05-04",
+      "ticker": "VGHF11",
+      "quantity": 54,
+      "total": 539.46,
+      "unitPrice": 9.99
+    },
+    {
+      "id": "fii-buy-158",
+      "type": "buy",
+      "date": "2022-05-04",
+      "ticker": "VSLH11",
+      "quantity": 55,
+      "total": 514.8,
+      "unitPrice": 9.36
+    },
+    {
+      "id": "fii-buy-159",
+      "type": "buy",
+      "date": "2022-05-04",
+      "ticker": "ARRI11",
+      "quantity": 50,
+      "total": 479,
+      "unitPrice": 9.58
+    },
+    {
+      "id": "fii-buy-160",
+      "type": "buy",
+      "date": "2022-05-04",
+      "ticker": "HCTR11",
+      "quantity": 5,
+      "total": 528.2,
+      "unitPrice": 105.64
+    },
+    {
+      "id": "fii-buy-161",
+      "type": "buy",
+      "date": "2022-05-04",
+      "ticker": "HABT11",
+      "quantity": 5,
+      "total": 506.55,
+      "unitPrice": 101.31
+    },
+    {
+      "id": "fii-buy-162",
+      "type": "buy",
+      "date": "2022-05-04",
+      "ticker": "CACR11",
+      "quantity": 3,
+      "total": 315,
+      "unitPrice": 105
+    },
+    {
+      "id": "fii-buy-163",
+      "type": "buy",
+      "date": "2022-05-12",
+      "ticker": "VGHF11",
+      "quantity": 100,
+      "total": 986.9999999999999,
+      "unitPrice": 9.87
+    },
+    {
+      "id": "fii-buy-164",
+      "type": "buy",
+      "date": "2022-05-12",
+      "ticker": "HCTR11",
+      "quantity": 4,
+      "total": 408.84,
+      "unitPrice": 102.21
+    },
+    {
+      "id": "fii-buy-165",
+      "type": "buy",
+      "date": "2022-05-12",
+      "ticker": "VSLH11",
+      "quantity": 60,
+      "total": 533.4000000000001,
+      "unitPrice": 8.89
+    },
+    {
+      "id": "fii-buy-166",
+      "type": "buy",
+      "date": "2022-05-12",
+      "ticker": "CACR11",
+      "quantity": 5,
+      "total": 525,
+      "unitPrice": 105
+    },
+    {
+      "id": "fii-buy-167",
+      "type": "buy",
+      "date": "2022-05-25",
+      "ticker": "VGHF11",
+      "quantity": 108,
+      "total": 1063.8,
+      "unitPrice": 9.85
+    },
+    {
+      "id": "fii-buy-168",
+      "type": "buy",
+      "date": "2022-05-25",
+      "ticker": "ARRI11",
+      "quantity": 50,
+      "total": 475.5,
+      "unitPrice": 9.51
+    },
+    {
+      "id": "fii-buy-169",
+      "type": "buy",
+      "date": "2022-05-25",
+      "ticker": "HCTR11",
+      "quantity": 10,
+      "total": 1104.3000000000002,
+      "unitPrice": 110.43
+    },
+    {
+      "id": "fii-buy-170",
+      "type": "buy",
+      "date": "2022-05-25",
+      "ticker": "HABT11",
+      "quantity": 5,
+      "total": 510.90000000000003,
+      "unitPrice": 102.18
+    },
+    {
+      "id": "fii-buy-171",
+      "type": "buy",
+      "date": "2022-06-09",
+      "ticker": "VGHF11",
+      "quantity": 56,
+      "total": 546,
+      "unitPrice": 9.75
+    },
+    {
+      "id": "fii-buy-172",
+      "type": "buy",
+      "date": "2022-06-10",
+      "ticker": "ARRI11",
+      "quantity": 50,
+      "total": 474.5,
+      "unitPrice": 9.49
+    },
+    {
+      "id": "fii-buy-173",
+      "type": "buy",
+      "date": "2022-06-11",
+      "ticker": "DEVA11",
+      "quantity": 5,
+      "total": 489.79999999999995,
+      "unitPrice": 97.96
+    },
+    {
+      "id": "fii-buy-174",
+      "type": "buy",
+      "date": "2022-06-12",
+      "ticker": "HCTR11",
+      "quantity": 4,
+      "total": 449.28,
+      "unitPrice": 112.32
+    },
+    {
+      "id": "fii-buy-175",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "VGHF11",
+      "quantity": 119,
+      "total": 1178.1000000000001,
+      "unitPrice": 9.9
+    },
+    {
+      "id": "fii-buy-177",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "ARRI11",
+      "quantity": 80,
+      "total": 764,
+      "unitPrice": 9.55
+    },
+    {
+      "id": "fii-buy-178",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "VGIP11",
+      "quantity": 10,
+      "total": 991,
+      "unitPrice": 99.1
+    },
+    {
+      "id": "fii-buy-179",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "JPPA11",
+      "quantity": 5,
+      "total": 526.1999999999999,
+      "unitPrice": 105.24
+    },
+    {
+      "id": "fii-buy-180",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "DEVA11",
+      "quantity": 10,
+      "total": 995,
+      "unitPrice": 99.5
+    },
+    {
+      "id": "fii-buy-181",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "HCTR11",
+      "quantity": 5,
+      "total": 566.25,
+      "unitPrice": 113.25
+    },
+    {
+      "id": "fii-buy-183",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "RBHY11",
+      "quantity": 5,
+      "total": 486.75,
+      "unitPrice": 97.35
+    },
+    {
+      "id": "fii-buy-184",
+      "type": "buy",
+      "date": "2022-06-23",
+      "ticker": "VCJR11",
+      "quantity": 10,
+      "total": 997.8,
+      "unitPrice": 99.78
+    },
+    {
+      "id": "fii-buy-185",
+      "type": "buy",
+      "date": "2022-07-05",
+      "ticker": "VGHF11",
+      "quantity": 13,
+      "total": 127.00999999999999,
+      "unitPrice": 9.77
+    },
+    {
+      "id": "fii-buy-187",
+      "type": "buy",
+      "date": "2022-10-28",
+      "ticker": "AIEC11",
+      "quantity": 4,
+      "total": 306.76,
+      "unitPrice": 76.69
+    },
+    {
+      "id": "fii-buy-188",
+      "type": "buy",
+      "date": "2022-10-28",
+      "ticker": "CXCO11",
+      "quantity": 4,
+      "total": 309.2,
+      "unitPrice": 77.3
+    },
+    {
+      "id": "fii-buy-189",
+      "type": "buy",
+      "date": "2022-10-28",
+      "ticker": "BLMG11",
+      "quantity": 6,
+      "total": 524.8199999999999,
+      "unitPrice": 87.47
+    },
+    {
+      "id": "fii-buy-195",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "RNGO11",
+      "quantity": 10,
+      "total": 489.5,
+      "unitPrice": 48.95
+    },
+    {
+      "id": "fii-buy-196",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "CXCO11",
+      "quantity": 3,
+      "total": 206.39999999999998,
+      "unitPrice": 68.8
+    },
+    {
+      "id": "fii-buy-197",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "BRCR11",
+      "quantity": 4,
+      "total": 219.88,
+      "unitPrice": 54.97
+    },
+    {
+      "id": "fii-buy-198",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "CEOC11",
+      "quantity": 4,
+      "total": 210.4,
+      "unitPrice": 52.6
+    },
+    {
+      "id": "fii-buy-199",
+      "type": "buy",
+      "date": "2023-04-25",
+      "ticker": "HOFC11",
+      "quantity": 8,
+      "total": 199.2,
+      "unitPrice": 24.9
+    },
+    {
+      "id": "fii-buy-200",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "OIAG11",
+      "quantity": 21,
+      "total": 203.48999999999998,
+      "unitPrice": 9.69
+    },
+    {
+      "id": "fii-buy-201",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "RZAG11",
+      "quantity": 23,
+      "total": 198.49,
+      "unitPrice": 8.63
+    },
+    {
+      "id": "fii-buy-202",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "AGRX11",
+      "quantity": 19,
+      "total": 206.33999999999997,
+      "unitPrice": 10.86
+    },
+    {
+      "id": "fii-buy-203",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "KNCA11",
+      "quantity": 2,
+      "total": 211.4,
+      "unitPrice": 105.7
+    },
+    {
+      "id": "fii-buy-204",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "VGIA11",
+      "quantity": 22,
+      "total": 206.36,
+      "unitPrice": 9.38
+    },
+    {
+      "id": "fii-buy-205",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "CPTR11",
+      "quantity": 20,
+      "total": 190.2,
+      "unitPrice": 9.51
+    },
+    {
+      "id": "fii-buy-206",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "XPCA11",
+      "quantity": 21,
+      "total": 207.48000000000002,
+      "unitPrice": 9.88
+    },
+    {
+      "id": "fii-buy-207",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "VCRA11",
+      "quantity": 2,
+      "total": 201.46,
+      "unitPrice": 100.73
+    },
+    {
+      "id": "fii-buy-209",
+      "type": "buy",
+      "date": "2023-04-26",
+      "ticker": "FGAA11",
+      "quantity": 21,
+      "total": 200.55,
+      "unitPrice": 9.55
+    },
+    {
+      "id": "fii-buy-212",
+      "type": "buy",
+      "date": "2023-05-02",
+      "ticker": "BBFO11",
+      "quantity": 4,
+      "total": 259,
+      "unitPrice": 64.75
+    },
+    {
+      "id": "fii-buy-215",
+      "type": "buy",
+      "date": "2023-05-16",
+      "ticker": "WHGR11",
+      "quantity": 21,
+      "total": 180.18,
+      "unitPrice": 8.58
+    },
+    {
+      "id": "fii-buy-216",
+      "type": "buy",
+      "date": "2023-05-16",
+      "ticker": "VIUR11",
+      "quantity": 25,
+      "total": 189,
+      "unitPrice": 7.56
+    },
+    {
+      "id": "fii-buy-218",
+      "type": "buy",
+      "date": "2023-07-24",
+      "ticker": "TGAR11",
+      "quantity": 2,
+      "total": 244.56,
+      "unitPrice": 122.28
+    },
+    {
+      "id": "fii-buy-219",
+      "type": "buy",
+      "date": "2023-07-24",
+      "ticker": "RURA11",
+      "quantity": 19,
+      "total": 200.07,
+      "unitPrice": 10.53
+    },
+    {
+      "id": "fii-buy-220",
+      "type": "buy",
+      "date": "2023-08-29",
+      "ticker": "GGRC11",
+      "quantity": 20,
+      "total": 234,
+      "unitPrice": 11.7
+    },
+    {
+      "id": "fii-buy-222",
+      "type": "buy",
+      "date": "2023-08-29",
+      "ticker": "TRBL11",
+      "quantity": 3,
+      "total": 293.31,
+      "unitPrice": 97.77
+    },
+    {
+      "id": "fii-buy-223",
+      "type": "buy",
+      "date": "2023-08-29",
+      "ticker": "CPUR11",
+      "quantity": 30,
+      "total": 292.5,
+      "unitPrice": 9.75
+    },
+    {
+      "id": "fii-buy-224",
+      "type": "buy",
+      "date": "2024-11-07",
+      "ticker": "HSML11",
+      "quantity": 3,
+      "total": 287.79,
+      "unitPrice": 95.93
+    },
+    {
+      "id": "fii-buy-225",
+      "type": "buy",
+      "date": "2023-08-29",
+      "ticker": "KISU11",
+      "quantity": 35,
+      "total": 302.05,
+      "unitPrice": 8.63
+    },
+    {
+      "id": "fii-buy-226",
+      "type": "buy",
+      "date": "2023-08-29",
+      "ticker": "BTAL11",
+      "quantity": 2,
+      "total": 174.1,
+      "unitPrice": 87.05
+    },
+    {
+      "id": "fii-buy-227",
+      "type": "buy",
+      "date": "2023-10-19",
+      "ticker": "CPTR11",
+      "quantity": 20,
+      "total": 191,
+      "unitPrice": 9.55
+    },
+    {
+      "id": "fii-buy-228",
+      "type": "buy",
+      "date": "2023-10-19",
+      "ticker": "VGIA11",
+      "quantity": 25,
+      "total": 233,
+      "unitPrice": 9.32
+    },
+    {
+      "id": "fii-buy-229",
+      "type": "buy",
+      "date": "2023-10-19",
+      "ticker": "BTAL11",
+      "quantity": 2,
+      "total": 171.36,
+      "unitPrice": 85.68
+    },
+    {
+      "id": "fii-buy-236",
+      "type": "buy",
+      "date": "2024-01-09",
+      "ticker": "RZAG11",
+      "quantity": 27,
+      "total": 250.29,
+      "unitPrice": 9.27
+    },
+    {
+      "id": "fii-buy-237",
+      "type": "buy",
+      "date": "2024-01-09",
+      "ticker": "VCRA11",
+      "quantity": 2,
+      "total": 185.98,
+      "unitPrice": 92.99
+    },
+    {
+      "id": "fii-buy-238",
+      "type": "buy",
+      "date": "2024-01-09",
+      "ticker": "PATL11",
+      "quantity": 4,
+      "total": 271.68,
+      "unitPrice": 67.92
+    },
+    {
+      "id": "fii-buy-240",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "RZAT11",
+      "quantity": 3,
+      "total": 289.40999999999997,
+      "unitPrice": 96.47
+    },
+    {
+      "id": "fii-buy-241",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "XPIN11",
+      "quantity": 4,
+      "total": 315.92,
+      "unitPrice": 78.98
+    },
+    {
+      "id": "fii-buy-242",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "HSLG11",
+      "quantity": 3,
+      "total": 291.6,
+      "unitPrice": 97.2
+    },
+    {
+      "id": "fii-buy-243",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "BRCO11",
+      "quantity": 3,
+      "total": 366.84000000000003,
+      "unitPrice": 122.28
+    },
+    {
+      "id": "fii-buy-244",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "GTWR11",
+      "quantity": 4,
+      "total": 343.32,
+      "unitPrice": 85.83
+    },
+    {
+      "id": "fii-buy-245",
+      "type": "buy",
+      "date": "2024-03-05",
+      "ticker": "FATN11",
+      "quantity": 3,
+      "total": 284.34000000000003,
+      "unitPrice": 94.78
+    },
+    {
+      "id": "fii-buy-246",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "VILG11",
+      "quantity": 3,
+      "total": 270.9,
+      "unitPrice": 90.3
+    },
+    {
+      "id": "fii-buy-247",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "BTLG11",
+      "quantity": 3,
+      "total": 304.95000000000005,
+      "unitPrice": 101.65
+    },
+    {
+      "id": "fii-buy-248",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "BRCO11",
+      "quantity": 2,
+      "total": 223.38,
+      "unitPrice": 111.69
+    },
+    {
+      "id": "fii-buy-249",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "PVBI11",
+      "quantity": 3,
+      "total": 275.15999999999997,
+      "unitPrice": 91.72
+    },
+    {
+      "id": "fii-buy-250",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "JSRE11",
+      "quantity": 4,
+      "total": 259.44,
+      "unitPrice": 64.86
+    },
+    {
+      "id": "fii-buy-251",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "HGRE11",
+      "quantity": 2,
+      "total": 228.9,
+      "unitPrice": 114.45
+    },
+    {
+      "id": "fii-buy-252",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "BROF11",
+      "quantity": 5,
+      "total": 255.04999999999998,
+      "unitPrice": 51.01
+    },
+    {
+      "id": "fii-buy-253",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "XPLG11",
+      "quantity": 2,
+      "total": 205.48,
+      "unitPrice": 102.74
+    },
+    {
+      "id": "fii-buy-255",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "BBGO11",
+      "quantity": 3,
+      "total": 252,
+      "unitPrice": 84
+    },
+    {
+      "id": "fii-buy-256",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "HGBS11",
+      "quantity": 1,
+      "total": 212.51,
+      "unitPrice": 212.51
+    },
+    {
+      "id": "fii-buy-257",
+      "type": "buy",
+      "date": "2024-07-08",
+      "ticker": "VISC11",
+      "quantity": 1,
+      "total": 114.84,
+      "unitPrice": 114.84
+    },
+    {
+      "id": "fii-buy-258",
+      "type": "buy",
+      "date": "2024-08-01",
+      "ticker": "RECT11",
+      "quantity": 7,
+      "total": 244.85999999999999,
+      "unitPrice": 34.98
+    },
+    {
+      "id": "fii-buy-259",
+      "type": "buy",
+      "date": "2024-08-01",
+      "ticker": "VINO11",
+      "quantity": 40,
+      "total": 248.4,
+      "unitPrice": 6.21
+    },
+    {
+      "id": "fii-buy-260",
+      "type": "buy",
+      "date": "2024-08-01",
+      "ticker": "BRCR11",
+      "quantity": 5,
+      "total": 252.89999999999998,
+      "unitPrice": 50.58
+    },
+    {
+      "id": "fii-buy-261",
+      "type": "buy",
+      "date": "2024-08-01",
+      "ticker": "XPCA11",
+      "quantity": 32,
+      "total": 258.88,
+      "unitPrice": 8.09
+    },
+    {
+      "id": "fii-buy-262",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "BTLG11",
+      "quantity": 2,
+      "total": 204.5,
+      "unitPrice": 102.25
+    },
+    {
+      "id": "fii-buy-263",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "PVBI11",
+      "quantity": 2,
+      "total": 184.44,
+      "unitPrice": 92.22
+    },
+    {
+      "id": "fii-buy-265",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "KISU11",
+      "quantity": 25,
+      "total": 201.25000000000003,
+      "unitPrice": 8.05
+    },
+    {
+      "id": "fii-buy-266",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "FGAA11",
+      "quantity": 25,
+      "total": 224.25000000000003,
+      "unitPrice": 8.97
+    },
+    {
+      "id": "fii-buy-267",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "BTAL11",
+      "quantity": 3,
+      "total": 233.34,
+      "unitPrice": 77.78
+    },
+    {
+      "id": "fii-buy-268",
+      "type": "buy",
+      "date": "2024-09-04",
+      "ticker": "XPLG11",
+      "quantity": 2,
+      "total": 204.42,
+      "unitPrice": 102.21
+    },
+    {
+      "id": "fii-buy-269",
+      "type": "buy",
+      "date": "2024-09-27",
+      "ticker": "TORD11",
+      "quantity": 26,
+      "total": 307.84,
+      "unitPrice": 11.84
+    },
+    {
+      "id": "fii-buy-270",
+      "type": "buy",
+      "date": "2024-11-12",
+      "ticker": "BTHF11",
+      "quantity": 64,
+      "total": 656,
+      "unitPrice": 10.25
+    },
+    {
+      "id": "fii-buy-271",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "BTLG11",
+      "quantity": 4,
+      "total": 490,
+      "unitPrice": 122.5
+    },
+    {
+      "id": "fii-buy-272",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "VGHF11",
+      "quantity": 59,
+      "total": 519.7900000000001,
+      "unitPrice": 8.81
+    },
+    {
+      "id": "fii-buy-273",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "TRBL11",
+      "quantity": 6,
+      "total": 511.43999999999994,
+      "unitPrice": 85.24
+    },
+    {
+      "id": "fii-buy-274",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "RZAT11",
+      "quantity": 21,
+      "total": 2271.99,
+      "unitPrice": 108.19
+    },
+    {
+      "id": "fii-buy-276",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "GCRI11",
+      "quantity": 3,
+      "total": 196.17000000000002,
+      "unitPrice": 65.39
+    },
+    {
+      "id": "fii-buy-277",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "VRTM11",
+      "quantity": 27,
+      "total": 215.46,
+      "unitPrice": 7.98
+    },
+    {
+      "id": "fii-buy-278",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "GARE11",
+      "quantity": 54,
+      "total": 492.47999999999996,
+      "unitPrice": 9.12
+    },
+    {
+      "id": "fii-buy-280",
+      "type": "buy",
+      "date": "2024-10-01",
+      "ticker": "RURA11",
+      "quantity": 8,
+      "total": 73.44,
+      "unitPrice": 9.18
+    },
+    {
+      "id": "fii-buy-281",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "PVBI11",
+      "quantity": 2,
+      "total": 157.24,
+      "unitPrice": 78.62
+    },
+    {
+      "id": "fii-buy-282",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "HGRE11",
+      "quantity": 2,
+      "total": 205.78,
+      "unitPrice": 102.89
+    },
+    {
+      "id": "fii-buy-283",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "GTWR11",
+      "quantity": 2,
+      "total": 147.44,
+      "unitPrice": 73.72
+    },
+    {
+      "id": "fii-buy-284",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "JSRE11",
+      "quantity": 3,
+      "total": 183.3,
+      "unitPrice": 61.1
+    },
+    {
+      "id": "fii-buy-287",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "XPSF11",
+      "quantity": 25,
+      "total": 165,
+      "unitPrice": 6.6
+    },
+    {
+      "id": "fii-buy-288",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "HSLG11",
+      "quantity": 2,
+      "total": 159.9,
+      "unitPrice": 79.95
+    },
+    {
+      "id": "fii-buy-289",
+      "type": "buy",
+      "date": "2024-11-05",
+      "ticker": "VILG11",
+      "quantity": 2,
+      "total": 159.46,
+      "unitPrice": 79.73
+    },
+    {
+      "id": "fii-buy-290",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "HSML11",
+      "quantity": 3,
+      "total": 237.14999999999998,
+      "unitPrice": 79.05
+    },
+    {
+      "id": "fii-buy-291",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "GGRC11",
+      "quantity": 20,
+      "total": 199.8,
+      "unitPrice": 9.99
+    },
+    {
+      "id": "fii-buy-292",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "MXRF11",
+      "quantity": 21,
+      "total": 195.72,
+      "unitPrice": 9.32
+    },
+    {
+      "id": "fii-buy-293",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "VISC11",
+      "quantity": 2,
+      "total": 191.84,
+      "unitPrice": 95.92
+    },
+    {
+      "id": "fii-buy-294",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "XPIN11",
+      "quantity": 3,
+      "total": 208.35000000000002,
+      "unitPrice": 69.45
+    },
+    {
+      "id": "fii-buy-295",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "HGBS11",
+      "quantity": 1,
+      "total": 186.92,
+      "unitPrice": 186.92
+    },
+    {
+      "id": "fii-buy-296",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "TRBL11",
+      "quantity": 3,
+      "total": 200.31,
+      "unitPrice": 66.77
+    },
+    {
+      "id": "fii-buy-297",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "JSRE11",
+      "quantity": 3,
+      "total": 173.28,
+      "unitPrice": 57.76
+    },
+    {
+      "id": "fii-buy-298",
+      "type": "buy",
+      "date": "2024-12-03",
+      "ticker": "VISC11",
+      "quantity": 2,
+      "total": 191.44,
+      "unitPrice": 95.72
+    },
+    {
+      "id": "fii-buy-304",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "XPIN11",
+      "quantity": 3,
+      "total": 196.5,
+      "unitPrice": 65.5
+    },
+    {
+      "id": "fii-buy-305",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "HGBS11",
+      "quantity": 2,
+      "total": 356.6,
+      "unitPrice": 178.3
+    },
+    {
+      "id": "fii-buy-306",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "VISC11",
+      "quantity": 2,
+      "total": 188.32,
+      "unitPrice": 94.16
+    },
+    {
+      "id": "fii-buy-308",
+      "type": "buy",
+      "date": "2025-01-22",
+      "ticker": "XPLG11",
+      "quantity": 2,
+      "total": 182.74,
+      "unitPrice": 91.37
+    },
+    {
+      "id": "fii-buy-309",
+      "type": "buy",
+      "date": "2025-01-23",
+      "ticker": "KNRI11",
+      "quantity": 2,
+      "total": 261.08,
+      "unitPrice": 130.54
+    },
+    {
+      "id": "fii-buy-310",
+      "type": "buy",
+      "date": "2025-01-23",
+      "ticker": "HGRE11",
+      "quantity": 2,
+      "total": 194.4,
+      "unitPrice": 97.2
+    },
+    {
+      "id": "fii-buy-311",
+      "type": "buy",
+      "date": "2025-01-23",
+      "ticker": "XPLG11",
+      "quantity": 2,
+      "total": 182.8,
+      "unitPrice": 91.4
+    },
+    {
+      "id": "fii-buy-312",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "HGBS11",
+      "quantity": 1,
+      "total": 180,
+      "unitPrice": 180
+    },
+    {
+      "id": "fii-buy-313",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "KFOF11",
+      "quantity": 3,
+      "total": 222.66,
+      "unitPrice": 74.22
+    },
+    {
+      "id": "fii-buy-314",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "FATN11",
+      "quantity": 2,
+      "total": 149.76,
+      "unitPrice": 74.88
+    },
+    {
+      "id": "fii-buy-315",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "KNHF11",
+      "quantity": 3,
+      "total": 253.92000000000002,
+      "unitPrice": 84.64
+    },
+    {
+      "id": "fii-buy-316",
+      "type": "buy",
+      "date": "2025-03-13",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 195.5,
+      "unitPrice": 97.75
+    },
+    {
+      "id": "fii-buy-317",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "FLMA11",
+      "quantity": 2,
+      "total": 270,
+      "unitPrice": 135
+    },
+    {
+      "id": "fii-buy-318",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "TEPP11",
+      "quantity": 3,
+      "total": 251.79000000000002,
+      "unitPrice": 83.93
+    },
+    {
+      "id": "fii-buy-319",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "GARE11",
+      "quantity": 28,
+      "total": 244.16000000000003,
+      "unitPrice": 8.72
+    },
+    {
+      "id": "fii-buy-320",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "ALZR11",
+      "quantity": 2,
+      "total": 195.7,
+      "unitPrice": 97.85
+    },
+    {
+      "id": "fii-buy-321",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "PLAG11",
+      "quantity": 6,
+      "total": 286.74,
+      "unitPrice": 47.79
+    },
+    {
+      "id": "fii-buy-322",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "JSAF11",
+      "quantity": 33,
+      "total": 256.40999999999997,
+      "unitPrice": 7.77
+    },
+    {
+      "id": "fii-buy-323",
+      "type": "buy",
+      "date": "2025-04-23",
+      "ticker": "INLG11",
+      "quantity": 4,
+      "total": 279.96,
+      "unitPrice": 69.99
+    },
+    {
+      "id": "fii-buy-324",
+      "type": "buy",
+      "date": "2025-05-30",
+      "ticker": "PQAG11",
+      "quantity": 3,
+      "total": 161.97,
+      "unitPrice": 53.99
+    },
+    {
+      "id": "fii-buy-325",
+      "type": "buy",
+      "date": "2025-05-30",
+      "ticker": "CCME11",
+      "quantity": 23,
+      "total": 206.77,
+      "unitPrice": 8.99
+    },
+    {
+      "id": "fii-buy-326",
+      "type": "buy",
+      "date": "2025-05-30",
+      "ticker": "TEPP11",
+      "quantity": 2,
+      "total": 166.7,
+      "unitPrice": 83.35
+    },
+    {
+      "id": "fii-buy-327",
+      "type": "buy",
+      "date": "2025-05-30",
+      "ticker": "JSAF11",
+      "quantity": 25,
+      "total": 201.5,
+      "unitPrice": 8.06
+    },
+    {
+      "id": "fii-buy-328",
+      "type": "buy",
+      "date": "2025-06-23",
+      "ticker": "FATN11",
+      "quantity": 3,
+      "total": 228,
+      "unitPrice": 76
+    },
+    {
+      "id": "fii-buy-329",
+      "type": "buy",
+      "date": "2025-06-23",
+      "ticker": "BRCO11",
+      "quantity": 2,
+      "total": 216.46,
+      "unitPrice": 108.23
+    },
+    {
+      "id": "fii-buy-330",
+      "type": "buy",
+      "date": "2025-06-23",
+      "ticker": "RZTR11",
+      "quantity": 3,
+      "total": 275.96999999999997,
+      "unitPrice": 91.99
+    },
+    {
+      "id": "fii-buy-331",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "GTWR11",
+      "quantity": 3,
+      "total": 228.03000000000003,
+      "unitPrice": 76.01
+    },
+    {
+      "id": "fii-buy-332",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "FATN11",
+      "quantity": 3,
+      "total": 248.10000000000002,
+      "unitPrice": 82.7
+    },
+    {
+      "id": "fii-buy-333",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "CCME11",
+      "quantity": 28,
+      "total": 243.88000000000002,
+      "unitPrice": 8.71
+    },
+    {
+      "id": "fii-buy-334",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "KNRI11",
+      "quantity": 2,
+      "total": 278.8,
+      "unitPrice": 139.4
+    },
+    {
+      "id": "fii-buy-336",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "KFOF11",
+      "quantity": 3,
+      "total": 233.88,
+      "unitPrice": 77.96
+    },
+    {
+      "id": "fii-buy-337",
+      "type": "buy",
+      "date": "2025-08-29",
+      "ticker": "PMLL11",
+      "quantity": 2,
+      "total": 199.4,
+      "unitPrice": 99.7
+    },
+    {
+      "id": "fii-buy-338",
+      "type": "buy",
+      "date": "2025-10-23",
+      "ticker": "JSRE11",
+      "quantity": 3,
+      "total": 185.34,
+      "unitPrice": 61.78
+    },
+    {
+      "id": "fii-buy-339",
+      "type": "buy",
+      "date": "2025-10-23",
+      "ticker": "GTWR11",
+      "quantity": 3,
+      "total": 228.54000000000002,
+      "unitPrice": 76.18
+    },
+    {
+      "id": "fii-buy-340",
+      "type": "buy",
+      "date": "2025-10-23",
+      "ticker": "PQAG11",
+      "quantity": 4,
+      "total": 219.16,
+      "unitPrice": 54.79
+    },
+    {
+      "id": "fii-buy-341",
+      "type": "buy",
+      "date": "2025-10-23",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 213.68,
+      "unitPrice": 106.84
+    },
+    {
+      "id": "fii-buy-342",
+      "type": "buy",
+      "date": "2025-10-23",
+      "ticker": "ALZR11",
+      "quantity": 20,
+      "total": 209.60000000000002,
+      "unitPrice": 10.48
+    },
+    {
+      "id": "fii-buy-343",
+      "type": "buy",
+      "date": "2025-11-01",
+      "ticker": "IRIM11",
+      "quantity": 4,
+      "total": 590.32,
+      "unitPrice": 147.58
+    },
+    {
+      "id": "fii-buy-344",
+      "type": "buy",
+      "date": "2025-08-01",
+      "ticker": "PSEC11",
+      "quantity": 21,
+      "total": 1575.21,
+      "unitPrice": 75.01
+    },
+    {
+      "id": "fii-buy-345",
+      "type": "buy",
+      "date": "2025-07-22",
+      "ticker": "PMLL11",
+      "quantity": 7,
+      "total": 670.04,
+      "unitPrice": 95.72
+    },
+    {
+      "id": "fii-buy-346",
+      "type": "buy",
+      "date": "2026-04-07",
+      "ticker": "FTCA11",
+      "quantity": 20,
+      "total": 206.4,
+      "unitPrice": 10.32
+    },
+    {
+      "id": "fii-buy-347",
+      "type": "buy",
+      "date": "2025-07-21",
+      "ticker": "PCIP11",
+      "quantity": 5,
+      "total": 527.5500000000001,
+      "unitPrice": 105.51
+    },
+    {
+      "id": "fii-buy-364",
+      "type": "buy",
+      "date": "2026-02-06",
+      "ticker": "FATN11",
+      "quantity": 3,
+      "total": 262.20000000000005,
+      "unitPrice": 87.4
+    },
+    {
+      "id": "fii-buy-365",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "TEPP11",
+      "quantity": 25,
+      "total": 223.25,
+      "unitPrice": 8.93
+    },
+    {
+      "id": "fii-buy-366",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "JSRE11",
+      "quantity": 5,
+      "total": 330.3,
+      "unitPrice": 66.06
+    },
+    {
+      "id": "fii-buy-367",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "GARE11",
+      "quantity": 25,
+      "total": 208.25,
+      "unitPrice": 8.33
+    },
+    {
+      "id": "fii-buy-368",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "ALZR11",
+      "quantity": 20,
+      "total": 212,
+      "unitPrice": 10.6
+    },
+    {
+      "id": "fii-buy-369",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "HFOF11",
+      "quantity": 30,
+      "total": 205.2,
+      "unitPrice": 6.84
+    },
+    {
+      "id": "fii-buy-370",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "VILG11",
+      "quantity": 3,
+      "total": 296.1,
+      "unitPrice": 98.7
+    },
+    {
+      "id": "fii-buy-371",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "HSLG11",
+      "quantity": 3,
+      "total": 281.13,
+      "unitPrice": 93.71
+    },
+    {
+      "id": "fii-buy-372",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "JSAF11",
+      "quantity": 20,
+      "total": 153.6,
+      "unitPrice": 7.68
+    },
+    {
+      "id": "fii-buy-373",
+      "type": "buy",
+      "date": "2026-03-19",
+      "ticker": "KFOF11",
+      "quantity": 2,
+      "total": 163.8,
+      "unitPrice": 81.9
+    },
+    {
+      "id": "fii-buy-374",
+      "type": "buy",
+      "date": "2026-04-06",
+      "ticker": "ALZC11",
+      "quantity": 50,
+      "total": 613,
+      "unitPrice": 12.26
+    },
+    {
+      "id": "fii-buy-375",
+      "type": "buy",
+      "date": "2026-04-06",
+      "ticker": "GGRC11",
+      "quantity": 17,
+      "total": 196.17999999999998,
+      "unitPrice": 11.54
+    },
+    {
+      "id": "fii-buy-376",
+      "type": "buy",
+      "date": "2026-04-06",
+      "ticker": "RBFM11",
+      "quantity": 40,
+      "total": 419.20000000000005,
+      "unitPrice": 10.48
+    },
+    {
+      "id": "fii-buy-377",
+      "type": "buy",
+      "date": "2025-12-11",
+      "ticker": "BTLG11",
+      "quantity": 1,
+      "total": 103.71,
+      "unitPrice": 103.71
+    },
+    {
+      "id": "fii-buy-378",
+      "type": "buy",
+      "date": "2025-06-20",
+      "ticker": "CPTS11",
+      "quantity": 62,
+      "total": 589,
+      "unitPrice": 9.5
+    },
+    {
+      "id": "fii-buy-379",
+      "type": "buy",
+      "date": "2025-02-04",
+      "ticker": "PLAG11",
+      "quantity": 4,
+      "total": 191.72,
+      "unitPrice": 47.93
+    }
+  ],
+  "sales": [
+    {
+      "id": "fii-sell-85",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 194.1,
+      "unitPrice": 97.05
+    },
+    {
+      "id": "fii-sell-86",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "HGRU11",
+      "quantity": 2,
+      "total": 219.8,
+      "unitPrice": 109.9
+    },
+    {
+      "id": "fii-sell-87",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "XPLG11",
+      "quantity": 2,
+      "total": 196.42,
+      "unitPrice": 98.21
+    },
+    {
+      "id": "fii-sell-88",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "FIIB11",
+      "quantity": 1,
+      "total": 441.26,
+      "unitPrice": 441.26
+    },
+    {
+      "id": "fii-sell-89",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 194.1,
+      "unitPrice": 97.05
+    },
+    {
+      "id": "fii-sell-90",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "HGRU11",
+      "quantity": 2,
+      "total": 219.8,
+      "unitPrice": 109.9
+    },
+    {
+      "id": "fii-sell-91",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "XPLG11",
+      "quantity": 3,
+      "total": 294.63,
+      "unitPrice": 98.21
+    },
+    {
+      "id": "fii-sell-92",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "HGLG11",
+      "quantity": 3,
+      "total": 486,
+      "unitPrice": 162
+    },
+    {
+      "id": "fii-sell-93",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "ABCP11",
+      "quantity": 7,
+      "total": 516.18,
+      "unitPrice": 73.74
+    },
+    {
+      "id": "fii-sell-94",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "VISC11",
+      "quantity": 5,
+      "total": 487.55,
+      "unitPrice": 97.51
+    },
+    {
+      "id": "fii-sell-95",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "LVBI11",
+      "quantity": 2,
+      "total": 194.1,
+      "unitPrice": 97.05
+    },
+    {
+      "id": "fii-sell-96",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "XPML11",
+      "quantity": 3,
+      "total": 271.83,
+      "unitPrice": 90.61
+    },
+    {
+      "id": "fii-sell-97",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "XPLG11",
+      "quantity": 3,
+      "total": 294.63,
+      "unitPrice": 98.21
+    },
+    {
+      "id": "fii-sell-98",
+      "type": "sell",
+      "date": "2022-03-10",
+      "ticker": "HGRU11",
+      "quantity": 2,
+      "total": 219.8,
+      "unitPrice": 109.9
+    },
+    {
+      "id": "fii-sell-236",
+      "type": "sell",
+      "date": "2024-11-12",
+      "ticker": "BCFF11",
+      "quantity": 80,
+      "total": 656,
+      "unitPrice": 8.2
+    }
+  ],
+  "assets": [
+    {
+      "ticker": "LVBI11",
+      "name": "VBI LOGÍSTICO",
+      "sector": "LOGISTICA",
+      "currentPrice": 103.59,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "IRIM11",
+      "name": "IRIDIUM RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 66.37,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HGRU11",
+      "name": "CSHG RENDA URBANA",
+      "sector": "HÍBRIDO",
+      "currentPrice": 66.37,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BRCR11",
+      "name": "BTG PACTUAL CORP. OFFICE FUND",
+      "sector": "LAJES",
+      "currentPrice": 40.82,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "MXRF11",
+      "name": "MAXI RENDA FDO INV IMOB",
+      "sector": "HÍBRIDO",
+      "currentPrice": 9.74,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "GGRC11",
+      "name": "COVEPI RENDA FDO INV IMOB",
+      "sector": "LOGISTICA",
+      "currentPrice": 9.72,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HFOF11",
+      "name": "HEDGE TOP FOFII 3 FDO INV IMOB",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 6.29,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VINO11",
+      "name": "VINCI OFFICES FDO INV IMOB",
+      "sector": "LAJES",
+      "currentPrice": 4.65,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RBVA11",
+      "name": "RIO BRAVO RENDA VAREJO",
+      "sector": "HÍBRIDO",
+      "currentPrice": 8.96,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "XPLG11",
+      "name": "XP LOG FDO INV IMOB",
+      "sector": "LOGISTICA",
+      "currentPrice": 91.55,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HCTR11",
+      "name": "HECTARE CE",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 16.61,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "TORD11",
+      "name": "TORDESILHAS EI",
+      "sector": "HÍBRIDO",
+      "currentPrice": 1.09,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "CPTS11",
+      "name": "CAPITÂNIA SECURITIES II",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 7.54,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RECT11",
+      "name": "REC RENDA IMOBILIÁRIA",
+      "sector": "LAJES",
+      "currentPrice": 35.66,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HABT11",
+      "name": "HABITAT RECEBÍVEIS PULVERIZADOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 72.25,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RECR11",
+      "name": "REC RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 80.5,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "DEVA11",
+      "name": "DEVANT RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 17.81,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "TGAR11",
+      "name": "TG ATIVO REAL",
+      "sector": "HÍBRIDO",
+      "currentPrice": 50.6,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "MFII11",
+      "name": "MÉRITO DESENVOLVIMENTO IMOBILIÁRIO I",
+      "sector": "HÍBRIDO",
+      "currentPrice": 50.74,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "FIIB11",
+      "name": "INDUSTRIAL DO BRASIL",
+      "sector": "LOGISTICA",
+      "currentPrice": 440.49,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BCIA11",
+      "name": "BRADESCO CARTEIRA IMOBILIÁRIA ATIVA",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 87.18,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "NSLU11",
+      "name": "HOSPITAL NOSSA SENHORA DE LOURDES",
+      "sector": "HOSPITAL",
+      "currentPrice": 171.25,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HCRI11",
+      "name": "HOSPITAL DA CRIANÇA",
+      "sector": "HOSPITAL",
+      "currentPrice": 266.23,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BTHF11",
+      "name": "BTG PACTUAL REAL ESTATE HEDGE FUND FII",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 9.02,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HGLG11",
+      "name": "CSHG LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 149.3,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RZTR11",
+      "name": "RIZA TERRAX",
+      "sector": "HÍBRIDO",
+      "currentPrice": 86.85,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "PCIP11",
+      "name": "PÁTRIA CRÉDITO IMOBILIÁRIO ÍNDICE DE PREÇOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 78.96,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "XPSF11",
+      "name": "XP SELECTION",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 6.18,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "PSEC11",
+      "name": "PATRIA SECURITIES",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 56.05,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "AIEC11",
+      "name": "AUTONOMY EDIFÍCIOS CORPORATIVOS",
+      "sector": "LAJES",
+      "currentPrice": 56.18,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "CEOC11",
+      "name": "CEO CYRELA COMMERCIAL PROPERTIES",
+      "sector": "LAJES",
+      "currentPrice": 41.14,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "CXCO11",
+      "name": "CAIXA IMÓVEIS CORPORATIVOS",
+      "sector": "LAJES",
+      "currentPrice": 67.32,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HOFC11",
+      "name": "HEDGE OFFICE INCOME FUNDO DE INVEST IMOB",
+      "sector": "LAJES",
+      "currentPrice": 34,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "ABCP11",
+      "name": "GRAND PLAZA SHOPPING",
+      "sector": "SHOPPING",
+      "currentPrice": 76.76,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VISC11",
+      "name": "VINCI SHOPPING CENTERS",
+      "sector": "SHOPPING",
+      "currentPrice": 105.64,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "TRXF11",
+      "name": "TRX REAL ESTATE",
+      "sector": "SHOPPING",
+      "currentPrice": 91.1,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RBRL11",
+      "name": "RBR LOG",
+      "sector": "LOGISTICA",
+      "currentPrice": 73.18,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BLMG11",
+      "name": "BLUEMACAW LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 31,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "EURO11",
+      "name": "EUROPAR",
+      "sector": "LOGISTICA",
+      "currentPrice": 317.97,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "KNSC11",
+      "name": "KINEA SECURITIES",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 9.22,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "URPR11",
+      "name": "URCA PRIME RENDA",
+      "sector": "HÍBRIDO",
+      "currentPrice": 19.77,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "KISU11",
+      "name": "KILIMA FOF SUNO 30",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 6.43,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RBFM11",
+      "name": "RIO BRAVO MULTIESTRATÉGIA",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 10.32,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "XPML11",
+      "name": "XP MALLS",
+      "sector": "SHOPPING",
+      "currentPrice": 106.13,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HSML11",
+      "name": "HSI MALLS",
+      "sector": "SHOPPING",
+      "currentPrice": 87.05,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "CACR11",
+      "name": "CARTESIA RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "HÍBRIDO",
+      "currentPrice": 21.8,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "ARRI11",
+      "name": "ÁTRIO REIT RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 4.7,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "JPPA11",
+      "name": "JPP ALLOCATION MOGNO",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 83.03,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VSLH11",
+      "name": "VERSALHES RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 1.79,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VGIP11",
+      "name": "VALORA CRI ÍNDICE DE PREÇO",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 81.84,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BCRI11",
+      "name": "BANESTES RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 59.4,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VCJR11",
+      "name": "VECTIS JUROS REAL",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 74.85,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HSAF11",
+      "name": "HSI ATIVOS FINANCEIROS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 77.97,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VGHF11",
+      "name": "VALORA HEDGE FUND",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 5.92,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RBHY11",
+      "name": "RIO BRAVO CRÉDITO IMOBILIÁRIO HIGH YIELD",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 72.45,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RNGO11",
+      "name": "RIO NEGRO",
+      "sector": "LAJES",
+      "currentPrice": 52.23,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "OIAG11",
+      "name": "OURINVEST INNOVATION",
+      "sector": "FIAGRO",
+      "currentPrice": 8.05,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RZAG11",
+      "name": "CADEIAS PROD AGRO RIZA AGRO FIAGRO",
+      "sector": "FIAGRO",
+      "currentPrice": 8.47,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "AGRX11",
+      "name": "AGRO EXES ARAGUAIA",
+      "sector": "FIAGRO",
+      "currentPrice": 8.29,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "KNCA11",
+      "name": "KINEA CRÉDITO AGRO FIAGRO-IMOBILIÁRIO",
+      "sector": "FIAGRO",
+      "currentPrice": 89.77,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VGIA11",
+      "name": "FIAGRO VGIA",
+      "sector": "FIAGRO",
+      "currentPrice": 9.81,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "CPTR11",
+      "name": "CAPITANIA AGRO STRATEGIES",
+      "sector": "FIAGRO",
+      "currentPrice": 8.07,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "XPCA11",
+      "name": "XP CRÉDITO AGRÍCOLA FDO INV FIAGRO IMOBILIÁRIO",
+      "sector": "FIAGRO",
+      "currentPrice": 7.81,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VCRA11",
+      "name": "VECTIS DATAGRO CR AGR",
+      "sector": "FIAGRO",
+      "currentPrice": 60.03,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "FTCA11",
+      "name": "FYTO RECEBÍVEIS DO AGRONEGÓCIO",
+      "sector": "FIAGRO",
+      "currentPrice": 8.5,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "FGAA11",
+      "name": "FG AGRO FDO DE INVEST",
+      "sector": "FIAGRO",
+      "currentPrice": 8.29,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "ALZC11",
+      "name": "ALIANZA CRÉDITO IMOBILIÁRIO",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 7.49,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BBFO11",
+      "name": "BB FUNDO DE FUNDOS",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 69.35,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "WHGR11",
+      "name": "WHG REAL ESTATE",
+      "sector": "HÍBRIDO",
+      "currentPrice": 9.09,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VIUR11",
+      "name": "VINCI IMÓVEIS URBANOS",
+      "sector": "HÍBRIDO",
+      "currentPrice": 2.25,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RURA11",
+      "name": "ITAU ASSET RURAL FIAGRO",
+      "sector": "FIAGRO",
+      "currentPrice": 8.22,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "TRBL11",
+      "name": "TELLUS RIO BRAVO RENDA LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 59.41,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "CPUR11",
+      "name": "FII CPHBC UR",
+      "sector": "HÍBRIDO",
+      "currentPrice": 10.49,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BTAL11",
+      "name": "BTG PACTUAL AGRO LOGÍSTICA",
+      "sector": "FIAGRO",
+      "currentPrice": 86.4,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "PATL11",
+      "name": "PÁTRIA LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 64.15,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "RZAT11",
+      "name": "RIZA ARCTIUM REAL ESTATE",
+      "sector": "LOGISTICA",
+      "currentPrice": 93.95,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "XPIN11",
+      "name": "XP INDUSTRIAL",
+      "sector": "LOGISTICA",
+      "currentPrice": 62.04,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HSLG11",
+      "name": "HSI LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 86.75,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BRCO11",
+      "name": "BRESCO LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 115,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "GTWR11",
+      "name": "GREEN TOWERS",
+      "sector": "LAJES",
+      "currentPrice": 80.6,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "FATN11",
+      "name": "BRC RENDA CORPORATIVA",
+      "sector": "LAJES",
+      "currentPrice": 79.9,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VILG11",
+      "name": "VINCI LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 95.7,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BTLG11",
+      "name": "BTG PACTUAL LOGÍSTICA",
+      "sector": "LOGISTICA",
+      "currentPrice": 102.48,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "PVBI11",
+      "name": "VBI PRIME PROPERTIES",
+      "sector": "LAJES",
+      "currentPrice": 72.79,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "JSRE11",
+      "name": "JS REAL ESTATE MULTIGESTÃO",
+      "sector": "LAJES",
+      "currentPrice": 58.98,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HGRE11",
+      "name": "CSHG REAL ESTATE",
+      "sector": "LAJES",
+      "currentPrice": 125.19,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BROF11",
+      "name": "BRPR CORPORATE OFFICES",
+      "sector": "LAJES",
+      "currentPrice": 61.8,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "BBGO11",
+      "name": "BB CRÉDITO FIAGRO",
+      "sector": "FIAGRO",
+      "currentPrice": 67,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "HGBS11",
+      "name": "HEDGE BRASIL SHOPPING",
+      "sector": "SHOPPING",
+      "currentPrice": 19.34,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "GCRI11",
+      "name": "GALAPAGOS RECEBÍVEIS IMOBILIÁRIOS",
+      "sector": "RECEBÍVEIS IMOBILIÁRIOS",
+      "currentPrice": 67,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "VRTM11",
+      "name": "FATOR VERITÀ MULTIESTRATÉGIA",
+      "sector": "HÍBRIDO",
+      "currentPrice": 6.99,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "GARE11",
+      "name": "GUARDIAN LOGISTICA",
+      "sector": "HÍBRIDO",
+      "currentPrice": 8.15,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "KNRI11",
+      "name": "KINEA RENDA IMOBILIÁRIA",
+      "sector": "HÍBRIDO",
+      "currentPrice": 157.43,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "KNHF11",
+      "name": "KINEA HEDGE FUND",
+      "sector": "HÍBRIDO",
+      "currentPrice": 94.98,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "KFOF11",
+      "name": "KINEA FUNDO DE FUNDOS",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 78.7,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "FLMA11",
+      "name": "CONTINENTAL SQUARE FARIA LIMA",
+      "sector": "LAJES",
+      "currentPrice": 147.28,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "TEPP11",
+      "name": "TELLUS PROPERTIES",
+      "sector": "LAJES",
+      "currentPrice": 7.92,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "ALZR11",
+      "name": "ALIANZA TRUST RENDA IMOBILIÁRIA",
+      "sector": "HÍBRIDO",
+      "currentPrice": 10.15,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "PLAG11",
+      "name": "VBI AGRO",
+      "sector": "FIAGRO",
+      "currentPrice": 62.9,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "JSAF11",
+      "name": "JS ATIVOS FINANCEIROS",
+      "sector": "FUNDOS DE FUNDOS",
+      "currentPrice": 7.36,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "INLG11",
+      "name": "INTER LOGÍSTICO",
+      "sector": "LOGISTICA",
+      "currentPrice": 67.25,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "PQAG11",
+      "name": "PARQUE ANHANGUERA",
+      "sector": "LOGISTICA",
+      "currentPrice": 53.97,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "CCME11",
+      "name": "CANUMA CAPITAL MULTIESTRATÉGIA",
+      "sector": "HÍBRIDO",
+      "currentPrice": 8.9,
+      "exchange": "B3",
+      "annual": null
+    },
+    {
+      "ticker": "PMLL11",
+      "name": "PÁTRIA MALLS",
+      "sector": "SHOPPING",
+      "currentPrice": 102.45,
+      "exchange": "B3",
+      "annual": null
+    }
+  ],
+  "integrity": {
+    "purchaseRows": 280,
+    "saleRows": 15,
+    "assetRows": 104,
+    "warnings": []
+  }
+}
