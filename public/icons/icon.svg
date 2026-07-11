@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Controle de Ações">
+  <defs>
+    <linearGradient id="background" x1="64" y1="448" x2="448" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08111f" />
+      <stop offset="1" stop-color="#153657" />
+    </linearGradient>
+    <linearGradient id="accent" x1="128" y1="384" x2="392" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#25c2a0" />
+      <stop offset="1" stop-color="#8ce8c8" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="#08111f" />
+  <rect width="512" height="512" rx="112" fill="url(#background)" />
+  <path d="M112 392V272h64v120h-64Zm112 0V200h64v192h-64Zm112 0V120h64v272h-64Z" fill="url(#accent)" />
+  <path d="m104 230 94-80 67 42 139-104" fill="none" stroke="#f5c76b" stroke-linecap="round" stroke-linejoin="round" stroke-width="28" />
+  <circle cx="104" cy="230" r="18" fill="#f5c76b" />
+  <circle cx="404" cy="88" r="18" fill="#f5c76b" />
+</svg>

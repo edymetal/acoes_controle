@@ -1,6 +1,8 @@
-# Atlas Equity — Controle de Ações Americanas
+# Controle de Ações
 
 Dashboard moderno para acompanhar uma carteira de ações americanas a partir de uma planilha Google Sheets privada. O site é estático, responsivo e publicado gratuitamente no GitHub Pages.
+
+O site pode ser instalado como aplicativo pelo Chrome no celular. Após abrir a página publicada, use **Adicionar à tela inicial** ou **Instalar app** no menu do navegador.
 
 ## Site
 

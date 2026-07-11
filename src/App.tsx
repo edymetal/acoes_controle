@@ -51,7 +51,7 @@ export default function App() {
   if (error) {
     return (
       <main className="state-screen">
-        <div className="brand brand--center"><span className="brand__mark"><BarChart3 size={23} /></span><span><strong>Atlas</strong><small>Equity Intelligence</small></span></div>
+        <div className="brand brand--center"><span className="brand__mark"><BarChart3 size={23} /></span><span><strong>Controle</strong><small>de Ações</small></span></div>
         <div className="state-screen__card state-screen__card--error"><AlertTriangle size={34} /><h1>Dados indisponíveis</h1><p>O painel não conseguiu carregar a base sincronizada.</p><code>{error}</code><button type="button" onClick={() => window.location.reload()}><RotateCcw size={17} /> Tentar novamente</button></div>
       </main>
     );

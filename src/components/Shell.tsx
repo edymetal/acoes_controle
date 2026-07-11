@@ -35,7 +35,7 @@ export function Shell({ page, onPageChange, updatedAt, children }: ShellProps) {
       <aside className="sidebar">
         <div className="brand">
           <span className="brand__mark"><BarChart3 size={23} /></span>
-          <span><strong>Atlas</strong><small>Equity Intelligence</small></span>
+          <span><strong>Controle</strong><small>de Ações</small></span>
         </div>
         <nav className="main-nav" aria-label="Navegação principal">
           <span className="main-nav__label">ANÁLISE</span>
@@ -75,4 +75,3 @@ export function Shell({ page, onPageChange, updatedAt, children }: ShellProps) {
     </div>
   );
 }
-
