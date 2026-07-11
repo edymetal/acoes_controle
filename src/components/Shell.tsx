@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Activity,
   BarChart3,
   BriefcaseBusiness,
   Building2,
+  ChevronDown,
   Clock3,
   LayoutDashboard,
   RefreshCw,
@@ -45,6 +46,44 @@ interface ShellProps {
 
 export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
+  const currentTopic = current.topic;
+  const [openTopic, setOpenTopic] = useState<"stocks" | "fiis">(currentTopic);
+
+  useEffect(() => setOpenTopic(currentTopic), [currentTopic]);
+
+  const renderTopic = (topic: "stocks" | "fiis", label: string, topicPages: PageDefinition[]) => {
+    const isOpen = openTopic === topic;
+    const panelId = `nav-topic-${topic}`;
+
+    return (
+      <div className={`main-nav__group ${isOpen ? "main-nav__group--open" : ""}`}>
+        <button
+          type="button"
+          className="main-nav__topic"
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          onClick={() => setOpenTopic(topic)}
+        >
+          <span>{label}</span><ChevronDown size={17} aria-hidden="true" />
+        </button>
+        {isOpen && (
+          <div className="main-nav__pages" id={panelId}>
+            {topicPages.map((item) => (
+              <button
+                type="button"
+                key={item.id}
+                className={page === item.id ? "active" : ""}
+                aria-current={page === item.id ? "page" : undefined}
+                onClick={() => onPageChange(item.id)}
+              >
+                {item.icon}<span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="app-shell">
@@ -54,30 +93,8 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           <span><strong>Controle</strong><small>de Investimentos</small></span>
         </div>
         <nav className="main-nav" aria-label="Navegação principal">
-          <span className="main-nav__label">AÇÕES</span>
-          {stockPages.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className={page === item.id ? "active" : ""}
-              aria-current={page === item.id ? "page" : undefined}
-              onClick={() => onPageChange(item.id)}
-            >
-              {item.icon}<span>{item.label}</span>
-            </button>
-          ))}
-          <span className="main-nav__label main-nav__label--section">FIIs</span>
-          {fiiPages.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className={page === item.id ? "active" : ""}
-              aria-current={page === item.id ? "page" : undefined}
-              onClick={() => onPageChange(item.id)}
-            >
-              {item.icon}<span>{item.label}</span>
-            </button>
-          ))}
+          {renderTopic("stocks", "AÇÕES", stockPages)}
+          {renderTopic("fiis", "FIIs", fiiPages)}
         </nav>
         <div className="sidebar__footer">
           <div className="security-note"><ShieldCheck size={18} /><span><strong>Dados protegidos</strong><small>Somente leitura</small></span></div>
