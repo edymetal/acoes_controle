@@ -11,12 +11,10 @@ import {
   LayoutDashboard,
   RefreshCw,
   Settings2,
-  ShieldCheck,
   Sparkles,
   Landmark,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
-import { usesPublicStaticData } from "../lib/dataSource";
 
 export type PageId = "overview" | "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
 
@@ -130,10 +128,6 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           {renderTopic("crypto", "CRIPTO", cryptoPages)}
           {renderTopic("fixed-income", "RENDA FIXA", fixedIncomePages)}
         </nav>
-        <div className="sidebar__footer">
-          <div className="security-note"><ShieldCheck size={18} /><span><strong>{usesPublicStaticData ? "Arquivos públicos" : "Fonte autenticada"}</strong><small>{usesPublicStaticData ? "Login protege somente a interface" : "Acesso com token Firebase"}</small></span></div>
-          <p>Indicadores para acompanhamento. Não constituem recomendação de investimento.</p>
-        </div>
       </aside>
 
       <div className="workspace">
