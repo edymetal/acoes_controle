@@ -17,6 +17,14 @@ const stockLogoDomains: Record<string, string> = {
 export function StockLogo({ ticker }: { ticker: string }) {
   const domain = stockLogoDomains[ticker];
 
+  if (ticker === "GOOGL") {
+    return <span className="ticker-avatar stock-logo stock-logo--google" title={ticker} role="img" aria-label="Logo da Google"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 3l5.7-5.7C33.9 6 29.2 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.2-.1-2.3-.4-3.5Z" /><path fill="#FF3D00" d="M6.3 14.7 12.9 19.5C14.7 15.1 19 12 24 12c3 0 5.7 1.1 7.8 3l5.7-5.7C33.9 6 29.2 4 24 4c-7.7 0-14.4 4.4-17.7 10.7Z" /><path fill="#4CAF50" d="M24 44c5.1 0 9.9-2 13.5-5.3l-6.2-5.2C29.3 35.1 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-7.9l-6.5 5C9.5 39.5 16.2 44 24 44Z" /><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.5l.1-.1 6.2 5.2C37.2 39 44 34 44 24c0-1.2-.1-2.3-.4-3.5Z" /></svg></span>;
+  }
+
+  if (ticker === "CSCO") {
+    return <span className="ticker-avatar stock-logo stock-logo--cisco" title={ticker} role="img" aria-label="Logo da Cisco"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#049FD9"><path d="M7 7h2v15H7zM12 4h2v18h-2zM17 2h2v20h-2zM22 1h2v21h-2zM27 2h2v20h-2zM32 4h2v18h-2zM37 7h2v15h-2z" /><path d="M8.4 31.5c0-2.9 1.7-4.7 4.4-4.7 1.2 0 2.2.4 3 1.1l-1.2 1.5c-.5-.5-1.1-.8-1.8-.8-1.5 0-2.5 1.1-2.5 2.8s1 2.8 2.5 2.8c.8 0 1.4-.3 1.9-.8l1.2 1.4c-.8.8-1.8 1.2-3.1 1.2-2.7 0-4.4-1.8-4.4-4.5ZM17 27h2v8.8h-2zM20.4 34.4l1.2-1.4c.7.7 1.5 1.1 2.4 1.1.8 0 1.3-.3 1.3-.8 0-.6-.7-.8-1.7-1.1-1.5-.5-2.8-1-2.8-2.8 0-1.6 1.3-2.7 3.2-2.7 1.3 0 2.5.5 3.2 1.3L26 29.3c-.6-.5-1.3-.9-2.1-.9-.7 0-1.1.3-1.1.8 0 .5.7.7 1.7 1.1 1.5.5 2.8 1 2.8 2.8 0 1.7-1.4 2.8-3.4 2.8-1.5 0-2.8-.5-3.5-1.5ZM28.4 31.5c0-2.9 1.7-4.7 4.4-4.7 1.2 0 2.2.4 3 1.1l-1.2 1.5c-.5-.5-1.1-.8-1.8-.8-1.5 0-2.5 1.1-2.5 2.8s1 2.8 2.5 2.8c.8 0 1.4-.3 1.9-.8l1.2 1.4c-.8.8-1.8 1.2-3.1 1.2-2.7 0-4.4-1.8-4.4-4.5Z" /></g></svg></span>;
+  }
+
   return (
     <span className="ticker-avatar stock-logo" title={ticker}>
       <span className="stock-logo__fallback" aria-hidden="true">{ticker.slice(0, 2)}</span>

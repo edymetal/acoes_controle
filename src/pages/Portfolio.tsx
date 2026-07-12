@@ -35,7 +35,7 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
 
         {positions.length ? (
           <div className="table-wrap">
-            <table>
+            <table className="portfolio-table">
               <thead><tr><th>Ativo</th><th>Quantidade</th><th>Preço médio</th><th>Cotação</th><th>Custo</th><th>Valor atual</th><th>Participação</th><th>Resultado aberto</th></tr></thead>
               <tbody>
                 {positions.map((position) => (
