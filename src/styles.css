@@ -131,6 +131,11 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .hero-card--crypto { border-color: rgba(246, 185, 74, .24); background: linear-gradient(115deg, rgba(79, 54, 18, .72), rgba(27, 35, 52, .94) 55%, rgba(38, 34, 64, .8)); }
 .hero-card--crypto::after { background: rgba(246, 185, 74, .12); }
 .ticker-avatar--crypto { color: #ffe1a5; background: rgba(246, 185, 74, .12); }
+.crypto-logo { flex: 0 0 auto; width: 40px; height: 40px; display: inline-grid; place-items: center; filter: drop-shadow(0 5px 10px rgba(0, 0, 0, .18)); }
+.crypto-logo svg { display: block; width: 100%; height: 100%; }
+.crypto-logo--compact { width: 31px; height: 31px; border-radius: 50%; }
+.crypto-logo--small { width: 24px; height: 24px; border-radius: 50%; }
+.chart-legend--crypto > div { grid-template-columns: 24px 1fr auto; }
 .state-screen__card--inline { min-height: 280px; margin: 0 auto; }
 .hero-card > div:first-child { display: flex; flex-direction: column; }
 .hero-card > div:first-child > strong { margin: 7px 0 4px; font-size: clamp(32px, 4vw, 48px); letter-spacing: -.05em; }

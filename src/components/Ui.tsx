@@ -33,6 +33,20 @@ export function StockLogo({ ticker }: { ticker: string }) {
   );
 }
 
+export function CryptoLogo({ ticker, size = "default" }: { ticker: string; size?: "default" | "compact" | "small" }) {
+  const symbol = ticker.toUpperCase();
+
+  if (symbol === "BTC") {
+    return <span className={`crypto-logo crypto-logo--${size}`} role="img" aria-label="Bitcoin"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#f7931a" /><text x="16" y="22" fill="#fff" fontSize="18" fontWeight="800" textAnchor="middle">₿</text></svg></span>;
+  }
+
+  if (symbol === "ETH") {
+    return <span className={`crypto-logo crypto-logo--${size}`} role="img" aria-label="Ethereum"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#627eea" /><path fill="#fff" fillOpacity=".92" d="M16 4.5 9.2 16 16 20l6.8-4L16 4.5Z" /><path fill="#fff" fillOpacity=".66" d="m16 21.3-6.8-4L16 27.5l6.8-10.2-6.8 4Z" /><path fill="#cbd5ff" d="M16 4.5V20l6.8-4L16 4.5Zm0 16.8v6.2l6.8-10.2-6.8 4Z" /></svg></span>;
+  }
+
+  return <span className={`ticker-avatar ticker-avatar--crypto crypto-logo--${size}`} title={ticker}>{symbol.slice(0, 2)}</span>;
+}
+
 interface MetricCardProps {
   label: string;
   value: string;

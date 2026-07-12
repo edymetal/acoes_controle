@@ -1,7 +1,7 @@
 import { ArrowRight, BadgeDollarSign, Bitcoin, CircleDollarSign, Layers3, TrendingUp, WalletCards } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import type { PageId } from "../../components/Shell";
-import { MetricCard, Section, Value } from "../../components/Ui";
+import { CryptoLogo, MetricCard, Section, Value } from "../../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent } from "../../lib/format";
 import type { PortfolioModel } from "../../types";
 
@@ -48,15 +48,15 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
               </ResponsiveContainer>
               <div className="donut-center"><Layers3 size={17} /><strong>{positions.length}</strong><small>criptos</small></div>
             </div>
-            <div className="chart-legend">
-              {positions.map((position, index) => <div key={position.ticker}><span className="legend-dot" style={{ background: CHART_COLORS[index % CHART_COLORS.length] }} /><strong>{position.ticker}</strong><span>{formatPercent(position.allocation)}</span></div>)}
+            <div className="chart-legend chart-legend--crypto">
+              {positions.map((position) => <div key={position.ticker}><CryptoLogo ticker={position.ticker} size="small" /><strong>{position.ticker}</strong><span>{formatPercent(position.allocation)}</span></div>)}
             </div>
           </div>
         </Section>
 
         <Section title="Movimentações recentes" subtitle={`${transactions.length} registros de cripto processados`} action={<button className="text-button" type="button" onClick={() => onNavigate("crypto-history")}>Ver histórico <ArrowRight size={15} /></button>}>
           <div className="compact-table">
-            {transactions.slice(0, 6).map((item) => <div key={item.id}><span className={`transaction-icon transaction-icon--${item.type}`}>{item.type === "buy" ? "+" : "−"}</span><span><strong>{item.ticker}</strong><small>{formatDate(item.date)}</small></span><span><strong>{formatCurrency(item.total)}</strong><small>{formatNumber(item.quantity, 8)} moedas</small></span></div>)}
+            {transactions.slice(0, 6).map((item) => <div key={item.id}><CryptoLogo ticker={item.ticker} size="compact" /><span><strong>{item.ticker}</strong><small>{item.type === "buy" ? "Compra" : "Venda"} · {formatDate(item.date)}</small></span><span><strong>{formatCurrency(item.total)}</strong><small>{formatNumber(item.quantity, 8)} moedas</small></span></div>)}
           </div>
           <div className="source-strip"><Bitcoin size={15} /> Cotações de Bitcoin e Ethereum provenientes da aba Cripto Base</div>
         </Section>
