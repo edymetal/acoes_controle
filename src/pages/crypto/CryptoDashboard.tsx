@@ -49,7 +49,7 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
               <div className="donut-center"><Layers3 size={17} /><strong>{positions.length}</strong><small>criptos</small></div>
             </div>
             <div className="chart-legend chart-legend--crypto">
-              {positions.map((position) => <div key={position.ticker}><CryptoLogo ticker={position.ticker} size="small" /><strong>{position.ticker}</strong><span>{formatPercent(position.allocation)}</span></div>)}
+              {positions.map((position) => <div key={position.ticker}><CryptoLogo ticker={position.ticker} size="small" /><span className="crypto-legend__asset"><strong>{position.name}</strong><small>{position.ticker}</small></span><span>{formatPercent(position.allocation)}</span></div>)}
             </div>
           </div>
         </Section>

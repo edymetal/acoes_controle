@@ -135,7 +135,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .crypto-logo svg { display: block; width: 100%; height: 100%; }
 .crypto-logo--compact { width: 31px; height: 31px; border-radius: 50%; }
 .crypto-logo--small { width: 24px; height: 24px; border-radius: 50%; }
-.chart-legend--crypto > div { grid-template-columns: 24px 1fr auto; }
+.chart-legend.chart-legend--crypto > div { grid-template-columns: 24px minmax(0, 1fr) auto; }.crypto-legend__asset { min-width: 0; display: flex; flex-direction: column; }.crypto-legend__asset strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.crypto-legend__asset small { margin-top: 1px; color: var(--muted-2); font-size: 11px; }
 .state-screen__card--inline { min-height: 280px; margin: 0 auto; }
 .hero-card > div:first-child { display: flex; flex-direction: column; }
 .hero-card > div:first-child > strong { margin: 7px 0 4px; font-size: clamp(32px, 4vw, 48px); letter-spacing: -.05em; }
