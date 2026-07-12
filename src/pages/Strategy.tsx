@@ -3,9 +3,44 @@ import { AlertTriangle, ArrowUpRight, Search, Sparkles, Target, TrendingDown } f
 import { EmptyState, MetricCard, SignalBadge, StockLogo } from "../components/Ui";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
-import type { PortfolioData, PortfolioModel, StrategyKind, StrategySettings } from "../types";
+import type { Asset, PortfolioData, PortfolioModel, StrategyKind, StrategySettings, StrategySignal } from "../types";
 
 type FilterKind = "all" | StrategyKind;
+
+function getRangeDetails(asset: Asset, signal: StrategySignal, settings: StrategySettings) {
+  const annual = asset.annual;
+  if (!annual || signal.rangePositionPercent === null) return null;
+
+  const annualRange = annual.max - annual.min;
+  const priceAt = (percent: number) => annual.min + annualRange * (percent / 100);
+  const currentPercent = signal.rangePositionPercent;
+  const sellStartPrice = annual.max * (1 - settings.sellDistanceFromHighPercent / 100);
+  const sellStartPercent = ((sellStartPrice - annual.min) / annualRange) * 100;
+
+  if (asset.currentPrice < annual.min) {
+    return { label: "Abaixo da mínima", currentPercent, priceLabel: `Abaixo de ${formatCurrency(annual.min)}` };
+  }
+  if (asset.currentPrice > annual.max) {
+    return { label: "Acima da máxima", currentPercent, priceLabel: `Acima de ${formatCurrency(annual.max)}` };
+  }
+  if (signal.kind === "sell") {
+    return { label: `${sellStartPercent.toFixed(1)}%–100%`, currentPercent, priceLabel: `${formatCurrency(sellStartPrice)}–${formatCurrency(annual.max)}` };
+  }
+
+  const boundaries = [
+    { lower: 0, upper: settings.buyZoneLowerPercent },
+    { lower: settings.buyZoneLowerPercent, upper: settings.buyZoneMiddlePercent },
+    { lower: settings.buyZoneMiddlePercent, upper: settings.buyZoneUpperPercent },
+    { lower: settings.buyZoneUpperPercent, upper: Math.max(settings.buyZoneUpperPercent, sellStartPercent) },
+  ];
+  const group = boundaries.find(({ lower, upper }) => currentPercent >= lower && currentPercent <= upper) ?? { lower: 0, upper: 100 };
+
+  return {
+    label: `${group.lower.toFixed(group.lower % 1 ? 1 : 0)}%–${group.upper.toFixed(group.upper % 1 ? 1 : 0)}%`,
+    currentPercent,
+    priceLabel: `${formatCurrency(priceAt(group.lower))}–${formatCurrency(priceAt(group.upper))}`,
+  };
+}
 
 export function Strategy({ data, model, settings }: { data: PortfolioData; model: PortfolioModel; settings: StrategySettings }) {
   const [filter, setFilter] = useState<FilterKind>("all");
@@ -54,6 +89,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
             const range = annual ? annual.max - annual.min : 0;
             const rangePosition = annual && range > 0 ? Math.max(0, Math.min(100, ((asset.currentPrice - annual.min) / range) * 100)) : 0;
             const profit = holding?.unrealized ?? 0;
+            const rangeDetails = getRangeDetails(asset, signal, settings);
             const style = { "--signal-strength": signal.strength } as CSSProperties;
             return (
               <article className={`strategy-card strategy-card--${signal.kind}`} style={style} key={asset.ticker}>
@@ -72,7 +108,10 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                   <div className="range-track"><i style={{ left: `${rangePosition}%` }} /><span className="range-track__fill" style={{ width: `${rangePosition}%` }} /></div>
                   <div className="range-labels"><span><small>Mínima</small>{formatCurrency(annual.min)}</span><span><small>Média</small>{formatCurrency(annual.average)}</span><span><small>Máxima</small>{formatCurrency(annual.max)}</span></div>
                 </> : <div className="range-unavailable">Histórico anual não disponível para este ativo.</div>}
-                <footer><span>{signal.description}</span><strong>Intensidade {Math.round(signal.strength * 100)}</strong></footer>
+                <footer>
+                  {rangeDetails ? <span className="strategy-card__range-info"><small>Faixa atual {rangeDetails.label}</small><strong>{formatPercent(rangeDetails.currentPercent / 100)} no intervalo anual</strong><em>Valores do grupo: {rangeDetails.priceLabel}</em></span> : <span>{signal.description}</span>}
+                  <b>Intensidade {Math.round(signal.strength * 100)}</b>
+                </footer>
               </article>
             );
           })}
