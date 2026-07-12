@@ -11,8 +11,11 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
   const [filter, setFilter] = useState<FilterKind>("all");
   const [search, setSearch] = useState("");
   const signals = useMemo(() => {
-    const positionValues = new Map(model.positions.map((position) => [position.ticker, position.marketValue]));
-    return data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings, positionValues.get(asset.ticker) ?? 0) }));
+    const positions = new Map(model.positions.map((position) => [position.ticker, position]));
+    return data.assets.map((asset) => {
+      const holding = positions.get(asset.ticker);
+      return { asset, holding, signal: getStrategySignal(asset, settings, holding?.marketValue ?? 0) };
+    });
   }, [data.assets, model.positions, settings]);
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -46,10 +49,11 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
         </div>
 
         {filtered.length ? <div className="strategy-grid">
-          {filtered.map(({ asset, signal }) => {
+          {filtered.map(({ asset, holding, signal }) => {
             const annual = asset.annual;
             const range = annual ? annual.max - annual.min : 0;
-            const position = annual && range > 0 ? Math.max(0, Math.min(100, ((asset.currentPrice - annual.min) / range) * 100)) : 0;
+            const rangePosition = annual && range > 0 ? Math.max(0, Math.min(100, ((asset.currentPrice - annual.min) / range) * 100)) : 0;
+            const profit = holding?.unrealized ?? 0;
             const style = { "--signal-strength": signal.strength } as CSSProperties;
             return (
               <article className={`strategy-card strategy-card--${signal.kind}`} style={style} key={asset.ticker}>
@@ -59,9 +63,13 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                   <span><small>Próxima operação</small><strong>{signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR" : "VENDER") : "AGUARDAR"}</strong></span>
                   <b>{signal.actionAmount > 0 ? formatCurrency(signal.actionAmount) : "—"}</b>
                 </div>
-                <div className="strategy-position"><span>Posição atual <strong>{formatCurrency(signal.positionValue)}</strong></span><span>Faixa <strong>{formatCurrency(settings.minimumPositionValue)}–{formatCurrency(settings.maximumPositionValue)}</strong></span></div>
+                <div className="strategy-position">
+                  <span><small>Comprado</small><strong>{formatCurrency(holding?.costBasis ?? 0)}</strong></span>
+                  <span><small>Atual</small><strong>{formatCurrency(holding?.marketValue ?? 0)}</strong></span>
+                  <span className={profit > 0 ? "value--positive" : profit < 0 ? "value--negative" : ""}><small>Lucro</small><strong>{formatCurrency(profit)}</strong></span>
+                </div>
                 {annual ? <>
-                  <div className="range-track"><i style={{ left: `${position}%` }} /><span className="range-track__fill" style={{ width: `${position}%` }} /></div>
+                  <div className="range-track"><i style={{ left: `${rangePosition}%` }} /><span className="range-track__fill" style={{ width: `${rangePosition}%` }} /></div>
                   <div className="range-labels"><span><small>Mínima</small>{formatCurrency(annual.min)}</span><span><small>Média</small>{formatCurrency(annual.average)}</span><span><small>Máxima</small>{formatCurrency(annual.max)}</span></div>
                 </> : <div className="range-unavailable">Histórico anual não disponível para este ativo.</div>}
                 <footer><span>{signal.description}</span><strong>Intensidade {Math.round(signal.strength * 100)}</strong></footer>
