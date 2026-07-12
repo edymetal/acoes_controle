@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { BadgeDollarSign, Filter, HandCoins, Search, ShoppingCart } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { BadgeDollarSign, Filter, HandCoins, Search, ShoppingCart, WalletCards, X } from "lucide-react";
 import { EmptyState, MetricCard, Section, Value } from "../../components/Ui";
 import { formatBrl, formatDate, formatNumber, formatUsdFromBrl } from "../../lib/format";
 import type { PortfolioModel, TransactionType } from "../../types";
@@ -8,11 +8,45 @@ export function FiiHistory({ model, usdRate }: { model: PortfolioModel; usdRate:
   const [search, setSearch] = useState("");
   const [type, setType] = useState<"all" | TransactionType>("all");
   const [ticker, setTicker] = useState("");
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
   const tickers = useMemo(() => [...new Set(model.transactions.map((item) => item.ticker))].sort(), [model.transactions]);
   const rows = useMemo(() => {
     const query = search.trim().toUpperCase();
     return model.transactions.filter((item) => (!query || item.ticker.includes(query)) && (!ticker || item.ticker === ticker) && (type === "all" || item.type === type));
   }, [model.transactions, search, ticker, type]);
+
+  const selectedSummary = useMemo(() => {
+    if (!selectedTicker) return null;
+    const items = model.transactions.filter((item) => item.ticker === selectedTicker);
+    const purchases = items.filter((item) => item.type === "buy");
+    const sales = items.filter((item) => item.type === "sell");
+    const position = model.positions.find((item) => item.ticker === selectedTicker);
+    return {
+      ticker: selectedTicker,
+      name: position?.name ?? selectedTicker,
+      purchaseTotal: purchases.reduce((sum, item) => sum + item.total, 0),
+      saleTotal: sales.reduce((sum, item) => sum + item.total, 0),
+      realizedProfit: sales.reduce((sum, item) => sum + (item.realizedProfit ?? 0), 0),
+      purchaseQuantity: purchases.reduce((sum, item) => sum + item.quantity, 0),
+      saleQuantity: sales.reduce((sum, item) => sum + item.quantity, 0),
+      purchaseCount: purchases.length,
+      saleCount: sales.length,
+      openQuantity: position?.quantity ?? 0,
+      marketValue: position?.marketValue ?? 0,
+    };
+  }, [model.positions, model.transactions, selectedTicker]);
+
+  useEffect(() => {
+    if (!selectedTicker) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setSelectedTicker(null); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [selectedTicker]);
 
   return <div className="page-stack">
     <section className="metrics-grid metrics-grid--three">
@@ -28,8 +62,23 @@ export function FiiHistory({ model, usdRate }: { model: PortfolioModel; usdRate:
       </div>
       <div className="filter-summary"><span><strong>{rows.length}</strong> movimentações de FIIs</span></div>
       {rows.length ? <div className="table-wrap"><table className="history-table"><thead><tr><th>Data</th><th>Tipo</th><th>Fundo</th><th>Cotas</th><th>Preço unitário</th><th>Valor total</th><th>Custo descontado</th><th>Lucro realizado</th></tr></thead><tbody>
-        {rows.map((item) => <tr key={item.id}><td>{formatDate(item.date)}</td><td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td><td><strong>{item.ticker}</strong></td><td>{formatNumber(item.quantity, 4)}</td><td>{formatBrl(item.unitPrice)}</td><td><strong>{formatBrl(item.total)}</strong></td><td>{item.type === "sell" && item.costBasis !== null ? formatBrl(item.costBasis) : <span className="table-dash">—</span>}</td><td>{item.type === "sell" && item.realizedProfit !== null ? <Value value={item.realizedProfit}><strong>{formatBrl(item.realizedProfit)}</strong></Value> : <span className="table-dash">—</span>}</td></tr>)}
+        {rows.map((item) => <tr key={item.id}><td>{formatDate(item.date)}</td><td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td><td><button className="ticker-link" type="button" onClick={() => setSelectedTicker(item.ticker)}>{item.ticker}</button></td><td>{formatNumber(item.quantity, 4)}</td><td>{formatBrl(item.unitPrice)}</td><td><strong>{formatBrl(item.total)}</strong></td><td>{item.type === "sell" && item.costBasis !== null ? formatBrl(item.costBasis) : <span className="table-dash">—</span>}</td><td>{item.type === "sell" && item.realizedProfit !== null ? <Value value={item.realizedProfit}><strong>{formatBrl(item.realizedProfit)}</strong></Value> : <span className="table-dash">—</span>}</td></tr>)}
       </tbody></table></div> : <EmptyState title="Nenhuma movimentação encontrada" description="Remova ou ajuste os filtros aplicados." />}
     </Section>
+    {selectedSummary && <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedTicker(null); }}>
+      <section className="asset-modal" role="dialog" aria-modal="true" aria-labelledby="fii-modal-title">
+        <header className="asset-modal__header">
+          <div><span className="ticker-avatar ticker-avatar--fii">{selectedSummary.ticker.slice(0, 2)}</span><span><small>RESUMO HISTÓRICO</small><h2 id="fii-modal-title">{selectedSummary.ticker} · {selectedSummary.name}</h2></span></div>
+          <button type="button" aria-label="Fechar resumo do fundo" onClick={() => setSelectedTicker(null)}><X size={21} /></button>
+        </header>
+        <div className="asset-modal__metrics">
+          <article><ShoppingCart size={20} /><span><small>Total comprado</small><strong>{formatBrl(selectedSummary.purchaseTotal)}</strong><em>{selectedSummary.purchaseCount} operações · {formatNumber(selectedSummary.purchaseQuantity, 4)} cotas</em></span></article>
+          <article><HandCoins size={20} /><span><small>Total vendido</small><strong>{formatBrl(selectedSummary.saleTotal)}</strong><em>{selectedSummary.saleCount} operações · {formatNumber(selectedSummary.saleQuantity, 4)} cotas</em></span></article>
+          <article className="asset-modal__profit"><BadgeDollarSign size={20} /><span><small>Lucro realizado</small><Value value={selectedSummary.realizedProfit}><strong>{formatBrl(selectedSummary.realizedProfit)}</strong></Value><em>Valor já descontado do custo de compra</em></span></article>
+          <article><WalletCards size={20} /><span><small>Posição atual</small><strong>{formatNumber(selectedSummary.openQuantity, 4)} cotas</strong><em>{formatBrl(selectedSummary.marketValue)} em valor de mercado</em></span></article>
+        </div>
+        <p className="asset-modal__note">O lucro realizado usa o custo médio disponível na data de cada venda. A posição atual não interfere no resultado das vendas já concluídas.</p>
+      </section>
+    </div>}
   </div>;
 }
