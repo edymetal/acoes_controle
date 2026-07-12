@@ -9,7 +9,7 @@ export function FixedIncomeDashboard({ model, usdRate, onNavigate }: { model: Fi
   return <div className="page-stack">
     {model.warnings.length > 0 && <div className="refresh-message refresh-message--warning" role="status">{model.warnings.length === 1 ? model.warnings[0] : `${model.warnings.length} avisos foram identificados na renda fixa.`}</div>}
     <section className="hero-card hero-card--fixed-income">
-      <div><span className="eyebrow">VALOR LÍQUIDO A RECEBER</span><strong>{formatBrl(metrics.netAmount)}</strong><small className="hero-card__converted">{formatUsdFromBrl(metrics.netAmount, usdRate)}</small><p><Value value={metrics.profit}>{formatBrl(metrics.profit)} ({formatPercent(metrics.returnRate)})</Value><span> de lucro previsto</span></p></div>
+      <div><span className="eyebrow">VALOR LÍQUIDO A RECEBER</span><strong>{formatBrl(metrics.netAmount)}</strong><small className="hero-card__converted currency-conversion">{formatUsdFromBrl(metrics.netAmount, usdRate)}</small><p><Value value={metrics.profit}>{formatBrl(metrics.profit)} ({formatPercent(metrics.returnRate)})</Value><span> de lucro previsto</span></p></div>
       <div className="hero-card__summary"><span><small>Total aplicado</small><strong>{formatBrl(metrics.investedAmount)}</strong></span><span><small>Ativos</small><strong>{metrics.assetCount}</strong></span><span><small>Meses cobertos</small><strong>{metrics.coveredMonths}/12</strong></span></div>
     </section>
     <section className="metrics-grid">

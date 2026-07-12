@@ -18,7 +18,7 @@ export function FiiDashboard({ model, usdRate, onNavigate }: { model: PortfolioM
         <div>
           <span className="eyebrow">VALOR ATUAL DA CARTEIRA DE FIIs</span>
           <strong>{formatBrl(metrics.marketValue)}</strong>
-          <small className="hero-card__converted">{formatUsdFromBrl(metrics.marketValue, usdRate)}</small>
+          <small className="hero-card__converted currency-conversion">{formatUsdFromBrl(metrics.marketValue, usdRate)}</small>
           <p><Value value={metrics.unrealizedProfit}>{formatBrl(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas cotas abertas</span></p>
         </div>
         <div className="hero-card__summary">

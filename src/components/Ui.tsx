@@ -21,7 +21,7 @@ export function MetricCard({ label, value, secondaryValue, icon, helper, change,
         <span>{label}</span>
         <span className="metric-card__icon">{icon}</span>
       </div>
-      <div className="metric-card__value"><strong>{value}</strong>{secondaryValue && <small>{secondaryValue}</small>}</div>
+      <div className="metric-card__value"><strong>{value}</strong>{secondaryValue && <small className="currency-conversion">{secondaryValue}</small>}</div>
       {(helper || change !== undefined) && (
         <div className={`metric-card__helper value--${tone}`}>
           {change !== undefined && (tone === "positive" ? <ArrowUpRight size={15} /> : tone === "negative" ? <ArrowDownRight size={15} /> : <Minus size={15} />)}
