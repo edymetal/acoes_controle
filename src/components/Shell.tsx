@@ -17,10 +17,12 @@ import {
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
 
-export type PageId = "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
+export type PageId = "overview" | "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
 
-type Topic = "stocks" | "fiis" | "crypto" | "fixed-income";
+type Topic = "overview" | "stocks" | "fiis" | "crypto" | "fixed-income";
 interface PageDefinition { id: PageId; label: string; description: string; icon: ReactNode; topic: Topic }
+
+const overviewPage: PageDefinition = { id: "overview", label: "Visão geral", description: "Panorama consolidado de todos os seus investimentos", icon: <LayoutDashboard size={19} />, topic: "overview" };
 
 const stockPages: PageDefinition[] = [
   { id: "dashboard", label: "Dashboard", description: "Visão consolidada da sua carteira", icon: <LayoutDashboard size={19} />, topic: "stocks" },
@@ -48,7 +50,7 @@ const fixedIncomePages: PageDefinition[] = [
   { id: "fixed-income-ladder", label: "Escada de vencimentos", description: "Cobertura dos 12 meses e oportunidades para completar a estratégia", icon: <CalendarRange size={19} />, topic: "fixed-income" },
 ];
 
-const pages = [...stockPages, ...fiiPages, ...cryptoPages, ...fixedIncomePages];
+const pages = [overviewPage, ...stockPages, ...fiiPages, ...cryptoPages, ...fixedIncomePages];
 
 interface ShellProps {
   page: PageId;
@@ -63,9 +65,11 @@ interface ShellProps {
 export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
   const currentTopic = current.topic;
-  const [openTopic, setOpenTopic] = useState<Topic>(currentTopic);
+  const [openTopic, setOpenTopic] = useState<Topic>(currentTopic === "overview" ? "stocks" : currentTopic);
 
-  useEffect(() => setOpenTopic(currentTopic), [currentTopic]);
+  useEffect(() => {
+    if (currentTopic !== "overview") setOpenTopic(currentTopic);
+  }, [currentTopic]);
 
   const renderTopic = (topic: Topic, label: string, topicPages: PageDefinition[]) => {
     const isOpen = openTopic === topic;
@@ -109,6 +113,14 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           <span><strong>Controle</strong><small>de Investimentos</small></span>
         </div>
         <nav className="main-nav" aria-label="Navegação principal">
+          <button
+            type="button"
+            className={`main-nav__overview ${page === "overview" ? "active" : ""}`}
+            aria-current={page === "overview" ? "page" : undefined}
+            onClick={() => onPageChange("overview")}
+          >
+            {overviewPage.icon}<span>{overviewPage.label}</span>
+          </button>
           {renderTopic("stocks", "AÇÕES", stockPages)}
           {renderTopic("fiis", "FIIs", fiiPages)}
           {renderTopic("crypto", "CRIPTO", cryptoPages)}
@@ -123,7 +135,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
       <div className="workspace">
         <header className="topbar">
           <div className="topbar__title">
-            <span className="eyebrow"><Activity size={14} /> {current.topic === "fiis" ? "FUNDOS IMOBILIÁRIOS · B3" : current.topic === "crypto" ? "MERCADO DE CRIPTOMOEDAS · USD" : current.topic === "fixed-income" ? "RENDA FIXA · BRL" : "MERCADO AMERICANO"}</span>
+            <span className="eyebrow"><Activity size={14} /> {current.topic === "overview" ? "TODOS OS INVESTIMENTOS" : current.topic === "fiis" ? "FUNDOS IMOBILIÁRIOS · B3" : current.topic === "crypto" ? "MERCADO DE CRIPTOMOEDAS · USD" : current.topic === "fixed-income" ? "RENDA FIXA · BRL" : "MERCADO AMERICANO"}</span>
             <h1>{current.label}</h1>
             <p>{current.description}</p>
           </div>

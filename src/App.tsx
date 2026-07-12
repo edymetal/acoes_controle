@@ -9,6 +9,7 @@ import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then((module) => ({ default: module.Dashboard })));
+const Overview = lazy(() => import("./pages/Overview").then((module) => ({ default: module.Overview })));
 const Portfolio = lazy(() => import("./pages/Portfolio").then((module) => ({ default: module.Portfolio })));
 const History = lazy(() => import("./pages/History").then((module) => ({ default: module.History })));
 const Strategy = lazy(() => import("./pages/Strategy").then((module) => ({ default: module.Strategy })));
@@ -23,7 +24,7 @@ const FixedIncomeDashboard = lazy(() => import("./pages/fixed-income/FixedIncome
 const FixedIncomePortfolio = lazy(() => import("./pages/fixed-income/FixedIncomePortfolio").then((module) => ({ default: module.FixedIncomePortfolio })));
 const FixedIncomeLadder = lazy(() => import("./pages/fixed-income/FixedIncomeLadder").then((module) => ({ default: module.FixedIncomeLadder })));
 
-const validPages: PageId[] = ["dashboard", "portfolio", "history", "strategy", "settings", "fii-dashboard", "fii-portfolio", "fii-history", "crypto-dashboard", "crypto-portfolio", "crypto-history", "fixed-income-dashboard", "fixed-income-portfolio", "fixed-income-ladder"];
+const validPages: PageId[] = ["overview", "dashboard", "portfolio", "history", "strategy", "settings", "fii-dashboard", "fii-portfolio", "fii-history", "crypto-dashboard", "crypto-portfolio", "crypto-history", "fixed-income-dashboard", "fixed-income-portfolio", "fixed-income-ladder"];
 type RefreshMessage = { kind: "success" | "warning" | "error"; text: string };
 
 async function fetchPortfolio(cacheBust = false, signal?: AbortSignal) {
@@ -69,7 +70,7 @@ async function fetchFixedIncome(cacheBust = false, signal?: AbortSignal) {
 
 function initialPage(): PageId {
   const hash = window.location.hash.replace("#", "") as PageId;
-  return validPages.includes(hash) ? hash : "dashboard";
+  return validPages.includes(hash) ? hash : "overview";
 }
 
 export default function App() {
@@ -193,6 +194,7 @@ export default function App() {
   return (
     <Shell page={page} onPageChange={navigate} updatedAt={page.startsWith("fii-") ? fiiData?.generatedAt ?? data.generatedAt : page.startsWith("crypto-") ? cryptoData?.generatedAt ?? data.generatedAt : page.startsWith("fixed-income-") ? fixedIncomeData?.generatedAt ?? data.generatedAt : data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData}>
       <Suspense fallback={<div className="page-loader"><LoaderCircle size={24} /> Carregando painel…</div>}>
+        {page === "overview" && <Overview stockModel={model} fiiModel={fiiModel} cryptoModel={cryptoModel} fixedIncomeModel={fixedIncomeModel} brlPerUsd={fiiData?.exchangeRate.brlPerUsd ?? fixedIncomeData?.exchangeRate.brlPerUsd ?? null} errors={{ fiis: fiiError, crypto: cryptoError, fixedIncome: fixedIncomeError }} onNavigate={navigate} />}
         {page === "dashboard" && <Dashboard data={data} model={model} settings={settings} onNavigate={navigate} />}
         {page === "portfolio" && <Portfolio model={model} />}
         {page === "history" && <History model={model} />}
