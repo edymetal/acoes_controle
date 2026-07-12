@@ -1,5 +1,5 @@
 import { useMemo, useState, type CSSProperties } from "react";
-import { AlertTriangle, ArrowUpRight, Search, Sparkles, Target, TrendingDown } from "lucide-react";
+import { ArrowUpRight, Search, Sparkles, Target, TrendingDown } from "lucide-react";
 import { EmptyState, MetricCard, SignalBadge, StockLogo } from "../components/Ui";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
@@ -68,7 +68,6 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
     <div className="page-stack">
       <section className="strategy-intro">
         <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão mostra o valor exato da próxima operação e respeita a faixa configurada por ação.</p></div>
-        <span className="strategy-intro__disclaimer"><AlertTriangle size={17} /> Indicador matemático, não recomendação de investimento.</span>
       </section>
 
       <section className="metrics-grid metrics-grid--three">

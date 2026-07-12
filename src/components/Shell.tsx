@@ -15,6 +15,7 @@ import {
   Landmark,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
+import packageJson from "../../package.json";
 
 export type PageId = "overview" | "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
 
@@ -112,7 +113,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
       <aside className="sidebar">
         <div className="brand">
           <span className="brand__mark"><BarChart3 size={23} /></span>
-          <span><strong>Controle</strong><small>de Investimentos</small></span>
+          <span><strong>Controle</strong><small>de Investimentos</small><span className="brand__version">v{packageJson.version}</span></span>
         </div>
         <nav className="main-nav" aria-label="Navegação principal">
           <button
