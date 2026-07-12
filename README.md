@@ -133,7 +133,7 @@ pnpm check      # testes + build
 
 O workflow também roda automaticamente a cada 6 horas e publica um novo artefato somente se a sincronização, os testes e o build terminarem com sucesso.
 
-Para publicar o login, defina `VITE_FIREBASE_API_KEY` em **Settings → Secrets and variables → Actions → Variables** com uma chave Web nova do Firebase. Restrinja essa chave no Google Cloud às APIs e origens necessárias.
+Para publicar o login, defina `VITE_FIREBASE_API_KEY` em **Settings → Secrets and variables → Actions → Secrets** com uma chave Web nova do Firebase. Restrinja essa chave no Google Cloud às APIs e origens necessárias.
 
 ## Estrutura
 
