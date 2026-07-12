@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
-import { formatCurrency, formatDate, formatNumber } from "../lib/format";
+import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
 import type { PortfolioModel, ProcessedTransaction, TransactionType } from "../types";
 
 const PAGE_SIZE = 15;
@@ -32,6 +32,9 @@ export function History({ model }: { model: PortfolioModel }) {
   const [grouped, setGrouped] = useState(false);
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const realizedProfitShare = model.metrics.totalProfit !== 0
+    ? model.metrics.realizedProfit / model.metrics.totalProfit
+    : null;
 
   const tickers = useMemo(
     () => [...new Set(model.transactions.map((item) => item.ticker))].sort(),
@@ -153,7 +156,7 @@ export function History({ model }: { model: PortfolioModel }) {
       <section className="metrics-grid metrics-grid--three">
         <MetricCard label="Total comprado" value={formatCurrency(model.metrics.historicalPurchases)} icon={<ShoppingCart size={19} />} helper={`${model.transactions.filter((item) => item.type === "buy").length} compras`} accent="blue" />
         <MetricCard label="Total vendido" value={formatCurrency(model.metrics.historicalSales)} icon={<HandCoins size={19} />} helper={`${model.transactions.filter((item) => item.type === "sell").length} vendas`} accent="violet" />
-        <MetricCard label="Lucro realizado" value={formatCurrency(model.metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Após descontar o custo das compras" change={model.metrics.realizedProfit} accent="green" />
+        <MetricCard label="Lucro realizado" value={formatCurrency(model.metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper={realizedProfitShare === null ? "Após descontar o custo das compras" : `${formatPercent(realizedProfitShare)} do lucro total`} change={model.metrics.realizedProfit} accent="green" />
       </section>
 
       <Section title="Histórico de compras e vendas" subtitle="Consulte, agrupe e analise todas as movimentações registradas">
