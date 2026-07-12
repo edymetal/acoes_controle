@@ -66,7 +66,7 @@ interface ShellProps {
 export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
   const currentTopic = current.topic;
-  const [openTopic, setOpenTopic] = useState<Topic>(currentTopic === "overview" ? "stocks" : currentTopic);
+  const [openTopic, setOpenTopic] = useState<Topic | null>(currentTopic === "overview" ? null : currentTopic);
 
   useEffect(() => {
     if (currentTopic !== "overview") setOpenTopic(currentTopic);
@@ -83,7 +83,10 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           className="main-nav__topic"
           aria-expanded={isOpen}
           aria-controls={panelId}
-          onClick={() => setOpenTopic(topic)}
+          onClick={() => {
+            setOpenTopic(topic);
+            onPageChange(topicPages[0].id);
+          }}
         >
           <span>{label}</span><ChevronDown size={17} aria-hidden="true" />
         </button>
