@@ -3,6 +3,36 @@ import { AlertCircle, ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import type { StrategySignal } from "../types";
 import { toneForValue } from "../lib/format";
 
+const stockLogoDomains: Record<string, string> = {
+  AAPL: "apple.com", ADBE: "adobe.com", AMZN: "amazon.com", AZN: "astrazeneca.com", BAC: "bankofamerica.com",
+  "BRK.B": "berkshirehathaway.com", CAT: "caterpillar.com", CSCO: "cisco.com", CVX: "chevron.com", DIS: "disney.com",
+  GE: "ge.com", GOOGL: "google.com", IBM: "ibm.com", INTC: "intel.com", JNJ: "jnj.com",
+  JPM: "jpmorganchase.com", KO: "coca-cola.com", LLY: "lilly.com", MA: "mastercard.com", MCD: "mcdonalds.com",
+  META: "meta.com", MSFT: "microsoft.com", NKE: "nike.com", NVDA: "nvidia.com", NVS: "novartis.com",
+  ORCL: "oracle.com", PEP: "pepsico.com", PFE: "pfizer.com", PG: "pg.com", SPCX: "spacex.com",
+  T: "att.com", TM: "toyota.com", TSLA: "tesla.com", UNH: "unitedhealthgroup.com", UPS: "ups.com",
+  V: "visa.com", VOD: "vodafone.com", XOM: "exxonmobil.com",
+};
+
+export function StockLogo({ ticker }: { ticker: string }) {
+  const domain = stockLogoDomains[ticker];
+
+  return (
+    <span className="ticker-avatar stock-logo" title={ticker}>
+      <span className="stock-logo__fallback" aria-hidden="true">{ticker.slice(0, 2)}</span>
+      {domain && <img src={`https://cdn.tickerlogos.com/${domain}`} data-fallback={`https://www.google.com/s2/favicons?domain=${domain}&sz=128`} alt={`Logo de ${ticker}`} onError={(event) => {
+        const fallback = event.currentTarget.dataset.fallback;
+        if (fallback) {
+          event.currentTarget.src = fallback;
+          delete event.currentTarget.dataset.fallback;
+          return;
+        }
+        event.currentTarget.style.display = "none";
+      }} />}
+    </span>
+  );
+}
+
 interface MetricCardProps {
   label: string;
   value: string;

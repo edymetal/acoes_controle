@@ -1,6 +1,6 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { AlertTriangle, ArrowUpRight, Search, Sparkles, Target, TrendingDown } from "lucide-react";
-import { EmptyState, MetricCard, SignalBadge } from "../components/Ui";
+import { EmptyState, MetricCard, SignalBadge, StockLogo } from "../components/Ui";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
 import type { PortfolioData, StrategyKind, StrategySettings } from "../types";
@@ -50,7 +50,7 @@ export function Strategy({ data, settings }: { data: PortfolioData; settings: St
             const style = { "--signal-strength": signal.strength } as CSSProperties;
             return (
               <article className={`strategy-card strategy-card--${signal.kind}`} style={style} key={asset.ticker}>
-                <header><span className="ticker-avatar">{asset.ticker.slice(0, 2)}</span><span><strong>{asset.ticker}</strong><small>{asset.name}</small></span><SignalBadge signal={signal} /></header>
+                <header><StockLogo ticker={asset.ticker} /><span><strong>{asset.ticker}</strong><small>{asset.name}</small></span><SignalBadge signal={signal} /></header>
                 <div className="strategy-card__price"><span><small>Cotação atual</small><strong>{formatCurrency(asset.currentPrice)}</strong></span>{signal.distanceToAverage !== null && <span className={signal.distanceToAverage < 0 ? "value--positive" : ""}><small>vs. média</small><strong>{formatPercent(signal.distanceToAverage)}</strong></span>}</div>
                 {annual ? <>
                   <div className="range-track"><i style={{ left: `${position}%` }} /><span className="range-track__fill" style={{ width: `${position}%` }} /></div>

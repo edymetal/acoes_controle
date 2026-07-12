@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { BriefcaseBusiness, Search, SlidersHorizontal, TrendingUp, WalletCards } from "lucide-react";
-import { EmptyState, MetricCard, Section, Value } from "../components/Ui";
+import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatNumber, formatPercent } from "../lib/format";
 import type { PortfolioModel } from "../types";
 
@@ -40,7 +40,7 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
               <tbody>
                 {positions.map((position) => (
                   <tr key={position.ticker}>
-                    <td><div className="asset-cell"><span className="ticker-avatar">{position.ticker.slice(0, 2)}</span><span><strong>{position.ticker}</strong><small>{position.name} · {position.sector}</small></span></div></td>
+                    <td><div className="asset-cell"><StockLogo ticker={position.ticker} /><span><strong>{position.ticker}</strong><small>{position.name} · {position.sector}</small></span></div></td>
                     <td>{formatNumber(position.quantity, 6)}</td>
                     <td>{formatCurrency(position.averageCost)}</td>
                     <td>{formatCurrency(position.currentPrice)}</td>
@@ -58,4 +58,3 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
     </div>
   );
 }
-

@@ -1,7 +1,7 @@
 import { ArrowRight, BadgeDollarSign, CircleDollarSign, Landmark, Layers3, TrendingUp, WalletCards } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { PageId } from "../components/Shell";
-import { MetricCard, Section, SignalBadge, Value } from "../components/Ui";
+import { MetricCard, Section, SignalBadge, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
 import type { PortfolioData, PortfolioModel, StrategySettings } from "../types";
@@ -102,7 +102,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
           <div className="signal-list">
             {[...buySignals.slice(0, 3), ...breakoutSignals.slice(0, 2)].slice(0, 5).map(({ asset, signal }) => (
               <div className="signal-row" key={asset.ticker}>
-                <span className="ticker-avatar">{asset.ticker.slice(0, 2)}</span>
+                <StockLogo ticker={asset.ticker} />
                 <span className="signal-row__name"><strong>{asset.ticker}</strong><small>{asset.name}</small></span>
                 <SignalBadge signal={signal} />
                 <span className="signal-row__price"><strong>{formatCurrency(asset.currentPrice)}</strong><small>{signal.description}</small></span>

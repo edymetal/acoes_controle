@@ -169,6 +169,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .signal-list { display: flex; flex-direction: column; }
 .signal-row { min-width: 0; display: grid; grid-template-columns: 35px minmax(85px, 1fr) auto minmax(120px, 1.1fr); gap: 10px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
 .signal-row:last-child { border: 0; }.ticker-avatar { flex: 0 0 auto; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 11px; color: #bfefff; background: linear-gradient(145deg, rgba(86, 216, 255, .15), rgba(124, 140, 255, .1)); font-size: 13px; font-weight: 800; }
+.stock-logo { position: relative; overflow: hidden; background: #f8fbff; }
+.stock-logo__fallback { color: #1e3b5c; }
+.stock-logo img { position: absolute; inset: 7px; width: calc(100% - 14px); height: calc(100% - 14px); object-fit: contain; }
 .signal-row__name, .signal-row__price { min-width: 0; display: flex; flex-direction: column; }.signal-row__name strong, .signal-row__price strong { font-size: 15px; }.signal-row__name small, .signal-row__price small { overflow: hidden; color: var(--muted); font-size: 12px; margin-top: 4px; text-overflow: ellipsis; white-space: nowrap; }.signal-row__price { text-align: right; }
 .signal-badge { display: inline-flex; width: max-content; padding: 6px 10px; border-radius: 99px; font-size: 12px; font-weight: 800; white-space: nowrap; }
 .signal-badge--sell { color: #ffca85; background: rgba(255, 184, 107, .1); }

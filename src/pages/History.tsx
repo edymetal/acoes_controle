@@ -11,7 +11,7 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
-import { EmptyState, MetricCard, Section, Value } from "../components/Ui";
+import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatDate, formatNumber } from "../lib/format";
 import type { PortfolioModel, ProcessedTransaction, TransactionType } from "../types";
 
@@ -201,7 +201,7 @@ export function History({ model }: { model: PortfolioModel }) {
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedTicker(null); }}>
           <section className="asset-modal" role="dialog" aria-modal="true" aria-labelledby="asset-modal-title">
             <header className="asset-modal__header">
-              <div><span className="ticker-avatar">{selectedSummary.ticker.slice(0, 2)}</span><span><small>RESUMO HISTÓRICO</small><h2 id="asset-modal-title">{selectedSummary.ticker} · {selectedSummary.name}</h2></span></div>
+              <div><StockLogo ticker={selectedSummary.ticker} /><span><small>RESUMO HISTÓRICO</small><h2 id="asset-modal-title">{selectedSummary.ticker} · {selectedSummary.name}</h2></span></div>
               <button type="button" aria-label="Fechar resumo da ação" onClick={() => setSelectedTicker(null)}><X size={21} /></button>
             </header>
             <div className="asset-modal__metrics">
