@@ -26,16 +26,16 @@ const TOPICS = [
 export function Overview({ stockModel, fiiModel, cryptoModel, fixedIncomeModel, brlPerUsd, errors, onNavigate }: OverviewProps) {
   const rate = brlPerUsd && brlPerUsd > 0 ? brlPerUsd : null;
   const topicData = {
-    stocks: { value: stockModel.metrics.marketValue, result: stockModel.metrics.totalProfit, rate: stockModel.metrics.openReturn, count: stockModel.metrics.openPositions, detail: "posições abertas", ready: true },
-    fiis: { value: fiiModel?.metrics.marketValue ?? 0, result: fiiModel?.metrics.totalProfit ?? 0, rate: fiiModel?.metrics.openReturn ?? 0, count: fiiModel?.metrics.openPositions ?? 0, detail: "fundos na carteira", ready: Boolean(fiiModel) },
-    crypto: { value: cryptoModel?.metrics.marketValue ?? 0, result: cryptoModel?.metrics.totalProfit ?? 0, rate: cryptoModel?.metrics.openReturn ?? 0, count: cryptoModel?.metrics.openPositions ?? 0, detail: "moedas na carteira", ready: Boolean(cryptoModel) },
-    fixedIncome: { value: fixedIncomeModel?.metrics.netAmount ?? 0, result: fixedIncomeModel?.metrics.profit ?? 0, rate: fixedIncomeModel?.metrics.returnRate ?? 0, count: fixedIncomeModel?.metrics.assetCount ?? 0, detail: "aplicações ativas", ready: Boolean(fixedIncomeModel) },
+    stocks: { value: stockModel.metrics.marketValue, consolidatedValue: stockModel.metrics.marketValue, result: stockModel.metrics.totalProfit, consolidatedResult: stockModel.metrics.totalProfit, rate: stockModel.metrics.openReturn, count: stockModel.metrics.openPositions, detail: "posições abertas", ready: true },
+    fiis: { value: fiiModel?.metrics.marketValue ?? 0, consolidatedValue: fiiModel?.metrics.marketValue ?? 0, result: fiiModel?.metrics.totalProfit ?? 0, consolidatedResult: fiiModel?.metrics.totalProfit ?? 0, rate: fiiModel?.metrics.openReturn ?? 0, count: fiiModel?.metrics.openPositions ?? 0, detail: "fundos na carteira", ready: Boolean(fiiModel) },
+    crypto: { value: cryptoModel?.metrics.marketValue ?? 0, consolidatedValue: cryptoModel?.metrics.marketValue ?? 0, result: cryptoModel?.metrics.totalProfit ?? 0, consolidatedResult: cryptoModel?.metrics.totalProfit ?? 0, rate: cryptoModel?.metrics.openReturn ?? 0, count: cryptoModel?.metrics.openPositions ?? 0, detail: "moedas na carteira", ready: Boolean(cryptoModel) },
+    fixedIncome: { value: fixedIncomeModel?.metrics.netAmount ?? 0, consolidatedValue: fixedIncomeModel?.metrics.investedAmount ?? 0, result: fixedIncomeModel?.metrics.profit ?? 0, consolidatedResult: 0, rate: fixedIncomeModel?.metrics.returnRate ?? 0, count: fixedIncomeModel?.metrics.assetCount ?? 0, detail: "aplicações ativas", ready: Boolean(fixedIncomeModel) },
   };
   const toUsd = (value: number, currency: "USD" | "BRL") => currency === "USD" ? value : rate ? value / rate : 0;
   const availableTopics = TOPICS.filter((topic) => topicData[topic.key].ready && (topic.currency === "USD" || rate));
-  const totalValue = availableTopics.reduce((sum, topic) => sum + toUsd(topicData[topic.key].value, topic.currency), 0);
-  const totalResult = availableTopics.reduce((sum, topic) => sum + toUsd(topicData[topic.key].result, topic.currency), 0);
-  const allocation = availableTopics.map((topic) => ({ name: topic.label, value: toUsd(topicData[topic.key].value, topic.currency), color: topic.color }));
+  const totalValue = availableTopics.reduce((sum, topic) => sum + toUsd(topicData[topic.key].consolidatedValue, topic.currency), 0);
+  const totalResult = availableTopics.reduce((sum, topic) => sum + toUsd(topicData[topic.key].consolidatedResult, topic.currency), 0);
+  const allocation = availableTopics.map((topic) => ({ name: topic.label, value: toUsd(topicData[topic.key].consolidatedValue, topic.currency), color: topic.color }));
   const hasCompleteConsolidation = Boolean(fiiModel && cryptoModel && fixedIncomeModel && rate);
 
   return (
@@ -44,7 +44,8 @@ export function Overview({ stockModel, fiiModel, cryptoModel, fixedIncomeModel, 
         <div>
           <span className="eyebrow">PATRIMÔNIO CONSOLIDADO</span>
           <strong>{formatCurrency(totalValue)}</strong>
-          <p><Value value={totalResult}>{formatCurrency(totalResult)}</Value><span> de resultado total entre as classes</span></p>
+          <p><Value value={totalResult}>{formatCurrency(totalResult)}</Value><span> de resultado acumulado, sem projeções futuras</span></p>
+          <small className="overview-hero__notice">Renda fixa entra no patrimônio pelo valor aplicado; o valor futuro permanece separado no cartão da classe.</small>
           {!hasCompleteConsolidation && <small className="overview-hero__notice">Total parcial enquanto todas as bases e a cotação do dólar são carregadas.</small>}
         </div>
         <div className="overview-hero__stats">

@@ -25,6 +25,19 @@ const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, v
 export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): PortfolioModel {
   const states = new Map<string, TickerState>();
   const warnings = [...data.integrity.warnings];
+  const transactionTypesByDay = new Map<string, Set<Transaction["type"]>>();
+  for (const transaction of [...data.purchases, ...data.sales]) {
+    const key = `${transaction.date}:${transaction.ticker}`;
+    const types = transactionTypesByDay.get(key) ?? new Set<Transaction["type"]>();
+    types.add(transaction.type);
+    transactionTypesByDay.set(key, types);
+  }
+  for (const [key, types] of transactionTypesByDay) {
+    if (types.size > 1) {
+      const [date, ticker] = key.split(":");
+      warnings.push(`Compra e venda de ${ticker} em ${date} não possuem horário; a compra foi processada primeiro.`);
+    }
+  }
   const transactions = [...data.purchases, ...data.sales].sort((a, b) => {
     const dateOrder = a.date.localeCompare(b.date);
     if (dateOrder !== 0) return dateOrder;

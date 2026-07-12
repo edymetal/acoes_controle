@@ -7,7 +7,11 @@ const MONTHS = [
 ] as const;
 
 export function calculateFixedIncome(data: FixedIncomeData): FixedIncomeModel {
-  const investments = [...data.investments].sort((a, b) => a.maturityDate.localeCompare(b.maturityDate));
+  const referenceDate = data.generatedAt.slice(0, 10);
+  const expiredInvestments = data.investments.filter((investment) => investment.maturityDate < referenceDate);
+  const investments = data.investments
+    .filter((investment) => investment.maturityDate >= referenceDate)
+    .sort((a, b) => a.maturityDate.localeCompare(b.maturityDate));
   const months = MONTHS.map(([label, shortLabel], month) => {
     const monthInvestments = investments.filter((investment) => new Date(`${investment.maturityDate}T12:00:00`).getMonth() === month);
     return {
@@ -39,6 +43,9 @@ export function calculateFixedIncome(data: FixedIncomeData): FixedIncomeModel {
       coveredMonths,
       missingMonths: 12 - coveredMonths,
     },
-    warnings: data.integrity.warnings,
+    warnings: [
+      ...data.integrity.warnings,
+      ...(expiredInvestments.length > 0 ? [`${expiredInvestments.length} ${expiredInvestments.length === 1 ? "aplicação vencida foi excluída" : "aplicações vencidas foram excluídas"} dos totais atuais.`] : []),
+    ],
   };
 }

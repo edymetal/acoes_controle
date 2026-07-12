@@ -33,4 +33,12 @@ describe("calculateFixedIncome", () => {
     expect(model.metrics.coveredMonths).toBe(2);
     expect(model.metrics.missingMonths).toBe(10);
   });
+
+  it("exclui aplicações vencidas dos totais atuais", () => {
+    const expired = { ...data.investments[0], id: "expired", maturityDate: "2025-12-31", netAmount: 5000 };
+    const model = calculateFixedIncome({ ...data, investments: [...data.investments, expired] });
+    expect(model.metrics.assetCount).toBe(3);
+    expect(model.metrics.netAmount).toBe(3950);
+    expect(model.warnings).toContain("1 aplicação vencida foi excluída dos totais atuais.");
+  });
 });

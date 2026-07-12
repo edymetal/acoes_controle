@@ -39,6 +39,16 @@ describe("calculatePortfolio", () => {
     expect(sale?.costBasis).toBeCloseTo(75);
     expect(sale?.realizedProfit).toBeCloseTo(25);
   });
+
+  it("avisa quando a ordem de compra e venda no mesmo dia é ambígua", () => {
+    const sameDayData: PortfolioData = {
+      ...data,
+      sales: [{ id: "sell-same-day", type: "sell", date: "2025-02-01", ticker: "AAA", quantity: 1, total: 20, unitPrice: 20 }],
+      integrity: { ...data.integrity, saleRows: 1 },
+    };
+    const model = calculatePortfolio(sameDayData);
+    expect(model.warnings).toContain("Compra e venda de AAA em 2025-02-01 não possuem horário; a compra foi processada primeiro.");
+  });
 });
 
 describe("getStrategySignal", () => {

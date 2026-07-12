@@ -5,6 +5,8 @@ import { calculatePortfolio } from "./lib/portfolio";
 import { calculateFiiPortfolio } from "./lib/fiiPortfolio";
 import { calculateCryptoPortfolio } from "./lib/cryptoPortfolio";
 import { calculateFixedIncome } from "./lib/fixedIncome";
+import { fetchDataFile } from "./lib/dataSource";
+import { parseCryptoData, parseFiiData, parseFixedIncomeData, parsePortfolioData } from "./lib/dataValidation";
 import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
@@ -28,44 +30,19 @@ const validPages: PageId[] = ["overview", "dashboard", "portfolio", "history", "
 type RefreshMessage = { kind: "success" | "warning" | "error"; text: string };
 
 async function fetchPortfolio(cacheBust = false, signal?: AbortSignal) {
-  const suffix = cacheBust ? `?refresh=${Date.now()}` : "";
-  const response = await fetch(`${import.meta.env.BASE_URL}data/portfolio.json${suffix}`, {
-    cache: "no-store",
-    signal,
-  });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await response.json() as PortfolioData;
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.assets)) {
-    throw new Error("O arquivo de dados está em um formato incompatível.");
-  }
-  return payload;
+  return parsePortfolioData(await fetchDataFile("portfolio.json", cacheBust, signal));
 }
 
 async function fetchFiis(cacheBust = false, signal?: AbortSignal) {
-  const suffix = cacheBust ? `?refresh=${Date.now()}` : "";
-  const response = await fetch(`${import.meta.env.BASE_URL}data/fiis.json${suffix}`, { cache: "no-store", signal });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await response.json() as FiiData;
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.assets)) throw new Error("A base de FIIs está em um formato incompatível.");
-  return payload;
+  return parseFiiData(await fetchDataFile("fiis.json", cacheBust, signal));
 }
 
 async function fetchCrypto(cacheBust = false, signal?: AbortSignal) {
-  const suffix = cacheBust ? `?refresh=${Date.now()}` : "";
-  const response = await fetch(`${import.meta.env.BASE_URL}data/crypto.json${suffix}`, { cache: "no-store", signal });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await response.json() as CryptoData;
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.assets)) throw new Error("A base de cripto está em um formato incompatível.");
-  return payload;
+  return parseCryptoData(await fetchDataFile("crypto.json", cacheBust, signal));
 }
 
 async function fetchFixedIncome(cacheBust = false, signal?: AbortSignal) {
-  const suffix = cacheBust ? `?refresh=${Date.now()}` : "";
-  const response = await fetch(`${import.meta.env.BASE_URL}data/fixed-income.json${suffix}`, { cache: "no-store", signal });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await response.json() as FixedIncomeData;
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.investments)) throw new Error("A base de renda fixa está em um formato incompatível.");
-  return payload;
+  return parseFixedIncomeData(await fetchDataFile("fixed-income.json", cacheBust, signal));
 }
 
 function initialPage(): PageId {
@@ -159,10 +136,10 @@ export default function App() {
         || cryptoResult.status === "rejected"
         || fixedIncomeResult.status === "rejected";
       setRefreshMessage(hasSheetWarnings
-        ? { kind: "warning", text: "Não foi possível obter todas as informações da planilha. Os últimos dados válidos foram mantidos." }
-        : { kind: "success", text: "Dados atualizados com sucesso." });
+        ? { kind: "warning", text: "Nem todas as bases publicadas puderam ser recarregadas. Os últimos dados válidos foram mantidos." }
+        : { kind: "success", text: "Dados publicados recarregados com sucesso." });
     } catch {
-      setRefreshMessage({ kind: "error", text: "Não foi possível buscar as informações da planilha. Os dados exibidos foram mantidos." });
+      setRefreshMessage({ kind: "error", text: "Não foi possível recarregar os dados publicados. Os dados exibidos foram mantidos." });
     } finally {
       setIsRefreshing(false);
     }

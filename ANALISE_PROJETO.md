@@ -4,6 +4,8 @@ Data da revisão: 12/07/2026
 
 Escopo: código-fonte, dados publicados, automação de deploy, testes, build e configuração do projeto.
 
+> Atualização: as correções locais recomendadas neste documento foram implementadas em 12/07/2026. A migração dos JSONs públicos depende da disponibilização de um backend autenticado; o frontend já aceita `VITE_DATA_BASE_URL` e envia o token Firebase para essa fonte.
+
 ## Resumo executivo
 
 O projeto está organizado, usa TypeScript estrito, separa os cálculos financeiros da interface e passa nos testes e no build de produção. A principal fragilidade é de arquitetura: a autenticação Firebase protege apenas a renderização da interface, enquanto os dados financeiros continuam públicos no GitHub Pages e no próprio histórico do repositório.

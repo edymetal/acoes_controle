@@ -53,20 +53,20 @@ export function Settings({ settings, onSave }: SettingsProps) {
     <div className="page-stack">
       <section className="settings-hero">
         <span className="settings-hero__icon"><Settings2 size={25} /></span>
-        <div><span className="eyebrow">PREFERENCIAS DA ESTRATEGIA</span><h2>Ajuste como os sinais sao calculados</h2><p>Os valores ficam salvos neste navegador e passam a valer imediatamente no Dashboard e na Estrategia anual.</p></div>
+        <div><span className="eyebrow">PREFERÊNCIAS DA ESTRATÉGIA</span><h2>Ajuste como os sinais são calculados</h2><p>Os valores ficam salvos neste navegador e passam a valer imediatamente no Dashboard e na Estratégia anual.</p></div>
       </section>
 
       <section className="panel settings-panel">
-        <div className="panel__header"><div><h2>Limites dos sinais</h2><p>Informe distancias percentuais entre 0,5% e 25%.</p></div></div>
+        <div className="panel__header"><div><h2>Limites dos sinais</h2><p>Informe distâncias percentuais entre 0,5% e 25%.</p></div></div>
         <div className="settings-list">
-          <SettingField label="Venda proxima da maxima" description="Gera venda quando a cotacao estiver ate esta distancia abaixo da maxima anual." value={draft.sellDistanceFromHighPercent} min={0.5} icon={<Target size={20} />} onChange={(value) => update("sellDistanceFromHighPercent", value)} />
-          <SettingField label="Compra abaixo da media" description="Exige esta distancia minima abaixo da media anual para gerar compra. Use 0% para qualquer valor abaixo da media." value={draft.buyDistanceBelowAveragePercent} min={0} icon={<TrendingDown size={20} />} onChange={(value) => update("buyDistanceBelowAveragePercent", value)} />
-          <SettingField label="Rompimento forte" description="Classifica como forte quando a cotacao superar a maxima anual por este percentual." value={draft.strongBreakoutAboveHighPercent} min={0.5} icon={<TrendingUp size={20} />} onChange={(value) => update("strongBreakoutAboveHighPercent", value)} />
+          <SettingField label="Venda próxima da máxima" description="Gera venda quando a cotação estiver até esta distância abaixo da máxima anual." value={draft.sellDistanceFromHighPercent} min={0.5} icon={<Target size={20} />} onChange={(value) => update("sellDistanceFromHighPercent", value)} />
+          <SettingField label="Compra abaixo da média" description="Exige esta distância mínima abaixo da média anual para gerar compra. Use 0% para qualquer valor abaixo da média." value={draft.buyDistanceBelowAveragePercent} min={0} icon={<TrendingDown size={20} />} onChange={(value) => update("buyDistanceBelowAveragePercent", value)} />
+          <SettingField label="Rompimento forte" description="Classifica como forte quando a cotação superar a máxima anual por este percentual." value={draft.strongBreakoutAboveHighPercent} min={0.5} icon={<TrendingUp size={20} />} onChange={(value) => update("strongBreakoutAboveHighPercent", value)} />
         </div>
         <div className="settings-actions">
-          <button className="settings-button settings-button--secondary" type="button" onClick={reset}><RotateCcw size={17} /> Restaurar padroes</button>
-          {saved && <span className="settings-saved" role="status"><CheckCircle2 size={16} /> Configuracoes salvas</span>}
-          <button className="settings-button settings-button--primary" type="button" onClick={save}><Save size={17} /> Salvar configuracoes</button>
+          <button className="settings-button settings-button--secondary" type="button" onClick={reset}><RotateCcw size={17} /> Restaurar padrões</button>
+          {saved && <span className="settings-saved" role="status"><CheckCircle2 size={16} /> Configurações salvas</span>}
+          <button className="settings-button settings-button--primary" type="button" onClick={save}><Save size={17} /> Salvar configurações</button>
         </div>
       </section>
     </div>

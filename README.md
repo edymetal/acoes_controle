@@ -23,7 +23,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Área independente de Renda Fixa, com valores em reais e conversão secundária em dólares, carteira detalhada e escada de vencimentos para os 12 meses.
 - Atualização automática a cada 6 horas pelo GitHub Actions.
 
-## Arquitetura segura
+## Arquitetura atual
 
 ```text
 Google Sheets privado
@@ -39,7 +39,20 @@ JSON sanitizado ── build React/Vite ── GitHub Pages
 
 A credencial nunca é incluída no JavaScript do navegador. Localmente ela permanece em `auth/`, que está ignorada pelo Git. No GitHub, o conteúdo completo do JSON é armazenado no secret `GOOGLE_SERVICE_ACCOUNT_JSON`.
 
-> O GitHub Pages é público. As linhas dos intervalos usados pelo site são publicadas nos JSONs finais, embora a chave e o restante da planilha continuem privados.
+> O GitHub Pages é público. As linhas dos intervalos usados pelo site são publicadas nos JSONs finais, embora a chave e o restante da planilha continuem privados. O login Firebase restringe a interface, mas não impede o acesso direto a esses arquivos.
+
+### Fonte de dados autenticada
+
+O frontend também aceita `VITE_DATA_BASE_URL`, que deve apontar para um backend capaz de validar o token Firebase recebido em `Authorization: Bearer <token>`. Quando a variável está configurada, os quatro JSONs são buscados nesse endpoint em vez de `public/data/`.
+
+Para dados realmente privados:
+
+1. publique os quatro arquivos por um backend autenticado;
+2. configure a variável de repositório `VITE_DATA_BASE_URL` com a URL desse backend;
+3. remova `public/data/*.json` e seu histórico do repositório somente depois de validar a migração;
+4. revise caches e artefatos antigos já publicados.
+
+Sem `VITE_DATA_BASE_URL`, o comportamento público atual é mantido por compatibilidade e a interface informa essa condição explicitamente.
 
 ## Intervalos lidos
 
@@ -101,6 +114,8 @@ O sincronizador procura uma credencial nesta ordem:
 2. caminho informado em `GOOGLE_APPLICATION_CREDENTIALS`;
 3. primeiro arquivo `.json` dentro de `auth/`.
 
+Copie `.env.example` para `.env` apenas se quiser testar uma fonte de dados autenticada. O backend precisa permitir CORS para a origem local e validar o token Firebase; não basta hospedar os mesmos arquivos em outra URL pública.
+
 Comandos úteis:
 
 ```bash
@@ -113,7 +128,8 @@ pnpm check      # testes + build
 
 1. Em **Settings → Secrets and variables → Actions**, crie o secret `GOOGLE_SERVICE_ACCOUNT_JSON` com o conteúdo completo do arquivo da conta de serviço.
 2. Em **Settings → Pages → Build and deployment**, selecione **GitHub Actions**.
-3. Execute manualmente o workflow **Sincronizar dados e publicar no GitHub Pages** ou envie um commit para `main`.
+3. Opcionalmente, em **Settings → Secrets and variables → Actions → Variables**, defina `VITE_DATA_BASE_URL` para usar o backend autenticado.
+4. Execute manualmente o workflow **Sincronizar dados e publicar no GitHub Pages** ou envie um commit para `main`.
 
 O workflow também roda automaticamente a cada 6 horas e publica um novo artefato somente se a sincronização, os testes e o build terminarem com sucesso.
 

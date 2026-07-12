@@ -16,6 +16,7 @@ import {
   Landmark,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
+import { usesPublicStaticData } from "../lib/dataSource";
 
 export type PageId = "overview" | "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
 
@@ -127,7 +128,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           {renderTopic("fixed-income", "RENDA FIXA", fixedIncomePages)}
         </nav>
         <div className="sidebar__footer">
-          <div className="security-note"><ShieldCheck size={18} /><span><strong>Dados protegidos</strong><small>Somente leitura</small></span></div>
+          <div className="security-note"><ShieldCheck size={18} /><span><strong>{usesPublicStaticData ? "Arquivos públicos" : "Fonte autenticada"}</strong><small>{usesPublicStaticData ? "Login protege somente a interface" : "Acesso com token Firebase"}</small></span></div>
           <p>Indicadores para acompanhamento. Não constituem recomendação de investimento.</p>
         </div>
       </aside>
@@ -142,7 +143,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           <div className="sync-status">
             <span className="sync-status__dot" aria-hidden="true" />
             <span><small>Atualizado em</small><strong>{formatDateTime(updatedAt)}</strong></span>
-            <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label="Atualizar dados" title="Atualizar dados"><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
+            <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label="Recarregar dados publicados" title="Recarregar dados publicados"><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
           </div>
         </header>
         {refreshMessage && <div className={`refresh-message refresh-message--${refreshMessage.kind}`} role="status">{refreshMessage.text}</div>}
