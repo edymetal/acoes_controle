@@ -22,7 +22,8 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
     .sort((a, b) => Math.abs(b.unrealized) - Math.abs(a.unrealized))
     .slice(0, 7)
     .map((position) => ({ ticker: position.ticker, value: position.unrealized }));
-  const strategy = data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings) }));
+  const positionValues = new Map(positions.map((position) => [position.ticker, position.marketValue]));
+  const strategy = data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings, positionValues.get(asset.ticker) ?? 0) }));
   const buySignals = strategy.filter((item) => item.signal.kind === "buy").sort((a, b) => b.signal.strength - a.signal.strength);
   const breakoutSignals = strategy.filter((item) => item.signal.kind === "breakout" || item.signal.kind === "sell");
 
@@ -105,7 +106,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
                 <StockLogo ticker={asset.ticker} />
                 <span className="signal-row__name"><strong>{asset.ticker}</strong><small>{asset.name}</small></span>
                 <SignalBadge signal={signal} />
-                <span className="signal-row__price"><strong>{formatCurrency(asset.currentPrice)}</strong><small>{signal.description}</small></span>
+                <span className="signal-row__price"><strong>{signal.actionAmount > 0 ? `${signal.kind === "buy" ? "Comprar" : "Vender"} ${formatCurrency(signal.actionAmount)}` : formatCurrency(asset.currentPrice)}</strong><small>{signal.description}</small></span>
               </div>
             ))}
           </div>

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { calculatePortfolio, getStrategySignal } from "./portfolio";
 import type { Asset, PortfolioData } from "../types";
+import { DEFAULT_STRATEGY_SETTINGS } from "./settings";
 
 const data: PortfolioData = {
   schemaVersion: 1,
@@ -61,38 +62,47 @@ describe("getStrategySignal", () => {
     annual: { min: 8, average: 18, max: 30, observations: 250, currency: "USD" },
   };
 
-  it("fortalece compra ao se aproximar da mínima", () => {
-    expect(getStrategySignal(base).kind).toBe("buy");
-    expect(getStrategySignal(base).strength).toBeCloseTo(0.8);
+  it("sugere US$ 10 entre 20% e 35% do intervalo anual", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 14 });
+    expect(signal.kind).toBe("buy");
+    expect(signal.actionAmount).toBe(10);
   });
 
-  it("identifica proximidade da máxima", () => {
-    expect(getStrategySignal({ ...base, currentPrice: 29 }).kind).toBe("sell");
+  it("sugere US$ 25 entre 10% e 20% do intervalo anual", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 11 });
+    expect(signal.kind).toBe("buy");
+    expect(signal.actionAmount).toBe(25);
   });
 
-  it("respeita a distancia configurada para venda", () => {
-    const settings = {
-      sellDistanceFromHighPercent: 2,
-      buyDistanceBelowAveragePercent: 0,
-      strongBreakoutAboveHighPercent: 3,
-    };
-    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings).kind).toBe("neutral");
-    expect(getStrategySignal({ ...base, currentPrice: 29.5 }, settings).kind).toBe("sell");
+  it("sugere US$ 15 quando rompe a mínima", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 7 });
+    expect(signal.kind).toBe("buy");
+    expect(signal.actionAmount).toBe(15);
   });
 
-  it("respeita a distancia minima abaixo da media para compra", () => {
-    const settings = {
-      sellDistanceFromHighPercent: 5,
-      buyDistanceBelowAveragePercent: 10,
-      strongBreakoutAboveHighPercent: 3,
-    };
-    expect(getStrategySignal({ ...base, currentPrice: 17 }, settings).kind).toBe("neutral");
-    expect(getStrategySignal({ ...base, currentPrice: 16 }, settings).kind).toBe("buy");
+  it("indica a primeira venda de 80% da faixa negociável", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, 115);
+    expect(signal.kind).toBe("sell");
+    expect(signal.actionAmount).toBe(40);
+    expect(signal.actionPercent).toBe(80);
   });
 
-  it("identifica rompimento da máxima", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 33 });
+  it("indica a parcela final de US$ 10 no rompimento", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 31 }, DEFAULT_STRATEGY_SETTINGS, 75);
     expect(signal.kind).toBe("breakout");
-    expect(signal.strength).toBe(1);
+    expect(signal.actionAmount).toBe(10);
+    expect(signal.actionPercent).toBe(20);
+  });
+
+  it("preserva o piso de US$ 65 e exige venda mínima de US$ 10", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, 70);
+    expect(signal.kind).toBe("sell");
+    expect(signal.actionAmount).toBe(0);
+  });
+
+  it("vende novo excesso acima do teto quando a ação continua subindo", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 33 }, DEFAULT_STRATEGY_SETTINGS, 135);
+    expect(signal.kind).toBe("breakout");
+    expect(signal.actionAmount).toBe(20);
   });
 });

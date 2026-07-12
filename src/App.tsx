@@ -175,7 +175,7 @@ export default function App() {
         {page === "dashboard" && <Dashboard data={data} model={model} settings={settings} onNavigate={navigate} />}
         {page === "portfolio" && <Portfolio model={model} />}
         {page === "history" && <History model={model} />}
-        {page === "strategy" && <Strategy data={data} settings={settings} />}
+        {page === "strategy" && <Strategy data={data} model={model} settings={settings} />}
         {page === "settings" && <Settings settings={settings} onSave={updateSettings} />}
         {page === "fii-dashboard" && fiiModel && <FiiDashboard model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} onNavigate={navigate} />}
         {page === "fii-portfolio" && fiiModel && <FiiPortfolio model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} />}

@@ -3,14 +3,17 @@ import { AlertTriangle, ArrowUpRight, Search, Sparkles, Target, TrendingDown } f
 import { EmptyState, MetricCard, SignalBadge, StockLogo } from "../components/Ui";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
-import type { PortfolioData, StrategyKind, StrategySettings } from "../types";
+import type { PortfolioData, PortfolioModel, StrategyKind, StrategySettings } from "../types";
 
 type FilterKind = "all" | StrategyKind;
 
-export function Strategy({ data, settings }: { data: PortfolioData; settings: StrategySettings }) {
+export function Strategy({ data, model, settings }: { data: PortfolioData; model: PortfolioModel; settings: StrategySettings }) {
   const [filter, setFilter] = useState<FilterKind>("all");
   const [search, setSearch] = useState("");
-  const signals = useMemo(() => data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings) })), [data.assets, settings]);
+  const signals = useMemo(() => {
+    const positionValues = new Map(model.positions.map((position) => [position.ticker, position.marketValue]));
+    return data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings, positionValues.get(asset.ticker) ?? 0) }));
+  }, [data.assets, model.positions, settings]);
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return signals
@@ -24,12 +27,12 @@ export function Strategy({ data, settings }: { data: PortfolioData; settings: St
   return (
     <div className="page-stack">
       <section className="strategy-intro">
-        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de oportunidades e rompimentos</h2><p>A intensidade compara a cotação atual com a média, mínima e máxima dos últimos 12 meses.</p></div>
+        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão mostra o valor exato da próxima operação e respeita a faixa configurada por ação.</p></div>
         <span className="strategy-intro__disclaimer"><AlertTriangle size={17} /> Indicador matemático, não recomendação de investimento.</span>
       </section>
 
       <section className="metrics-grid metrics-grid--three">
-        <MetricCard label="Abaixo da média" value={String(buyCount)} icon={<TrendingDown size={19} />} helper="Possíveis pontos de compra" accent="green" />
+        <MetricCard label="Comprar agora" value={String(buyCount)} icon={<TrendingDown size={19} />} helper="Sinais com valor de compra" accent="green" />
         <MetricCard label="Sinal de venda" value={String(sellCount)} icon={<Target size={19} />} helper={`Até ${settings.sellDistanceFromHighPercent}% da máxima anual`} accent="amber" />
         <MetricCard label="Em rompimento" value={String(breakoutCount)} icon={<ArrowUpRight size={19} />} helper="Acima da máxima anual" accent="violet" />
       </section>
@@ -51,7 +54,12 @@ export function Strategy({ data, settings }: { data: PortfolioData; settings: St
             return (
               <article className={`strategy-card strategy-card--${signal.kind}`} style={style} key={asset.ticker}>
                 <header><StockLogo ticker={asset.ticker} /><span><strong>{asset.ticker}</strong><small>{asset.name}</small></span><SignalBadge signal={signal} /></header>
-                <div className="strategy-card__price"><span><small>Cotação atual</small><strong>{formatCurrency(asset.currentPrice)}</strong></span>{signal.distanceToAverage !== null && <span className={signal.distanceToAverage < 0 ? "value--positive" : ""}><small>vs. média</small><strong>{formatPercent(signal.distanceToAverage)}</strong></span>}</div>
+                <div className="strategy-card__price"><span><small>Cotação atual</small><strong>{formatCurrency(asset.currentPrice)}</strong></span>{signal.rangePositionPercent !== null && <span><small>No intervalo anual</small><strong>{formatPercent(signal.rangePositionPercent / 100)}</strong></span>}</div>
+                <div className={`strategy-action strategy-action--${signal.actionAmount > 0 ? signal.kind : "waiting"}`}>
+                  <span><small>Próxima operação</small><strong>{signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR" : "VENDER") : "AGUARDAR"}</strong></span>
+                  <b>{signal.actionAmount > 0 ? formatCurrency(signal.actionAmount) : "—"}</b>
+                </div>
+                <div className="strategy-position"><span>Posição atual <strong>{formatCurrency(signal.positionValue)}</strong></span><span>Faixa <strong>{formatCurrency(settings.minimumPositionValue)}–{formatCurrency(settings.maximumPositionValue)}</strong></span></div>
                 {annual ? <>
                   <div className="range-track"><i style={{ left: `${position}%` }} /><span className="range-track__fill" style={{ width: `${position}%` }} /></div>
                   <div className="range-labels"><span><small>Mínima</small>{formatCurrency(annual.min)}</span><span><small>Média</small>{formatCurrency(annual.average)}</span><span><small>Máxima</small>{formatCurrency(annual.max)}</span></div>

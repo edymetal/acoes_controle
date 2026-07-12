@@ -179,8 +179,17 @@ export type StrategyKind = "buy" | "sell" | "breakout" | "neutral" | "unavailabl
 
 export interface StrategySettings {
   sellDistanceFromHighPercent: number;
-  buyDistanceBelowAveragePercent: number;
-  strongBreakoutAboveHighPercent: number;
+  initialSellPercent: number;
+  breakoutSellPercent: number;
+  minimumSaleAmount: number;
+  buyZoneUpperPercent: number;
+  buyZoneMiddlePercent: number;
+  buyZoneLowerPercent: number;
+  moderateBuyAmount: number;
+  strongBuyAmount: number;
+  breakdownBuyAmount: number;
+  minimumPositionValue: number;
+  maximumPositionValue: number;
 }
 
 export interface StrategySignal {
@@ -190,6 +199,10 @@ export interface StrategySignal {
   strength: number;
   distanceToAverage: number | null;
   distanceToHigh: number | null;
+  rangePositionPercent: number | null;
+  positionValue: number;
+  actionAmount: number;
+  actionPercent: number | null;
 }
 
 export interface PortfolioModel {

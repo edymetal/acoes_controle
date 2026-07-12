@@ -155,9 +155,9 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
   };
 }
 
-export function getStrategySignal(asset: Asset, settings: StrategySettings = DEFAULT_STRATEGY_SETTINGS): StrategySignal {
+export function getStrategySignal(asset: Asset, settings: StrategySettings = DEFAULT_STRATEGY_SETTINGS, positionValue = 0): StrategySignal {
   const annual = asset.annual;
-  if (!annual || annual.min <= 0 || annual.average <= 0 || annual.max <= 0) {
+  if (!annual || annual.min <= 0 || annual.average <= 0 || annual.max <= annual.min) {
     return {
       kind: "unavailable",
       label: "Dados insuficientes",
@@ -165,62 +165,99 @@ export function getStrategySignal(asset: Asset, settings: StrategySettings = DEF
       strength: 0,
       distanceToAverage: null,
       distanceToHigh: null,
+      rangePositionPercent: null,
+      positionValue,
+      actionAmount: 0,
+      actionPercent: null,
     };
   }
 
   const price = asset.currentPrice;
   const distanceToAverage = (price - annual.average) / annual.average;
   const distanceToHigh = (price - annual.max) / annual.max;
+  const rangePositionPercent = ((price - annual.min) / (annual.max - annual.min)) * 100;
   const sellDistance = settings.sellDistanceFromHighPercent / 100;
-  const buyDistance = settings.buyDistanceBelowAveragePercent / 100;
-  const strongBreakoutDistance = settings.strongBreakoutAboveHighPercent / 100;
+  const allocationRange = Math.max(0, settings.maximumPositionValue - settings.minimumPositionValue);
+  const sellableValue = Math.max(0, positionValue - settings.minimumPositionValue);
+  const availableToBuy = Math.max(0, settings.maximumPositionValue - positionValue);
+  const base = { distanceToAverage, distanceToHigh, rangePositionPercent, positionValue };
 
   if (price > annual.max) {
-    const strength = 0.7 + clamp(distanceToHigh / Math.max(strongBreakoutDistance, EPSILON)) * 0.3;
+    const scheduledAmount = allocationRange * (settings.breakoutSellPercent / 100);
+    const newExcess = Math.max(0, positionValue - settings.maximumPositionValue);
+    const actionAmount = Math.min(sellableValue, Math.max(scheduledAmount, newExcess));
+    const canSell = actionAmount + EPSILON >= settings.minimumSaleAmount && actionAmount > EPSILON;
     return {
       kind: "breakout",
-      label: distanceToHigh >= strongBreakoutDistance ? "Rompimento forte" : "Rompimento",
-      description: `Cotação ${Math.abs(distanceToHigh * 100).toFixed(1)}% acima da máxima anual.`,
-      strength,
-      distanceToAverage,
-      distanceToHigh,
+      label: canSell ? "Vender no rompimento" : "Rompimento",
+      description: canSell
+        ? `Venda da parcela final de ${settings.breakoutSellPercent}% sem deixar a posição abaixo de ${formatStrategyMoney(settings.minimumPositionValue)}.`
+        : `Máxima anual rompida, mas ainda não há ${formatStrategyMoney(settings.minimumSaleAmount)} disponíveis para venda.`,
+      strength: 0.75 + clamp(distanceToHigh / 0.1) * 0.25,
+      ...base,
+      actionAmount: canSell ? actionAmount : 0,
+      actionPercent: settings.breakoutSellPercent,
     };
   }
 
   if (price >= annual.max * (1 - sellDistance)) {
     const proximity = clamp((price - annual.max * (1 - sellDistance)) / (annual.max * sellDistance));
+    const scheduledAmount = allocationRange * (settings.initialSellPercent / 100);
+    const newExcess = Math.max(0, positionValue - settings.maximumPositionValue);
+    const actionAmount = Math.min(sellableValue, Math.max(scheduledAmount, newExcess));
+    const canSell = actionAmount + EPSILON >= settings.minimumSaleAmount && actionAmount > EPSILON;
     return {
       kind: "sell",
-      label: "Venda",
-      description: `Faltam ${Math.abs(distanceToHigh * 100).toFixed(1)}% para a máxima anual.`,
+      label: canSell ? `Vender ${settings.initialSellPercent}%` : "Próxima da máxima",
+      description: canSell
+        ? `Faltam ${Math.abs(distanceToHigh * 100).toFixed(1)}% para a máxima anual; preserve o piso de ${formatStrategyMoney(settings.minimumPositionValue)}.`
+        : `Zona de venda atingida, mas a posição não permite vender ${formatStrategyMoney(settings.minimumSaleAmount)} sem romper o piso.`,
       strength: 0.45 + proximity * 0.25,
-      distanceToAverage,
-      distanceToHigh,
+      ...base,
+      actionAmount: canSell ? actionAmount : 0,
+      actionPercent: settings.initialSellPercent,
     };
   }
 
-  if (price < annual.average && Math.abs(distanceToAverage) >= buyDistance) {
-    const interval = annual.average - annual.min;
-    const strength = interval > EPSILON ? clamp((annual.average - price) / interval) : 1;
-    const label = strength >= 0.75 ? "Compra forte" : strength >= 0.4 ? "Compra" : "Abaixo da média";
+  const buySignal = (amount: number, label: string, description: string, strength: number): StrategySignal => {
+    const actionAmount = Math.min(amount, availableToBuy);
+    const canBuy = actionAmount > EPSILON;
     return {
-      kind: "buy",
-      label,
-      description: `Cotação ${Math.abs(distanceToAverage * 100).toFixed(1)}% abaixo da média anual.`,
+      kind: canBuy ? "buy" : "neutral",
+      label: canBuy ? label : "Limite atingido",
+      description: canBuy ? description : `A posição já atingiu o teto de ${formatStrategyMoney(settings.maximumPositionValue)}.`,
       strength,
-      distanceToAverage,
-      distanceToHigh,
+      ...base,
+      actionAmount: canBuy ? actionAmount : 0,
+      actionPercent: null,
     };
+  };
+
+  if (price < annual.min) {
+    return buySignal(settings.breakdownBuyAmount, "Comprar no rompimento", "Cotação abaixo da mínima anual.", 1);
+  }
+
+  if (rangePositionPercent >= settings.buyZoneMiddlePercent && rangePositionPercent <= settings.buyZoneUpperPercent) {
+    return buySignal(settings.moderateBuyAmount, "Comprar", `Cotação entre ${settings.buyZoneMiddlePercent}% e ${settings.buyZoneUpperPercent}% do intervalo anual.`, 0.55);
+  }
+
+  if (rangePositionPercent >= settings.buyZoneLowerPercent && rangePositionPercent < settings.buyZoneMiddlePercent) {
+    return buySignal(settings.strongBuyAmount, "Compra forte", `Cotação entre ${settings.buyZoneLowerPercent}% e ${settings.buyZoneMiddlePercent}% do intervalo anual.`, 0.8);
   }
 
   return {
     kind: "neutral",
     label: "Faixa neutra",
-    description: "Cotação entre a média anual e a zona de máxima.",
+    description: "Cotação fora das faixas configuradas para compra e venda.",
     strength: 0.2,
-    distanceToAverage,
-    distanceToHigh,
+    ...base,
+    actionAmount: 0,
+    actionPercent: null,
   };
+}
+
+function formatStrategyMoney(value: number) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD" }).format(value);
 }
 
 export function getTransactionsByTicker(transactions: Transaction[], ticker: string) {
