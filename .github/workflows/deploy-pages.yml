@@ -50,6 +50,7 @@ jobs:
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
           VITE_DATA_BASE_URL: ${{ vars.VITE_DATA_BASE_URL }}
+          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
         run: pnpm build
 
       - name: Configurar GitHub Pages
