@@ -24,14 +24,16 @@ describe("calculateFixedIncome", () => {
     expect(model.metrics.returnRate).toBeCloseTo(450 / 3500);
   });
 
-  it("agrupa vencimentos nos 12 meses e identifica lacunas", () => {
+  it("separa os vencimentos entre o ano atual e os dois anos seguintes", () => {
     const model = calculateFixedIncome(data);
-    expect(model.months).toHaveLength(12);
-    expect(model.months[0].investments).toHaveLength(2);
-    expect(model.months[0].amountToReceive).toBe(3390);
-    expect(model.months[2].covered).toBe(true);
-    expect(model.metrics.coveredMonths).toBe(2);
-    expect(model.metrics.missingMonths).toBe(10);
+    expect(model.referenceYear).toBe(2026);
+    expect(model.years.map(({ year }) => year)).toEqual([2026, 2027, 2028]);
+    expect(model.years.every(({ months }) => months.length === 12)).toBe(true);
+    expect(model.years[1].months[0].amountToReceive).toBe(1140);
+    expect(model.years[1].months[2].covered).toBe(true);
+    expect(model.years[1].metrics.coveredMonths).toBe(2);
+    expect(model.years[1].metrics.missingMonths).toBe(10);
+    expect(model.years[2].months[0].amountToReceive).toBe(2250);
   });
 
   it("exclui aplicações vencidas dos totais atuais", () => {

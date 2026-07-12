@@ -142,19 +142,29 @@ export interface FixedIncomeMonth {
   covered: boolean;
 }
 
-export interface FixedIncomeModel {
+export interface FixedIncomeMetrics {
+  investedAmount: number;
+  grossAmount: number;
+  netAmount: number;
+  profit: number;
+  returnRate: number;
+  assetCount: number;
+  coveredMonths: number;
+  missingMonths: number;
+}
+
+export interface FixedIncomeYear {
+  year: number;
   investments: FixedIncomeInvestment[];
   months: FixedIncomeMonth[];
-  metrics: {
-    investedAmount: number;
-    grossAmount: number;
-    netAmount: number;
-    profit: number;
-    returnRate: number;
-    assetCount: number;
-    coveredMonths: number;
-    missingMonths: number;
-  };
+  metrics: FixedIncomeMetrics;
+}
+
+export interface FixedIncomeModel {
+  referenceYear: number;
+  investments: FixedIncomeInvestment[];
+  years: FixedIncomeYear[];
+  metrics: FixedIncomeMetrics;
   warnings: string[];
 }
 

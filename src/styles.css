@@ -321,6 +321,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 /* Renda fixa */
 .hero-card--fixed-income { background: radial-gradient(circle at 88% 20%, rgba(55, 221, 162, .12), transparent 22rem), linear-gradient(130deg, #10243a, #111e2f); }
 .hero-card--fixed-income > div:first-child > strong { color: #e8fff7; }
+.fixed-income-section-actions { display: flex; align-items: center; gap: 10px; }
+.fixed-income-year-selector { flex: 0 0 auto; }
+.fixed-income-year-selector button { min-width: 58px; }
 .month-coverage-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; }
 .month-coverage { min-height: 86px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--border-soft); border-radius: 11px; background: rgba(7, 16, 29, .38); }
 .month-coverage > span { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
@@ -376,4 +379,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .month-coverage-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .maturity-ladder { grid-template-columns: 1fr; }
   .maturity-month > footer { font-size: 10px; }
+  .fixed-income-section-actions { width: 100%; align-items: stretch; flex-direction: column; }
+  .fixed-income-year-selector { width: 100%; }
+  .fixed-income-year-selector button { flex: 1; }
 }
