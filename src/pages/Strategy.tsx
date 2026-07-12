@@ -59,8 +59,10 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
       .sort((a, b) => b.signal.strength - a.signal.strength || a.asset.ticker.localeCompare(b.asset.ticker));
   }, [signals, filter, search]);
   const buyCount = signals.filter(({ signal }) => signal.kind === "buy").length;
-  const sellCount = signals.filter(({ signal }) => signal.kind === "sell").length;
+  const sellCount = signals.filter(({ signal }) => (signal.kind === "sell" || signal.kind === "breakout") && signal.actionAmount > 0).length;
   const breakoutCount = signals.filter(({ signal }) => signal.kind === "breakout").length;
+  const buyTotal = signals.reduce((total, { signal }) => total + (signal.kind === "buy" ? signal.actionAmount : 0), 0);
+  const sellTotal = signals.reduce((total, { signal }) => total + (signal.kind === "sell" || signal.kind === "breakout" ? signal.actionAmount : 0), 0);
 
   return (
     <div className="page-stack">
@@ -70,8 +72,8 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
       </section>
 
       <section className="metrics-grid metrics-grid--three">
-        <MetricCard label="Comprar agora" value={String(buyCount)} icon={<TrendingDown size={19} />} helper="Sinais com valor de compra" accent="green" />
-        <MetricCard label="Sinal de venda" value={String(sellCount)} icon={<Target size={19} />} helper={`Até ${settings.sellDistanceFromHighPercent}% da máxima anual`} accent="amber" />
+        <MetricCard label="Comprar agora" value={String(buyCount)} secondaryValue={`Total ${formatCurrency(buyTotal)}`} icon={<TrendingDown size={19} />} helper="Sinais com valor de compra" accent="green" />
+        <MetricCard label="Sinal de venda" value={String(sellCount)} secondaryValue={`Total ${formatCurrency(sellTotal)}`} icon={<Target size={19} />} helper={`Até ${settings.sellDistanceFromHighPercent}% da máxima anual e rompimentos`} accent="amber" />
         <MetricCard label="Em rompimento" value={String(breakoutCount)} icon={<ArrowUpRight size={19} />} helper="Acima da máxima anual" accent="violet" />
       </section>
 
