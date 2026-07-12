@@ -110,7 +110,6 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                 </> : <div className="range-unavailable">Histórico anual não disponível para este ativo.</div>}
                 <footer>
                   {rangeDetails ? <span className="strategy-card__range-info"><small>Faixa atual {rangeDetails.label}</small><strong>{formatPercent(rangeDetails.currentPercent / 100)} no intervalo anual</strong><em>Valores do grupo: {rangeDetails.priceLabel}</em></span> : <span>{signal.description}</span>}
-                  <b>Intensidade {Math.round(signal.strength * 100)}</b>
                 </footer>
               </article>
             );
