@@ -18,9 +18,14 @@ const CRYPTO_RANGES = {
   transactions: "'Cripto'!A1:L1000",
   assets: "'Cripto Base'!D2:E4",
 };
+const FIXED_INCOME_RANGES = {
+  investments: "'Fixa Hist'!B36:Q1000",
+  usdRate: "'Dólar'!G5",
+};
 const OUTPUT_PATH = path.resolve("public/data/portfolio.json");
 const FII_OUTPUT_PATH = path.resolve("public/data/fiis.json");
 const CRYPTO_OUTPUT_PATH = path.resolve("public/data/crypto.json");
+const FIXED_INCOME_OUTPUT_PATH = path.resolve("public/data/fixed-income.json");
 const CRYPTO_BY_NAME = new Map([
   ["BITCOIN", { ticker: "BTC", name: "Bitcoin" }],
   ["ETHEREUM", { ticker: "ETH", name: "Ethereum" }],
@@ -313,6 +318,54 @@ function mapCryptoAssets(rows, warnings) {
   return assets;
 }
 
+function mapFixedIncomeInvestments(rows, warnings) {
+  return rows.flatMap((row, index) => {
+    if (!row?.length) return [];
+    if (text(row[0]).toUpperCase() === "RISCO" && text(row[1]).toUpperCase() === "TIPO") return [];
+
+    const risk = numeric(row[0]);
+    const type = text(row[1]);
+    const name = text(row[2]);
+    const maturityDate = excelSerialToIsoDate(row[6]);
+    const lockupDate = excelSerialToIsoDate(row[7]);
+    const periodMonths = numeric(row[8]);
+    const investedAmount = numeric(row[9]);
+    const purchaseDate = excelSerialToIsoDate(row[10]);
+    const grossAmount = numeric(row[11]);
+    const taxAmount = numeric(row[12]);
+    const taxRate = numeric(row[13]);
+    const netAmount = numeric(row[14]);
+    const profit = numeric(row[15]);
+
+    if (!type && !name && investedAmount === null && !maturityDate) return [];
+    if (!type || !name || !maturityDate || !purchaseDate || investedAmount === null || investedAmount <= 0
+      || netAmount === null || netAmount < 0 || profit === null) {
+      warnings.push(`Ativo de renda fixa inválido na linha ${index + 36} da aba Fixa Hist.`);
+      return [];
+    }
+
+    const rawYield = row[5];
+    return [{
+      id: `fixed-income-${index + 36}`,
+      risk,
+      type,
+      name,
+      fgcGuarantee: /^sim$/i.test(text(row[4])),
+      yield: typeof rawYield === "number" && Number.isFinite(rawYield) ? rawYield : text(rawYield),
+      maturityDate,
+      lockupDate,
+      periodMonths,
+      investedAmount,
+      purchaseDate,
+      grossAmount,
+      taxAmount,
+      taxRate,
+      netAmount,
+      profit,
+    }];
+  });
+}
+
 async function loadPreviousAnnualStats() {
   try {
     const previous = JSON.parse(await readFile(OUTPUT_PATH, "utf8"));
@@ -331,11 +384,11 @@ async function main() {
   const previousAnnualByTicker = await loadPreviousAnnualStats();
   const response = await batchGetValues({
     spreadsheetId: SPREADSHEET_ID,
-    ranges: [...Object.values(RANGES), ...Object.values(FII_RANGES), ...Object.values(CRYPTO_RANGES)],
+    ranges: [...Object.values(RANGES), ...Object.values(FII_RANGES), ...Object.values(CRYPTO_RANGES), ...Object.values(FIXED_INCOME_RANGES)],
     valueRenderOption: "UNFORMATTED_VALUE",
     dateTimeRenderOption: "SERIAL_NUMBER",
   });
-  const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange, cryptoTransactionRange, cryptoAssetRange] = response.valueRanges;
+  const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange, cryptoTransactionRange, cryptoAssetRange, fixedIncomeRange, fixedIncomeUsdRateRange] = response.valueRanges;
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
   const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker);
@@ -348,6 +401,10 @@ async function main() {
   const cryptoWarnings = [];
   const cryptoTransactions = mapCryptoTransactions(cryptoTransactionRange?.values ?? [], cryptoWarnings);
   const cryptoAssets = mapCryptoAssets(cryptoAssetRange?.values ?? [], cryptoWarnings);
+  const fixedIncomeWarnings = [];
+  const fixedIncomeInvestments = mapFixedIncomeInvestments(fixedIncomeRange?.values ?? [], fixedIncomeWarnings);
+  const fixedIncomeBrlPerUsd = numeric(fixedIncomeUsdRateRange?.values?.[0]?.[0]);
+  if (fixedIncomeBrlPerUsd === null || fixedIncomeBrlPerUsd <= 0) fixedIncomeWarnings.push("Cotação do dólar inválida na célula Dólar!G5.");
 
   const output = {
     schemaVersion: 1,
@@ -412,11 +469,30 @@ async function main() {
     },
   };
 
+  const fixedIncomeOutput = {
+    schemaVersion: 1,
+    generatedAt: output.generatedAt,
+    source: {
+      spreadsheetId: SPREADSHEET_ID,
+      ranges: FIXED_INCOME_RANGES,
+    },
+    exchangeRate: {
+      brlPerUsd: fixedIncomeBrlPerUsd !== null && fixedIncomeBrlPerUsd > 0 ? fixedIncomeBrlPerUsd : null,
+      source: FIXED_INCOME_RANGES.usdRate,
+    },
+    investments: fixedIncomeInvestments,
+    integrity: {
+      investmentRows: fixedIncomeInvestments.length,
+      warnings: fixedIncomeWarnings,
+    },
+  };
+
   await mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
   await Promise.all([
     writeFile(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`, "utf8"),
     writeFile(FII_OUTPUT_PATH, `${JSON.stringify(fiiOutput, null, 2)}\n`, "utf8"),
     writeFile(CRYPTO_OUTPUT_PATH, `${JSON.stringify(cryptoOutput, null, 2)}\n`, "utf8"),
+    writeFile(FIXED_INCOME_OUTPUT_PATH, `${JSON.stringify(fixedIncomeOutput, null, 2)}\n`, "utf8"),
   ]);
   console.log(
     `Dados sincronizados: ${purchases.length} compras, ${sales.length} vendas, ${assets.length} ativos, ${warnings.length} avisos.`,
@@ -426,6 +502,9 @@ async function main() {
   );
   console.log(
     `Criptos sincronizadas: ${cryptoTransactions.purchases.length} compras, ${cryptoTransactions.sales.length} vendas, ${cryptoAssets.length} ativos, ${cryptoWarnings.length} avisos.`,
+  );
+  console.log(
+    `Renda fixa sincronizada: ${fixedIncomeInvestments.length} ativos, ${fixedIncomeWarnings.length} avisos.`,
   );
 }
 

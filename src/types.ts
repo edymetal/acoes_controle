@@ -95,6 +95,69 @@ export interface CryptoData {
   };
 }
 
+export interface FixedIncomeInvestment {
+  id: string;
+  risk: number | null;
+  type: string;
+  name: string;
+  fgcGuarantee: boolean;
+  yield: number | string;
+  maturityDate: string;
+  lockupDate: string | null;
+  periodMonths: number | null;
+  investedAmount: number;
+  purchaseDate: string;
+  grossAmount: number | null;
+  taxAmount: number | null;
+  taxRate: number | null;
+  netAmount: number;
+  profit: number;
+}
+
+export interface FixedIncomeData {
+  schemaVersion: number;
+  generatedAt: string;
+  source: {
+    spreadsheetId: string;
+    ranges: Record<string, string>;
+  };
+  exchangeRate: {
+    brlPerUsd: number | null;
+    source: string;
+  };
+  investments: FixedIncomeInvestment[];
+  integrity: {
+    investmentRows: number;
+    warnings: string[];
+  };
+}
+
+export interface FixedIncomeMonth {
+  month: number;
+  label: string;
+  shortLabel: string;
+  investments: FixedIncomeInvestment[];
+  amountToReceive: number;
+  profit: number;
+  covered: boolean;
+}
+
+export interface FixedIncomeModel {
+  investments: FixedIncomeInvestment[];
+  months: FixedIncomeMonth[];
+  metrics: {
+    investedAmount: number;
+    grossAmount: number;
+    netAmount: number;
+    profit: number;
+    returnRate: number;
+    assetCount: number;
+    coveredMonths: number;
+    missingMonths: number;
+  };
+  warnings: string[];
+}
+
 export interface Position {
   ticker: string;
   name: string;

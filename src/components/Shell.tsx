@@ -5,6 +5,7 @@ import {
   Bitcoin,
   BriefcaseBusiness,
   Building2,
+  CalendarRange,
   ChevronDown,
   Clock3,
   LayoutDashboard,
@@ -12,12 +13,13 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
+  Landmark,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
 
-export type PageId = "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history";
+export type PageId = "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
 
-type Topic = "stocks" | "fiis" | "crypto";
+type Topic = "stocks" | "fiis" | "crypto" | "fixed-income";
 interface PageDefinition { id: PageId; label: string; description: string; icon: ReactNode; topic: Topic }
 
 const stockPages: PageDefinition[] = [
@@ -40,7 +42,13 @@ const cryptoPages: PageDefinition[] = [
   { id: "crypto-history", label: "Movimentações", description: "Histórico separado de compras e vendas de criptomoedas", icon: <Clock3 size={19} />, topic: "crypto" },
 ];
 
-const pages = [...stockPages, ...fiiPages, ...cryptoPages];
+const fixedIncomePages: PageDefinition[] = [
+  { id: "fixed-income-dashboard", label: "Visão geral", description: "Resumo exclusivo dos seus investimentos de renda fixa", icon: <LayoutDashboard size={19} />, topic: "fixed-income" },
+  { id: "fixed-income-portfolio", label: "Carteira de Renda Fixa", description: "Aportes, vencimentos, valores a receber e lucros", icon: <Landmark size={19} />, topic: "fixed-income" },
+  { id: "fixed-income-ladder", label: "Escada de vencimentos", description: "Cobertura dos 12 meses e oportunidades para completar a estratégia", icon: <CalendarRange size={19} />, topic: "fixed-income" },
+];
+
+const pages = [...stockPages, ...fiiPages, ...cryptoPages, ...fixedIncomePages];
 
 interface ShellProps {
   page: PageId;
@@ -104,6 +112,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           {renderTopic("stocks", "AÇÕES", stockPages)}
           {renderTopic("fiis", "FIIs", fiiPages)}
           {renderTopic("crypto", "CRIPTO", cryptoPages)}
+          {renderTopic("fixed-income", "RENDA FIXA", fixedIncomePages)}
         </nav>
         <div className="sidebar__footer">
           <div className="security-note"><ShieldCheck size={18} /><span><strong>Dados protegidos</strong><small>Somente leitura</small></span></div>
@@ -114,7 +123,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
       <div className="workspace">
         <header className="topbar">
           <div className="topbar__title">
-            <span className="eyebrow"><Activity size={14} /> {current.topic === "fiis" ? "FUNDOS IMOBILIÁRIOS · B3" : current.topic === "crypto" ? "MERCADO DE CRIPTOMOEDAS · USD" : "MERCADO AMERICANO"}</span>
+            <span className="eyebrow"><Activity size={14} /> {current.topic === "fiis" ? "FUNDOS IMOBILIÁRIOS · B3" : current.topic === "crypto" ? "MERCADO DE CRIPTOMOEDAS · USD" : current.topic === "fixed-income" ? "RENDA FIXA · BRL" : "MERCADO AMERICANO"}</span>
             <h1>{current.label}</h1>
             <p>{current.description}</p>
           </div>

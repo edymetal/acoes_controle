@@ -259,3 +259,63 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Renda fixa */
+.hero-card--fixed-income { background: radial-gradient(circle at 88% 20%, rgba(55, 221, 162, .12), transparent 22rem), linear-gradient(130deg, #10243a, #111e2f); }
+.hero-card--fixed-income > div:first-child > strong { color: #e8fff7; }
+.month-coverage-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; }
+.month-coverage { min-height: 86px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--border-soft); border-radius: 11px; background: rgba(7, 16, 29, .38); }
+.month-coverage > span { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.month-coverage > strong { margin: 5px 0 2px; font-size: 18px; }
+.month-coverage > small { color: var(--muted-2); font-size: 9px; }
+.month-coverage--covered { border-color: rgba(55, 221, 162, .25); background: rgba(55, 221, 162, .055); }
+.month-coverage--covered > strong, .month-coverage--covered > small { color: var(--green); }
+.month-coverage--missing { border-style: dashed; }
+.month-coverage--missing > small { color: var(--amber); }
+.fixed-income-upcoming { display: flex; flex-direction: column; }
+.fixed-income-upcoming > div { display: grid; grid-template-columns: 37px minmax(0, 1fr) auto; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
+.fixed-income-upcoming > div > span { min-width: 0; display: flex; flex-direction: column; }
+.fixed-income-upcoming > div > span:last-child { text-align: right; }
+.fixed-income-upcoming small { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.fixed-income-upcoming .value--positive { color: var(--green); }
+.fixed-income-icon { width: 35px; height: 35px; display: grid !important; place-items: center; border-radius: 10px; color: var(--green); background: rgba(55, 221, 162, .08); }
+.ticker-avatar--fixed-income { color: var(--green); background: rgba(55, 221, 162, .1); }
+.dual-value { display: flex; flex-direction: column; gap: 3px; white-space: nowrap; }
+.dual-value small { color: var(--muted); font-size: 10px; }
+.date-emphasis { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; color: #dceaff; font-weight: 700; }
+.date-emphasis svg { color: var(--blue); }
+.fgc-badge, .muted-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 999px; white-space: nowrap; font-size: 10px; font-weight: 800; }
+.fgc-badge { color: var(--green); background: rgba(55, 221, 162, .09); }
+.muted-badge { color: var(--muted); background: rgba(140, 165, 199, .08); }
+.maturity-ladder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+.maturity-month { overflow: hidden; border: 1px solid var(--border-soft); border-radius: 13px; background: rgba(7, 16, 29, .35); }
+.maturity-month > header { display: grid; grid-template-columns: 39px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 14px; border-bottom: 1px solid var(--border-soft); }
+.maturity-month > header > span:nth-child(2) { display: flex; flex-direction: column; }
+.maturity-month > header small { margin-top: 2px; color: var(--muted); font-size: 10px; }
+.maturity-month > header svg { color: var(--green); }
+.maturity-month__number { width: 37px; height: 37px; display: grid; place-items: center; border-radius: 10px; color: var(--green); background: rgba(55, 221, 162, .09); font-size: 12px; font-weight: 900; }
+.maturity-assets { min-height: 94px; padding: 7px 14px; }
+.maturity-assets > div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border-soft); }
+.maturity-assets > div:last-child { border-bottom: 0; }
+.maturity-assets span { min-width: 0; display: flex; flex-direction: column; }
+.maturity-assets span:last-child { flex: 0 0 auto; text-align: right; }
+.maturity-assets strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.maturity-assets small { margin-top: 3px; color: var(--muted); font-size: 9px; }
+.maturity-missing { min-height: 94px; display: flex; align-items: center; gap: 10px; padding: 14px; color: var(--amber); background: rgba(255, 184, 107, .025); }
+.maturity-missing span { display: flex; flex-direction: column; }
+.maturity-missing small { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+.maturity-month--missing { border-style: dashed; }
+.maturity-month--missing > header svg, .maturity-month--missing .maturity-month__number { color: var(--amber); }
+.maturity-month--missing .maturity-month__number { background: rgba(255, 184, 107, .08); }
+.maturity-month > footer { display: flex; justify-content: space-between; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border-soft); color: var(--muted); font-size: 9px; }
+.maturity-month > footer span { display: inline-flex; align-items: center; gap: 4px; }
+.maturity-month > footer > span > span { align-items: flex-start; flex-direction: column; gap: 2px; }
+.maturity-month > footer strong { color: var(--text); }
+.maturity-month > footer small { color: var(--muted-2); font-size: 8px; }
+
+@media (max-width: 1180px) { .maturity-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) {
+  .month-coverage-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .maturity-ladder { grid-template-columns: 1fr; }
+  .maturity-month > footer { font-size: 10px; }
+}

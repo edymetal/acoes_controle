@@ -4,8 +4,9 @@ import { Shell, type PageId } from "./components/Shell";
 import { calculatePortfolio } from "./lib/portfolio";
 import { calculateFiiPortfolio } from "./lib/fiiPortfolio";
 import { calculateCryptoPortfolio } from "./lib/cryptoPortfolio";
+import { calculateFixedIncome } from "./lib/fixedIncome";
 import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
-import type { CryptoData, FiiData, PortfolioData, StrategySettings } from "./types";
+import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then((module) => ({ default: module.Dashboard })));
 const Portfolio = lazy(() => import("./pages/Portfolio").then((module) => ({ default: module.Portfolio })));
@@ -18,8 +19,11 @@ const FiiHistory = lazy(() => import("./pages/fiis/FiiHistory").then((module) =>
 const CryptoDashboard = lazy(() => import("./pages/crypto/CryptoDashboard").then((module) => ({ default: module.CryptoDashboard })));
 const CryptoPortfolio = lazy(() => import("./pages/crypto/CryptoPortfolio").then((module) => ({ default: module.CryptoPortfolio })));
 const CryptoHistory = lazy(() => import("./pages/crypto/CryptoHistory").then((module) => ({ default: module.CryptoHistory })));
+const FixedIncomeDashboard = lazy(() => import("./pages/fixed-income/FixedIncomeDashboard").then((module) => ({ default: module.FixedIncomeDashboard })));
+const FixedIncomePortfolio = lazy(() => import("./pages/fixed-income/FixedIncomePortfolio").then((module) => ({ default: module.FixedIncomePortfolio })));
+const FixedIncomeLadder = lazy(() => import("./pages/fixed-income/FixedIncomeLadder").then((module) => ({ default: module.FixedIncomeLadder })));
 
-const validPages: PageId[] = ["dashboard", "portfolio", "history", "strategy", "settings", "fii-dashboard", "fii-portfolio", "fii-history", "crypto-dashboard", "crypto-portfolio", "crypto-history"];
+const validPages: PageId[] = ["dashboard", "portfolio", "history", "strategy", "settings", "fii-dashboard", "fii-portfolio", "fii-history", "crypto-dashboard", "crypto-portfolio", "crypto-history", "fixed-income-dashboard", "fixed-income-portfolio", "fixed-income-ladder"];
 type RefreshMessage = { kind: "success" | "warning" | "error"; text: string };
 
 async function fetchPortfolio(cacheBust = false, signal?: AbortSignal) {
@@ -54,6 +58,15 @@ async function fetchCrypto(cacheBust = false, signal?: AbortSignal) {
   return payload;
 }
 
+async function fetchFixedIncome(cacheBust = false, signal?: AbortSignal) {
+  const suffix = cacheBust ? `?refresh=${Date.now()}` : "";
+  const response = await fetch(`${import.meta.env.BASE_URL}data/fixed-income.json${suffix}`, { cache: "no-store", signal });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const payload = await response.json() as FixedIncomeData;
+  if (payload.schemaVersion !== 1 || !Array.isArray(payload.investments)) throw new Error("A base de renda fixa está em um formato incompatível.");
+  return payload;
+}
+
 function initialPage(): PageId {
   const hash = window.location.hash.replace("#", "") as PageId;
   return validPages.includes(hash) ? hash : "dashboard";
@@ -66,6 +79,8 @@ export default function App() {
   const [fiiError, setFiiError] = useState<string | null>(null);
   const [cryptoData, setCryptoData] = useState<CryptoData | null>(null);
   const [cryptoError, setCryptoError] = useState<string | null>(null);
+  const [fixedIncomeData, setFixedIncomeData] = useState<FixedIncomeData | null>(null);
+  const [fixedIncomeError, setFixedIncomeError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshMessage, setRefreshMessage] = useState<RefreshMessage | null>(null);
@@ -73,6 +88,7 @@ export default function App() {
   const model = useMemo(() => data ? calculatePortfolio(data) : null, [data]);
   const fiiModel = useMemo(() => fiiData ? calculateFiiPortfolio(fiiData) : null, [fiiData]);
   const cryptoModel = useMemo(() => cryptoData ? calculateCryptoPortfolio(cryptoData) : null, [cryptoData]);
+  const fixedIncomeModel = useMemo(() => fixedIncomeData ? calculateFixedIncome(fixedIncomeData) : null, [fixedIncomeData]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -102,6 +118,15 @@ export default function App() {
         if (reason instanceof DOMException && reason.name === "AbortError") return;
         setCryptoError(reason instanceof Error ? reason.message : "Não foi possível carregar as criptos.");
       });
+    fetchFixedIncome(false, controller.signal)
+      .then((payload) => {
+        setFixedIncomeData(payload);
+        setFixedIncomeError(null);
+      })
+      .catch((reason: unknown) => {
+        if (reason instanceof DOMException && reason.name === "AbortError") return;
+        setFixedIncomeError(reason instanceof Error ? reason.message : "Não foi possível carregar a renda fixa.");
+      });
     return () => controller.abort();
   }, []);
 
@@ -109,7 +134,7 @@ export default function App() {
     setIsRefreshing(true);
     setRefreshMessage(null);
     try {
-      const [stockResult, fiiResult, cryptoResult] = await Promise.allSettled([fetchPortfolio(true), fetchFiis(true), fetchCrypto(true)]);
+      const [stockResult, fiiResult, cryptoResult, fixedIncomeResult] = await Promise.allSettled([fetchPortfolio(true), fetchFiis(true), fetchCrypto(true), fetchFixedIncome(true)]);
       if (stockResult.status === "fulfilled") setData(stockResult.value);
       if (fiiResult.status === "fulfilled") {
         setFiiData(fiiResult.value);
@@ -119,13 +144,19 @@ export default function App() {
         setCryptoData(cryptoResult.value);
         setCryptoError(null);
       }
-      if (stockResult.status === "rejected" && fiiResult.status === "rejected" && cryptoResult.status === "rejected") throw new Error("Falha ao atualizar as bases.");
+      if (fixedIncomeResult.status === "fulfilled") {
+        setFixedIncomeData(fixedIncomeResult.value);
+        setFixedIncomeError(null);
+      }
+      if (stockResult.status === "rejected" && fiiResult.status === "rejected" && cryptoResult.status === "rejected" && fixedIncomeResult.status === "rejected") throw new Error("Falha ao atualizar as bases.");
       const hasSheetWarnings = (stockResult.status === "fulfilled" && stockResult.value.integrity.warnings.length > 0)
         || (fiiResult.status === "fulfilled" && fiiResult.value.integrity.warnings.length > 0)
         || (cryptoResult.status === "fulfilled" && cryptoResult.value.integrity.warnings.length > 0)
+        || (fixedIncomeResult.status === "fulfilled" && fixedIncomeResult.value.integrity.warnings.length > 0)
         || stockResult.status === "rejected"
         || fiiResult.status === "rejected"
-        || cryptoResult.status === "rejected";
+        || cryptoResult.status === "rejected"
+        || fixedIncomeResult.status === "rejected";
       setRefreshMessage(hasSheetWarnings
         ? { kind: "warning", text: "Não foi possível obter todas as informações da planilha. Os últimos dados válidos foram mantidos." }
         : { kind: "success", text: "Dados atualizados com sucesso." });
@@ -160,7 +191,7 @@ export default function App() {
   }
 
   return (
-    <Shell page={page} onPageChange={navigate} updatedAt={page.startsWith("fii-") ? fiiData?.generatedAt ?? data.generatedAt : page.startsWith("crypto-") ? cryptoData?.generatedAt ?? data.generatedAt : data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData}>
+    <Shell page={page} onPageChange={navigate} updatedAt={page.startsWith("fii-") ? fiiData?.generatedAt ?? data.generatedAt : page.startsWith("crypto-") ? cryptoData?.generatedAt ?? data.generatedAt : page.startsWith("fixed-income-") ? fixedIncomeData?.generatedAt ?? data.generatedAt : data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData}>
       <Suspense fallback={<div className="page-loader"><LoaderCircle size={24} /> Carregando painel…</div>}>
         {page === "dashboard" && <Dashboard data={data} model={model} settings={settings} onNavigate={navigate} />}
         {page === "portfolio" && <Portfolio model={model} />}
@@ -181,6 +212,14 @@ export default function App() {
         {page.startsWith("crypto-") && !cryptoModel && (
           <div className="state-screen__card state-screen__card--error state-screen__card--inline">
             {cryptoError ? <><AlertTriangle size={30} /><h2>Dados de cripto indisponíveis</h2><p>Os módulos de ações e FIIs continuam disponíveis normalmente.</p><code>{cryptoError}</code></> : <><LoaderCircle className="spin" size={30} /><h2>Carregando criptos…</h2></>}
+          </div>
+        )}
+        {page === "fixed-income-dashboard" && fixedIncomeModel && <FixedIncomeDashboard model={fixedIncomeModel} usdRate={fixedIncomeData?.exchangeRate.brlPerUsd ?? null} onNavigate={navigate} />}
+        {page === "fixed-income-portfolio" && fixedIncomeModel && <FixedIncomePortfolio model={fixedIncomeModel} usdRate={fixedIncomeData?.exchangeRate.brlPerUsd ?? null} />}
+        {page === "fixed-income-ladder" && fixedIncomeModel && <FixedIncomeLadder model={fixedIncomeModel} usdRate={fixedIncomeData?.exchangeRate.brlPerUsd ?? null} />}
+        {page.startsWith("fixed-income-") && !fixedIncomeModel && (
+          <div className="state-screen__card state-screen__card--error state-screen__card--inline">
+            {fixedIncomeError ? <><AlertTriangle size={30} /><h2>Dados de renda fixa indisponíveis</h2><p>Os demais módulos continuam disponíveis normalmente.</p><code>{fixedIncomeError}</code></> : <><LoaderCircle className="spin" size={30} /><h2>Carregando renda fixa…</h2></>}
           </div>
         )}
       </Suspense>
