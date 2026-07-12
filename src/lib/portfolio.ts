@@ -1,5 +1,6 @@
 import type {
   Asset,
+  CryptoData,
   FiiData,
   PortfolioData,
   PortfolioModel,
@@ -21,7 +22,7 @@ interface TickerState {
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
-export function calculatePortfolio(data: PortfolioData | FiiData): PortfolioModel {
+export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): PortfolioModel {
   const states = new Map<string, TickerState>();
   const warnings = [...data.integrity.warnings];
   const transactions = [...data.purchases, ...data.sales].sort((a, b) => {

@@ -76,6 +76,25 @@ export interface FiiData {
   };
 }
 
+export interface CryptoData {
+  schemaVersion: number;
+  generatedAt: string;
+  source: {
+    spreadsheetId: string;
+    ranges: Record<string, string>;
+    currentQuotes: string;
+  };
+  purchases: Transaction[];
+  sales: Transaction[];
+  assets: Asset[];
+  integrity: {
+    purchaseRows: number;
+    saleRows: number;
+    assetRows: number;
+    warnings: string[];
+  };
+}
+
 export interface Position {
   ticker: string;
   name: string;

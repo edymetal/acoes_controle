@@ -14,8 +14,18 @@ const FII_RANGES = {
   assets: "'FII BASE'!A16:G1000",
   usdRate: "'Dólar'!G5",
 };
+const CRYPTO_RANGES = {
+  transactions: "'Cripto'!A1:L1000",
+  assets: "'Cripto Base'!D2:E4",
+};
 const OUTPUT_PATH = path.resolve("public/data/portfolio.json");
 const FII_OUTPUT_PATH = path.resolve("public/data/fiis.json");
+const CRYPTO_OUTPUT_PATH = path.resolve("public/data/crypto.json");
+const CRYPTO_BY_NAME = new Map([
+  ["BITCOIN", { ticker: "BTC", name: "Bitcoin" }],
+  ["ETHEREUM", { ticker: "ETH", name: "Ethereum" }],
+]);
+const SUPPORTED_CRYPTO_TICKERS = new Set([...CRYPTO_BY_NAME.values()].map((asset) => asset.ticker));
 
 function excelSerialToIsoDate(serial) {
   if (typeof serial !== "number" || !Number.isFinite(serial)) return null;
@@ -234,6 +244,75 @@ function mapFiiAssets(rows, warnings) {
   });
 }
 
+function mapCryptoTransactions(rows, warnings) {
+  const purchases = [];
+  const sales = [];
+
+  rows.forEach((row, index) => {
+    if (!row?.length) return;
+    const symbol = ticker(row[4]);
+    if (!SUPPORTED_CRYPTO_TICKERS.has(symbol)) return;
+
+    const rawType = text(row[0]).toUpperCase();
+    const type = rawType === "COMPRA" ? "buy" : rawType === "VENDA" ? "sell" : null;
+    const date = excelSerialToIsoDate(row[1]);
+    const quantity = numeric(row[5]);
+    const unitPrice = numeric(row[6]);
+
+    if (!type || !date || quantity === null || quantity <= 0 || unitPrice === null || unitPrice < 0) {
+      warnings.push(`Movimentação de cripto inválida na linha ${index + 1} da aba Cripto.`);
+      return;
+    }
+
+    const transaction = {
+      id: `crypto-${type}-${index + 1}`,
+      type,
+      date,
+      ticker: symbol,
+      quantity,
+      total: quantity * unitPrice,
+      unitPrice,
+    };
+    (type === "buy" ? purchases : sales).push(transaction);
+  });
+
+  return { purchases, sales };
+}
+
+function mapCryptoAssets(rows, warnings) {
+  const seen = new Set();
+  const assets = rows.flatMap((row, index) => {
+    if (!row?.length) return [];
+    const crypto = CRYPTO_BY_NAME.get(text(row[0]).toUpperCase());
+    if (!crypto) return [];
+    const currentPrice = numeric(row[1]);
+
+    if (currentPrice === null || currentPrice < 0) {
+      warnings.push(`Cotação inválida para ${crypto.name} na linha ${index + 2} da aba Cripto Base.`);
+      return [];
+    }
+    if (seen.has(crypto.ticker)) {
+      warnings.push(`Cripto duplicada na base: ${crypto.ticker}.`);
+      return [];
+    }
+    seen.add(crypto.ticker);
+
+    return [{
+      ticker: crypto.ticker,
+      name: crypto.name,
+      sector: "Criptomoeda",
+      currentPrice,
+      exchange: "Mercado cripto",
+      annual: null,
+    }];
+  });
+
+  for (const crypto of CRYPTO_BY_NAME.values()) {
+    if (!seen.has(crypto.ticker)) warnings.push(`Cotação não encontrada para ${crypto.name} na aba Cripto Base.`);
+  }
+  return assets;
+}
+
 async function loadPreviousAnnualStats() {
   try {
     const previous = JSON.parse(await readFile(OUTPUT_PATH, "utf8"));
@@ -252,11 +331,11 @@ async function main() {
   const previousAnnualByTicker = await loadPreviousAnnualStats();
   const response = await batchGetValues({
     spreadsheetId: SPREADSHEET_ID,
-    ranges: [...Object.values(RANGES), ...Object.values(FII_RANGES)],
+    ranges: [...Object.values(RANGES), ...Object.values(FII_RANGES), ...Object.values(CRYPTO_RANGES)],
     valueRenderOption: "UNFORMATTED_VALUE",
     dateTimeRenderOption: "SERIAL_NUMBER",
   });
-  const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange] = response.valueRanges;
+  const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange, cryptoTransactionRange, cryptoAssetRange] = response.valueRanges;
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
   const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker);
@@ -266,6 +345,9 @@ async function main() {
   const fiiAssets = mapFiiAssets(fiiAssetRange?.values ?? [], fiiWarnings);
   const brlPerUsd = numeric(usdRateRange?.values?.[0]?.[0]);
   if (brlPerUsd === null || brlPerUsd <= 0) fiiWarnings.push("Cotação do dólar inválida na célula Dólar!G5.");
+  const cryptoWarnings = [];
+  const cryptoTransactions = mapCryptoTransactions(cryptoTransactionRange?.values ?? [], cryptoWarnings);
+  const cryptoAssets = mapCryptoAssets(cryptoAssetRange?.values ?? [], cryptoWarnings);
 
   const output = {
     schemaVersion: 1,
@@ -311,16 +393,39 @@ async function main() {
     },
   };
 
+  const cryptoOutput = {
+    schemaVersion: 1,
+    generatedAt: output.generatedAt,
+    source: {
+      spreadsheetId: SPREADSHEET_ID,
+      ranges: CRYPTO_RANGES,
+      currentQuotes: "Google Sheets",
+    },
+    purchases: cryptoTransactions.purchases,
+    sales: cryptoTransactions.sales,
+    assets: cryptoAssets,
+    integrity: {
+      purchaseRows: cryptoTransactions.purchases.length,
+      saleRows: cryptoTransactions.sales.length,
+      assetRows: cryptoAssets.length,
+      warnings: cryptoWarnings,
+    },
+  };
+
   await mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
   await Promise.all([
     writeFile(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`, "utf8"),
     writeFile(FII_OUTPUT_PATH, `${JSON.stringify(fiiOutput, null, 2)}\n`, "utf8"),
+    writeFile(CRYPTO_OUTPUT_PATH, `${JSON.stringify(cryptoOutput, null, 2)}\n`, "utf8"),
   ]);
   console.log(
     `Dados sincronizados: ${purchases.length} compras, ${sales.length} vendas, ${assets.length} ativos, ${warnings.length} avisos.`,
   );
   console.log(
     `FIIs sincronizados: ${fiiPurchases.length} compras, ${fiiSales.length} vendas, ${fiiAssets.length} fundos, ${fiiWarnings.length} avisos.`,
+  );
+  console.log(
+    `Criptos sincronizadas: ${cryptoTransactions.purchases.length} compras, ${cryptoTransactions.sales.length} vendas, ${cryptoAssets.length} ativos, ${cryptoWarnings.length} avisos.`,
   );
 }
 

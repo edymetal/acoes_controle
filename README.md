@@ -1,6 +1,6 @@
 # Controle de Investimentos
 
-Dashboard moderno para acompanhar, em áreas separadas, uma carteira de ações americanas e uma carteira de fundos imobiliários (FIIs) a partir de uma planilha Google Sheets privada. O site é estático, responsivo e publicado gratuitamente no GitHub Pages.
+Dashboard moderno para acompanhar, em áreas separadas, carteiras de ações americanas, fundos imobiliários (FIIs) e criptomoedas a partir de uma planilha Google Sheets privada. O site é estático, responsivo e publicado gratuitamente no GitHub Pages.
 
 O site pode ser instalado como aplicativo pelo Chrome no celular. Após abrir a página publicada, use **Adicionar à tela inicial** ou **Instalar app** no menu do navegador.
 
@@ -19,6 +19,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Gráficos de distribuição da carteira e impacto por posição.
 - Interface responsiva para desktop, tablet e celular.
 - Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
+- Área independente de Cripto em dólares, restrita a Bitcoin e Ethereum, com visão geral, carteira e movimentações.
 - Atualização automática a cada 6 horas pelo GitHub Actions.
 
 ## Arquitetura segura
@@ -37,7 +38,7 @@ JSON sanitizado ── build React/Vite ── GitHub Pages
 
 A credencial nunca é incluída no JavaScript do navegador. Localmente ela permanece em `auth/`, que está ignorada pelo Git. No GitHub, o conteúdo completo do JSON é armazenado no secret `GOOGLE_SERVICE_ACCOUNT_JSON`.
 
-> O GitHub Pages é público. As linhas dos três intervalos usados pelo site são publicadas no JSON final, embora a chave e o restante da planilha continuem privados.
+> O GitHub Pages é público. As linhas dos intervalos usados pelo site são publicadas nos JSONs finais, embora a chave e o restante da planilha continuem privados.
 
 ## Intervalos lidos
 
@@ -50,6 +51,8 @@ A credencial nunca é incluída no JavaScript do navegador. Localmente ela perma
 | Vendas de FIIs | `FII Hist` | `AJ85:AN1000` |
 | Fundos e cotações atuais | `FII BASE` | `A16:G1000` |
 | Cotação do dólar para conversão dos FIIs | `Dólar` | `G5` |
+| Compras e vendas de cripto | `Cripto` | `A1:L1000` |
+| Cotações atuais de Bitcoin e Ethereum | `Cripto Base` | `D2:E4` |
 
 Planilha: `1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0`
 
@@ -124,6 +127,7 @@ scripts/
 public/data/
   portfolio.json    dados sanitizados consumidos pelo site
   fiis.json         dados de FIIs, mantidos separados das ações
+  crypto.json       dados de Bitcoin e Ethereum, isolados dos demais tópicos
 .github/workflows/
   deploy-pages.yml
 ```

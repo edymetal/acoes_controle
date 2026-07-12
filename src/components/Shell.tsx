@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   Activity,
   BarChart3,
+  Bitcoin,
   BriefcaseBusiness,
   Building2,
   ChevronDown,
@@ -14,9 +15,10 @@ import {
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
 
-export type PageId = "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history";
+export type PageId = "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history";
 
-interface PageDefinition { id: PageId; label: string; description: string; icon: ReactNode; topic: "stocks" | "fiis" }
+type Topic = "stocks" | "fiis" | "crypto";
+interface PageDefinition { id: PageId; label: string; description: string; icon: ReactNode; topic: Topic }
 
 const stockPages: PageDefinition[] = [
   { id: "dashboard", label: "Dashboard", description: "Visão consolidada da sua carteira", icon: <LayoutDashboard size={19} />, topic: "stocks" },
@@ -32,7 +34,13 @@ const fiiPages: PageDefinition[] = [
   { id: "fii-history", label: "Movimentações", description: "Histórico separado de compras e vendas de FIIs", icon: <Clock3 size={19} />, topic: "fiis" },
 ];
 
-const pages = [...stockPages, ...fiiPages];
+const cryptoPages: PageDefinition[] = [
+  { id: "crypto-dashboard", label: "Visão geral", description: "Resumo exclusivo da sua carteira de criptomoedas", icon: <LayoutDashboard size={19} />, topic: "crypto" },
+  { id: "crypto-portfolio", label: "Carteira de Cripto", description: "Posições, custos e valores atuais de Bitcoin e Ethereum", icon: <Bitcoin size={19} />, topic: "crypto" },
+  { id: "crypto-history", label: "Movimentações", description: "Histórico separado de compras e vendas de criptomoedas", icon: <Clock3 size={19} />, topic: "crypto" },
+];
+
+const pages = [...stockPages, ...fiiPages, ...cryptoPages];
 
 interface ShellProps {
   page: PageId;
@@ -47,11 +55,11 @@ interface ShellProps {
 export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
   const currentTopic = current.topic;
-  const [openTopic, setOpenTopic] = useState<"stocks" | "fiis">(currentTopic);
+  const [openTopic, setOpenTopic] = useState<Topic>(currentTopic);
 
   useEffect(() => setOpenTopic(currentTopic), [currentTopic]);
 
-  const renderTopic = (topic: "stocks" | "fiis", label: string, topicPages: PageDefinition[]) => {
+  const renderTopic = (topic: Topic, label: string, topicPages: PageDefinition[]) => {
     const isOpen = openTopic === topic;
     const panelId = `nav-topic-${topic}`;
 
@@ -95,6 +103,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
         <nav className="main-nav" aria-label="Navegação principal">
           {renderTopic("stocks", "AÇÕES", stockPages)}
           {renderTopic("fiis", "FIIs", fiiPages)}
+          {renderTopic("crypto", "CRIPTO", cryptoPages)}
         </nav>
         <div className="sidebar__footer">
           <div className="security-note"><ShieldCheck size={18} /><span><strong>Dados protegidos</strong><small>Somente leitura</small></span></div>
@@ -105,7 +114,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
       <div className="workspace">
         <header className="topbar">
           <div className="topbar__title">
-            <span className="eyebrow"><Activity size={14} /> {current.topic === "fiis" ? "FUNDOS IMOBILIÁRIOS · B3" : "MERCADO AMERICANO"}</span>
+            <span className="eyebrow"><Activity size={14} /> {current.topic === "fiis" ? "FUNDOS IMOBILIÁRIOS · B3" : current.topic === "crypto" ? "MERCADO DE CRIPTOMOEDAS · USD" : "MERCADO AMERICANO"}</span>
             <h1>{current.label}</h1>
             <p>{current.description}</p>
           </div>
