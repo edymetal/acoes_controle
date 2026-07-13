@@ -58,7 +58,7 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
           <div className="compact-table">
             {transactions.slice(0, 6).map((item) => <div key={item.id}><CryptoLogo ticker={item.ticker} size="compact" /><span><strong>{item.ticker}</strong><small>{item.type === "buy" ? "Compra" : "Venda"} · {formatDate(item.date)}</small></span><span><strong>{formatCurrency(item.total)}</strong><small>{formatNumber(item.quantity, 8)} moedas</small></span></div>)}
           </div>
-          <div className="source-strip"><Bitcoin size={15} /> Cotações de Bitcoin e Ethereum provenientes da aba Cripto Base</div>
+          <div className="source-strip"><Bitcoin size={15} /> Cotações de Bitcoin, Ethereum e BNB provenientes da aba Cripto Base</div>
         </Section>
       </section>
     </div>

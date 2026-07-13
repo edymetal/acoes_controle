@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-12T06:30:01.484Z",
+  "generatedAt": "2026-07-13T06:30:15.971Z",
   "source": {
     "spreadsheetId": "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0",
     "ranges": {
       "transactions": "'Cripto'!A1:L1000",
-      "assets": "'Cripto Base'!D2:E4"
+      "assets": "'Cripto Base'!D2:E5"
     },
     "currentQuotes": "Google Sheets"
   },
@@ -36,6 +36,15 @@
       "quantity": 0.0754,
       "total": 197.42834347826087,
       "unitPrice": 2618.413043478261
+    },
+    {
+      "id": "crypto-buy-14",
+      "type": "buy",
+      "date": "2022-04-04",
+      "ticker": "BNB",
+      "quantity": 0.112,
+      "total": 49.8288,
+      "unitPrice": 444.9
     },
     {
       "id": "crypto-buy-17",
@@ -521,7 +530,7 @@
       "ticker": "BTC",
       "name": "Bitcoin",
       "sector": "Criptomoeda",
-      "currentPrice": 63714.32,
+      "currentPrice": 62808,
       "exchange": "Mercado cripto",
       "annual": null
     },
@@ -529,15 +538,17 @@
       "ticker": "ETH",
       "name": "Ethereum",
       "sector": "Criptomoeda",
-      "currentPrice": 1792.612,
+      "currentPrice": 1775.6012,
       "exchange": "Mercado cripto",
       "annual": null
     }
   ],
   "integrity": {
-    "purchaseRows": 56,
+    "purchaseRows": 57,
     "saleRows": 0,
     "assetRows": 2,
-    "warnings": []
+    "warnings": [
+      "Cotação não encontrada para BNB na aba Cripto Base."
+    ]
   }
 }

@@ -16,7 +16,7 @@ const FII_RANGES = {
 };
 const CRYPTO_RANGES = {
   transactions: "'Cripto'!A1:L1000",
-  assets: "'Cripto Base'!D2:E4",
+  assets: "'Cripto Base'!D2:E5",
 };
 const FIXED_INCOME_RANGES = {
   investments: "'Fixa Hist'!B36:Q1000",
@@ -29,6 +29,8 @@ const FIXED_INCOME_OUTPUT_PATH = path.resolve("public/data/fixed-income.json");
 const CRYPTO_BY_NAME = new Map([
   ["BITCOIN", { ticker: "BTC", name: "Bitcoin" }],
   ["ETHEREUM", { ticker: "ETH", name: "Ethereum" }],
+  ["BNB", { ticker: "BNB", name: "BNB" }],
+  ["BINANCE COIN", { ticker: "BNB", name: "BNB" }],
 ]);
 const SUPPORTED_CRYPTO_TICKERS = new Set([...CRYPTO_BY_NAME.values()].map((asset) => asset.ticker));
 
@@ -312,7 +314,7 @@ function mapCryptoAssets(rows, warnings) {
     }];
   });
 
-  for (const crypto of CRYPTO_BY_NAME.values()) {
+  for (const crypto of new Map([...CRYPTO_BY_NAME.values()].map((crypto) => [crypto.ticker, crypto])).values()) {
     if (!seen.has(crypto.ticker)) warnings.push(`Cotação não encontrada para ${crypto.name} na aba Cripto Base.`);
   }
   return assets;

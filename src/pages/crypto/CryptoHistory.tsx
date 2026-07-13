@@ -20,7 +20,7 @@ export function CryptoHistory({ model }: { model: PortfolioModel }) {
       <MetricCard label="Total vendido" value={formatCurrency(model.metrics.historicalSales)} icon={<HandCoins size={19} />} helper={`${model.transactions.filter((item) => item.type === "sell").length} vendas`} accent="violet" />
       <MetricCard label="Lucro realizado" value={formatCurrency(model.metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Custo médio descontado" change={model.metrics.realizedProfit} accent="green" />
     </section>
-    <Section title="Histórico de cripto" subtitle="Compras e vendas de Bitcoin e Ethereum processadas exclusivamente a partir da aba Cripto">
+    <Section title="Histórico de cripto" subtitle="Compras e vendas de Bitcoin, Ethereum e BNB processadas exclusivamente a partir da aba Cripto">
       <div className="toolbar toolbar--history">
         <label className="search-field"><Search size={18} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar código da cripto" /></label>
         <label className="select-field"><Filter size={17} /><select value={type} onChange={(event) => setType(event.target.value as "all" | TransactionType)}><option value="all">Compras e vendas</option><option value="buy">Somente compras</option><option value="sell">Somente vendas</option></select></label>

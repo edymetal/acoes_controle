@@ -40,7 +40,7 @@ const fiiPages: PageDefinition[] = [
 
 const cryptoPages: PageDefinition[] = [
   { id: "crypto-dashboard", label: "Visão geral", description: "Resumo exclusivo da sua carteira de criptomoedas", icon: <LayoutDashboard size={19} />, topic: "crypto" },
-  { id: "crypto-portfolio", label: "Carteira de Cripto", description: "Posições, custos e valores atuais de Bitcoin e Ethereum", icon: <Bitcoin size={19} />, topic: "crypto" },
+  { id: "crypto-portfolio", label: "Carteira de Cripto", description: "Posições, custos e valores atuais de Bitcoin, Ethereum e BNB", icon: <Bitcoin size={19} />, topic: "crypto" },
   { id: "crypto-history", label: "Movimentações", description: "Histórico separado de compras e vendas de criptomoedas", icon: <Clock3 size={19} />, topic: "crypto" },
 ];
 

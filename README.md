@@ -19,7 +19,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Gráficos de distribuição da carteira e impacto por posição.
 - Interface responsiva para desktop, tablet e celular.
 - Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
-- Área independente de Cripto em dólares, restrita a Bitcoin e Ethereum, com visão geral, carteira e movimentações.
+- Área independente de Cripto em dólares para Bitcoin, Ethereum e BNB, com visão geral, carteira e movimentações.
 - Área independente de Renda Fixa, com valores em reais e conversão secundária em dólares, carteira detalhada e escada de vencimentos para os 12 meses.
 - Atualização automática a cada 6 horas pelo GitHub Actions.
 
@@ -66,7 +66,7 @@ Sem `VITE_DATA_BASE_URL`, o comportamento público atual é mantido por compatib
 | Fundos e cotações atuais | `FII BASE` | `A16:G1000` |
 | Cotação do dólar para conversão dos FIIs | `Dólar` | `G5` |
 | Compras e vendas de cripto | `Cripto` | `A1:L1000` |
-| Cotações atuais de Bitcoin e Ethereum | `Cripto Base` | `D2:E4` |
+| Cotações atuais de Bitcoin, Ethereum e BNB | `Cripto Base` | `D2:E5` |
 | Ativos de renda fixa, vencimentos e resultados | `Fixa Hist` | `B36:Q1000` |
 | Cotação do dólar para conversão da renda fixa | `Dólar` | `G5` |
 
@@ -148,7 +148,7 @@ scripts/
 public/data/
   portfolio.json    dados sanitizados consumidos pelo site
   fiis.json         dados de FIIs, mantidos separados das ações
-  crypto.json       dados de Bitcoin e Ethereum, isolados dos demais tópicos
+  crypto.json       dados de Bitcoin, Ethereum e BNB, isolados dos demais tópicos
   fixed-income.json dados de renda fixa e vencimentos, isolados dos demais tópicos
 .github/workflows/
   deploy-pages.yml

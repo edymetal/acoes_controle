@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-11T17:04:43.298Z",
+  "generatedAt": "2026-07-13T06:30:15.971Z",
   "source": {
     "spreadsheetId": "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0",
     "ranges": {
@@ -12,7 +12,7 @@
     "currentQuotes": "Google Sheets"
   },
   "exchangeRate": {
-    "brlPerUsd": 5.13,
+    "brlPerUsd": 5.1101,
     "source": "'Dólar'!G5"
   },
   "purchases": [
