@@ -9,9 +9,11 @@ import {
   ChevronDown,
   Clock3,
   LayoutDashboard,
+  LockKeyhole,
   RefreshCw,
   Settings2,
   Sparkles,
+  UnlockKeyhole,
   Landmark,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
@@ -62,14 +64,99 @@ interface ShellProps {
   children: ReactNode;
 }
 
+const PRIVACY_CREDENTIAL_KEY = "acoes-controle.privacy-credential";
+
+function randomBytes(length: number) {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return bytes;
+}
+
+function encodeCredentialId(bytes: ArrayBuffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function decodeCredentialId(value: string) {
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
+  return Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
+}
+
+function supportsDeviceAuthentication() {
+  return typeof window !== "undefined" && "PublicKeyCredential" in window && Boolean(navigator.credentials);
+}
+
 export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
   const currentTopic = current.topic;
   const [openTopic, setOpenTopic] = useState<Topic | null>(currentTopic === "overview" ? null : currentTopic);
+  const [privacyCredential, setPrivacyCredential] = useState(() => localStorage.getItem(PRIVACY_CREDENTIAL_KEY));
+  const [isPrivacyLocked, setIsPrivacyLocked] = useState(() => Boolean(localStorage.getItem(PRIVACY_CREDENTIAL_KEY)));
+  const [privacyMessage, setPrivacyMessage] = useState<string | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
     if (currentTopic !== "overview") setOpenTopic(currentTopic);
   }, [currentTopic]);
+
+  const lockValues = async () => {
+    setPrivacyMessage(null);
+    if (privacyCredential) {
+      setIsPrivacyLocked(true);
+      return;
+    }
+    if (!supportsDeviceAuthentication()) {
+      setPrivacyMessage("Este navegador não oferece autenticação por biometria ou PIN do dispositivo.");
+      return;
+    }
+
+    setIsAuthenticating(true);
+    try {
+      const credential = await navigator.credentials.create({
+        publicKey: {
+          challenge: randomBytes(32),
+          rp: { name: "Controle de Investimentos" },
+          user: { id: randomBytes(16), name: "investimentos", displayName: "Controle de Investimentos" },
+          pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+          authenticatorSelection: { authenticatorAttachment: "platform", residentKey: "required", userVerification: "required" },
+          timeout: 60_000,
+          attestation: "none",
+        },
+      });
+      if (!credential) throw new Error("Cadastro não concluído.");
+      const credentialId = encodeCredentialId((credential as PublicKeyCredential).rawId);
+      localStorage.setItem(PRIVACY_CREDENTIAL_KEY, credentialId);
+      setPrivacyCredential(credentialId);
+      setIsPrivacyLocked(true);
+      setPrivacyMessage("Proteção ativada. Para ver os valores novamente, confirme sua identidade no celular.");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "NotAllowedError") setPrivacyMessage("A autenticação foi cancelada ou não foi autorizada no dispositivo.");
+      else setPrivacyMessage("Não foi possível ativar a proteção neste dispositivo.");
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  const unlockValues = async () => {
+    if (!privacyCredential || !supportsDeviceAuthentication()) return;
+    setIsAuthenticating(true);
+    setPrivacyMessage(null);
+    try {
+      const credential = await navigator.credentials.get({
+        publicKey: {
+          challenge: randomBytes(32),
+          allowCredentials: [{ type: "public-key", id: decodeCredentialId(privacyCredential) }],
+          userVerification: "required",
+          timeout: 60_000,
+        },
+      });
+      if (!credential) throw new Error("Autenticação não concluída.");
+      setIsPrivacyLocked(false);
+    } catch {
+      setPrivacyMessage("Não foi possível confirmar sua identidade. Tente novamente.");
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
 
   const renderTopic = (topic: Topic, label: string, topicPages: PageDefinition[]) => {
     const isOpen = openTopic === topic;
@@ -141,11 +228,16 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           <div className="sync-status">
             <span className="sync-status__dot" aria-hidden="true" />
             <span><small>Atualizado em</small><strong>{formatDateTime(updatedAt)}</strong></span>
+            <button type="button" onClick={lockValues} disabled={isAuthenticating} aria-label={isPrivacyLocked ? "Valores protegidos" : "Proteger valores com biometria"} title={isPrivacyLocked ? "Valores protegidos" : "Proteger valores com biometria"}>{isPrivacyLocked ? <LockKeyhole size={17} /> : <UnlockKeyhole size={17} />}</button>
             <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label="Recarregar dados publicados" title="Recarregar dados publicados"><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
           </div>
         </header>
         {refreshMessage && <div className={`refresh-message refresh-message--${refreshMessage.kind}`} role="status">{refreshMessage.text}</div>}
-        <main className="content">{children}</main>
+        <main className={`content ${isPrivacyLocked ? "content--protected" : ""}`}>
+          <div className="content__body">{children}</div>
+          {isPrivacyLocked && <div className="privacy-shield" role="status"><LockKeyhole size={30} /><strong>Valores protegidos</strong><span>Use a autenticação do dispositivo para visualizar seus investimentos.</span>{privacyMessage && <small>{privacyMessage}</small>}<button type="button" onClick={unlockValues} disabled={isAuthenticating}><UnlockKeyhole size={17} /> {isAuthenticating ? "Aguardando confirmação…" : "Desbloquear valores"}</button></div>}
+          {!isPrivacyLocked && privacyMessage && <div className="privacy-notice" role="status">{privacyMessage}</div>}
+        </main>
       </div>
     </div>
   );
