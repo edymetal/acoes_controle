@@ -8,12 +8,12 @@ import {
   CalendarRange,
   ChevronDown,
   Clock3,
+  Eye,
+  EyeOff,
   LayoutDashboard,
-  LockKeyhole,
   RefreshCw,
   Settings2,
   Sparkles,
-  UnlockKeyhole,
   Landmark,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
@@ -228,15 +228,14 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           <div className="sync-status">
             <span className="sync-status__dot" aria-hidden="true" />
             <span><small>Atualizado em</small><strong>{formatDateTime(updatedAt)}</strong></span>
-            <button type="button" onClick={lockValues} disabled={isAuthenticating} aria-label={isPrivacyLocked ? "Valores protegidos" : "Proteger valores com biometria"} title={isPrivacyLocked ? "Valores protegidos" : "Proteger valores com biometria"}>{isPrivacyLocked ? <LockKeyhole size={17} /> : <UnlockKeyhole size={17} />}</button>
+            <button type="button" onClick={isPrivacyLocked ? unlockValues : lockValues} disabled={isAuthenticating} aria-label={isPrivacyLocked ? "Mostrar valores com biometria" : "Ocultar valores com biometria"} title={isPrivacyLocked ? "Mostrar valores com biometria" : "Ocultar valores com biometria"}>{isPrivacyLocked ? <EyeOff size={17} /> : <Eye size={17} />}</button>
             <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label="Recarregar dados publicados" title="Recarregar dados publicados"><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
           </div>
         </header>
         {refreshMessage && <div className={`refresh-message refresh-message--${refreshMessage.kind}`} role="status">{refreshMessage.text}</div>}
         <main className={`content ${isPrivacyLocked ? "content--protected" : ""}`}>
-          <div className="content__body">{children}</div>
-          {isPrivacyLocked && <div className="privacy-shield" role="status"><LockKeyhole size={30} /><strong>Valores protegidos</strong><span>Use a autenticação do dispositivo para visualizar seus investimentos.</span>{privacyMessage && <small>{privacyMessage}</small>}<button type="button" onClick={unlockValues} disabled={isAuthenticating}><UnlockKeyhole size={17} /> {isAuthenticating ? "Aguardando confirmação…" : "Desbloquear valores"}</button></div>}
-          {!isPrivacyLocked && privacyMessage && <div className="privacy-notice" role="status">{privacyMessage}</div>}
+          {privacyMessage && <div className="privacy-notice" role="status">{privacyMessage}</div>}
+          {children}
         </main>
       </div>
     </div>
