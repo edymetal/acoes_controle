@@ -382,6 +382,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 @media (max-width: 680px) {
   .month-coverage-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .maturity-ladder { grid-template-columns: 1fr; }
+  .maturity-assets > div { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .maturity-assets span:last-child { text-align: left; }
+  .maturity-assets small { overflow-wrap: anywhere; }
   .maturity-month > footer { font-size: 10px; }
   .fixed-income-section-actions { width: 100%; align-items: stretch; flex-direction: column; }
   .fixed-income-year-selector { width: 100%; }
