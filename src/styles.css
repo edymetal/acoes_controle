@@ -356,29 +356,29 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .maturity-month { overflow: hidden; border: 1px solid var(--border-soft); border-radius: 13px; background: rgba(7, 16, 29, .35); }
 .maturity-month > header { display: grid; grid-template-columns: 45px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 17px; border-bottom: 1px solid var(--border-soft); }
 .maturity-month > header > span:nth-child(2) { display: flex; flex-direction: column; }
-.maturity-month > header strong { font-size: 18px; }
-.maturity-month > header small { margin-top: 4px; color: var(--muted); font-size: 13px; }
+.maturity-month > header strong { font-size: 20px; line-height: 1.2; }
+.maturity-month > header small { margin-top: 5px; color: var(--muted); font-size: 15px; line-height: 1.35; }
 .maturity-month > header svg { color: var(--green); }
-.maturity-month__number { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 11px; color: var(--green); background: rgba(55, 221, 162, .09); font-size: 14px; font-weight: 900; }
+.maturity-month__number { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 11px; color: var(--green); background: rgba(55, 221, 162, .09); font-size: 16px; font-weight: 900; }
 .maturity-assets { min-height: 112px; padding: 10px 17px; }
 .maturity-assets > div { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
 .maturity-assets > div:last-child { border-bottom: 0; }
 .maturity-assets span { min-width: 0; display: flex; flex-direction: column; }
 .maturity-assets span:last-child { flex: 0 0 auto; text-align: right; }
-.maturity-assets strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
-.maturity-assets small { margin-top: 4px; color: var(--muted); font-size: 11px; }
+.maturity-assets strong { overflow: hidden; font-size: 16px; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+.maturity-assets small { margin-top: 5px; color: var(--muted); font-size: 13px; line-height: 1.4; }
 .maturity-missing { min-height: 112px; display: flex; align-items: center; gap: 12px; padding: 17px; color: var(--amber); background: rgba(255, 184, 107, .025); }
 .maturity-missing span { display: flex; flex-direction: column; }
-.maturity-missing strong { font-size: 18px; }
-.maturity-missing small { margin-top: 5px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.maturity-missing strong { font-size: 20px; }
+.maturity-missing small { margin-top: 5px; color: var(--muted); font-size: 15px; line-height: 1.45; }
 .maturity-month--missing { border-style: dashed; }
 .maturity-month--missing > header svg, .maturity-month--missing .maturity-month__number { color: var(--amber); }
 .maturity-month--missing .maturity-month__number { background: rgba(255, 184, 107, .08); }
-.maturity-month > footer { display: flex; justify-content: space-between; gap: 10px; padding: 13px 17px; border-top: 1px solid var(--border-soft); color: var(--muted); font-size: 11px; }
+.maturity-month > footer { display: flex; justify-content: space-between; gap: 10px; padding: 15px 17px; border-top: 1px solid var(--border-soft); color: var(--muted); font-size: 13px; }
 .maturity-month > footer span { display: inline-flex; align-items: center; gap: 6px; }
 .maturity-month > footer > span > span { align-items: flex-start; flex-direction: column; gap: 3px; }
-.maturity-month > footer strong { color: var(--text); font-size: 13px; }
-.maturity-month > footer small { color: var(--muted-2); font-size: 10px; }
+.maturity-month > footer strong { color: var(--text); font-size: 15px; }
+.maturity-month > footer small { color: var(--muted-2); font-size: 12px; }
 
 @media (max-width: 1180px) { .maturity-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 680px) {
@@ -387,7 +387,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .maturity-assets > div { align-items: flex-start; flex-direction: column; gap: 6px; }
   .maturity-assets span:last-child { text-align: left; }
   .maturity-assets small { overflow-wrap: anywhere; }
-  .maturity-month > footer { font-size: 10px; }
+  .maturity-month > footer { font-size: 12px; }
   .fixed-income-section-actions { width: 100%; align-items: stretch; flex-direction: column; }
   .fixed-income-year-selector { width: 100%; }
   .fixed-income-year-selector button { flex: 1; }
