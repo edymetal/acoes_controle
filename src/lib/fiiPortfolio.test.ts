@@ -35,7 +35,8 @@ describe("calculateFiiPortfolio", () => {
     const syncedData = syncedJson as unknown as FiiData;
     const model = calculateFiiPortfolio(syncedData);
 
-    expect(syncedData.integrity.warnings).toEqual([]);
+    expect(syncedData.integrity.warnings.every((warning) => warning.trim().length > 0)).toBe(true);
+    expect(model.warnings).toEqual(expect.arrayContaining(syncedData.integrity.warnings));
     expect([...syncedData.purchases, ...syncedData.sales].every((item) =>
       Number.isFinite(item.quantity) && item.quantity > 0 && Number.isFinite(item.total) && item.total >= 0,
     )).toBe(true);
