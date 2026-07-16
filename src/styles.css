@@ -193,6 +193,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .panel__header p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
 .dashboard-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 18px; }
 .dashboard-grid--lower { grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); }
+.chart-panel--wide { grid-column: 1 / -1; }
 .chart-box { position: relative; width: 100%; height: 260px; min-width: 0; }
 .chart-box--donut { width: min(260px, 54%); }
 .donut-layout { min-height: 260px; display: flex; align-items: center; gap: 12px; }

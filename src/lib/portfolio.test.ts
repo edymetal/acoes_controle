@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculatePortfolio, getStrategySignal } from "./portfolio";
+import { calculatePortfolio, getAnnualRealizedProfit, getStrategySignal } from "./portfolio";
 import type { Asset, PortfolioData } from "../types";
 import { DEFAULT_STRATEGY_SETTINGS } from "./settings";
 
@@ -49,6 +49,24 @@ describe("calculatePortfolio", () => {
     };
     const model = calculatePortfolio(sameDayData);
     expect(model.warnings).toContain("Compra e venda de AAA em 2025-02-01 não possuem horário; a compra foi processada primeiro.");
+  });
+});
+
+describe("getAnnualRealizedProfit", () => {
+  it("soma o lucro realizado por ano e preserva anos sem vendas", () => {
+    const model = calculatePortfolio(data);
+    const sale = model.transactions.find((transaction) => transaction.id === "sell-1")!;
+    const purchase = model.transactions.find((transaction) => transaction.id === "buy-1")!;
+
+    expect(getAnnualRealizedProfit([
+      ...model.transactions,
+      { ...sale, id: "sell-2024", date: "2024-03-01", realizedProfit: -5 },
+      { ...purchase, id: "buy-2023", date: "2023-01-01" },
+    ])).toEqual([
+      { year: "2023", value: 0 },
+      { year: "2024", value: -5 },
+      { year: "2025", value: 25 },
+    ]);
   });
 });
 

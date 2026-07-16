@@ -22,6 +22,20 @@ interface TickerState {
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
+export function getAnnualRealizedProfit(transactions: ProcessedTransaction[]) {
+  const totals = new Map<string, number>();
+
+  for (const transaction of transactions) {
+    const year = transaction.date.slice(0, 4);
+    if (!/^\d{4}$/.test(year)) continue;
+    totals.set(year, (totals.get(year) ?? 0) + (transaction.realizedProfit ?? 0));
+  }
+
+  return [...totals.entries()]
+    .sort(([yearA], [yearB]) => yearA.localeCompare(yearB))
+    .map(([year, value]) => ({ year, value }));
+}
+
 export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): PortfolioModel {
   const states = new Map<string, TickerState>();
   const warnings = [...data.integrity.warnings];

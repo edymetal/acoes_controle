@@ -1,9 +1,9 @@
 import { ArrowRight, BadgeDollarSign, CircleDollarSign, Landmark, Layers3, TrendingUp, WalletCards } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { PageId } from "../components/Shell";
-import { MetricCard, Section, SignalBadge, StockLogo, Value } from "../components/Ui";
+import { EmptyState, MetricCard, Section, SignalBadge, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
-import { getStrategySignal } from "../lib/portfolio";
+import { getAnnualRealizedProfit, getStrategySignal } from "../lib/portfolio";
 import type { PortfolioData, PortfolioModel, StrategySettings } from "../types";
 
 const CHART_COLORS = ["#56d8ff", "#7c8cff", "#37dda2", "#b584ff", "#ffb86b", "#f8799b", "#4eb6a5", "#8ca5c7"];
@@ -22,6 +22,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
     .sort((a, b) => Math.abs(b.unrealized) - Math.abs(a.unrealized))
     .slice(0, 7)
     .map((position) => ({ ticker: position.ticker, value: position.unrealized }));
+  const annualRealizedProfit = getAnnualRealizedProfit(transactions);
   const positionValues = new Map(positions.map((position) => [position.ticker, position.marketValue]));
   const strategy = data.assets.map((asset) => ({ asset, signal: getStrategySignal(asset, settings, positionValues.get(asset.ticker) ?? 0) }));
   const buySignals = strategy.filter((item) => item.signal.kind === "buy").sort((a, b) => b.signal.strength - a.signal.strength);
@@ -91,6 +92,22 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
               </BarChart>
             </ResponsiveContainer>
           </div>
+        </Section>
+
+        <Section title="Lucro realizado por ano" subtitle="Resultado consolidado das vendas concluídas em cada ano" className="chart-panel chart-panel--wide">
+          {annualRealizedProfit.length ? <div className="chart-box chart-box--annual">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={annualRealizedProfit} margin={{ top: 10, right: 10, left: 4, bottom: 0 }}>
+                <CartesianGrid vertical={false} stroke="#203149" strokeDasharray="4 5" />
+                <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fill: "#a5b5c9", fontSize: 14 }} />
+                <YAxis axisLine={false} tickLine={false} width={58} tick={{ fill: "#8296ae", fontSize: 13 }} tickFormatter={(value) => `$${Math.round(Number(value))}`} />
+                <Tooltip formatter={(value) => formatCurrency(Number(value))} cursor={{ fill: "rgba(255,255,255,.025)" }} contentStyle={{ background: "#101d30", border: "1px solid #273851", borderRadius: 12 }} />
+                <Bar dataKey="value" maxBarSize={72} radius={[5, 5, 3, 3]}>
+                  {annualRealizedProfit.map((item) => <Cell key={item.year} fill={item.value >= 0 ? "#37dda2" : "#f8799b"} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div> : <EmptyState title="Nenhum ano disponível" description="As movimentações anuais aparecerão quando houver dados processados." />}
         </Section>
       </section>
 
