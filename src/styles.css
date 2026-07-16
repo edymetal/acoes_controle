@@ -77,6 +77,16 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 @keyframes spin { to { transform: rotate(360deg); } }
 .content { padding: 28px clamp(20px, 3.5vw, 52px) 52px; max-width: 1640px; margin-inline: auto; }
 .content--protected .metric-card__value, .content--protected .overview-hero > div:first-child > strong, .content--protected .overview-hero p .value--positive, .content--protected .overview-hero p .value--negative, .content--protected .overview-hero__stats strong, .content--protected .hero-card > div:first-child > strong, .content--protected .hero-card__converted, .content--protected .hero-card p .value--positive, .content--protected .hero-card p .value--negative, .content--protected .hero-card__summary strong, .content--protected .portfolio-table td:nth-child(3), .content--protected .portfolio-table td:nth-child(4), .content--protected .portfolio-table td:nth-child(5), .content--protected .portfolio-table td:nth-child(6), .content--protected .portfolio-table td:nth-child(8) strong, .content--protected .history-table td:nth-child(5), .content--protected .history-table td:nth-child(6), .content--protected .history-table td:nth-child(7), .content--protected .history-table td:nth-child(8), .content--protected .fixed-income-table td:nth-child(3) small, .content--protected .fixed-income-table td:nth-child(5), .content--protected .fixed-income-table td:nth-child(6), .content--protected .fixed-income-table td:nth-child(7), .content--protected .compact-table > div > span:last-child strong, .content--protected .fixed-income-upcoming > div > span:last-child strong, .content--protected .fixed-income-upcoming > div > span:last-child small, .content--protected .maturity-assets > div > span:last-child, .content--protected .maturity-month > footer strong, .content--protected .maturity-month > footer small, .content--protected .filter-summary strong, .content--protected .asset-modal article strong, .content--protected .asset-modal article em, .content--protected .strategy-card__price strong, .content--protected .strategy-action b, .content--protected .strategy-position strong, .content--protected .range-labels span { filter: blur(8px); user-select: none; }
+.content--protected .overview-topic-card__value strong,
+.content--protected .overview-hero p .value--neutral,
+.content--protected .overview-topic-card__result .value--positive,
+.content--protected .overview-topic-card__result .value--negative,
+.content--protected .overview-topic-card__result .value--neutral,
+.content--protected .overview-topic-card > p,
+.content--protected .overview-allocation__chart > div:last-child strong,
+.content--protected .overview-allocation__legend small,
+.content--protected .overview-allocation__legend b { filter: blur(8px); user-select: none; }
+.content--protected .overview-allocation .recharts-tooltip-wrapper { visibility: hidden !important; }
 .privacy-notice { margin-bottom: 16px; padding: 10px 12px; border: 1px solid rgba(255, 184, 107, .35); border-radius: 10px; color: var(--amber); background: rgba(255, 184, 107, .08); font-size: 12px; }
 .page-stack { display: flex; flex-direction: column; gap: 20px; animation: page-in .3s ease; }
 .page-loader { min-height: 50vh; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 14px; }
