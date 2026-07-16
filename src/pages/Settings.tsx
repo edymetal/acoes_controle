@@ -55,6 +55,10 @@ export function Settings({ settings, onSave, language, onLanguageChange }: Setti
     setSaved(true);
   };
 
+  const scrollToSection = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="page-stack">
       <section className="settings-hero">
@@ -62,7 +66,22 @@ export function Settings({ settings, onSave, language, onLanguageChange }: Setti
         <div><span className="eyebrow">{translate(language, "settings.eyebrow")}</span><h2>{translate(language, "settings.title")}</h2><p>{translate(language, "settings.description")}</p></div>
       </section>
 
-      <section className="panel settings-panel">
+      <nav className="panel settings-index" aria-label={translate(language, "settings.index.title")}>
+        <div className="settings-index__header"><strong>{translate(language, "settings.index.title")}</strong><small>{translate(language, "settings.index.description")}</small></div>
+        <div className="settings-index__items">
+          <button type="button" onClick={() => scrollToSection("settings-language")}><Languages size={18} /><span>{translate(language, "settings.language.title")}</span></button>
+          <button type="button" onClick={() => scrollToSection("settings-position")}><WalletCards size={18} /><span>{translate(language, "settings.position.title")}</span></button>
+          <button type="button" onClick={() => scrollToSection("settings-sell")}><TrendingUp size={18} /><span>{translate(language, "settings.sell.title")}</span></button>
+          <button type="button" onClick={() => scrollToSection("settings-buy")}><TrendingDown size={18} /><span>{translate(language, "settings.buy.title")}</span></button>
+        </div>
+      </nav>
+
+      <div className="settings-topic-heading">
+        <span className="settings-topic-heading__icon"><Settings2 size={20} /></span>
+        <span><strong>{translate(language, "settings.group.general")}</strong><small>{translate(language, "settings.group.general.description")}</small></span>
+      </div>
+
+      <section className="panel settings-panel settings-anchor" id="settings-language">
         <div className="panel__header"><div><h2><Languages size={19} /> {translate(language, "settings.language.title")}</h2><p>{translate(language, "settings.language.description")}</p></div></div>
         <div className="language-options" role="radiogroup" aria-label={translate(language, "settings.language.title")}>
           {(["pt-BR", "it-IT"] as AppLanguage[]).map((option) => (
@@ -76,7 +95,12 @@ export function Settings({ settings, onSave, language, onLanguageChange }: Setti
         <p className="settings-auto-save">{translate(language, "settings.language.saved")}</p>
       </section>
 
-      <section className="panel settings-panel">
+      <div className="settings-topic-heading">
+        <span className="settings-topic-heading__icon"><WalletCards size={20} /></span>
+        <span><strong>{translate(language, "settings.group.stocks")}</strong><small>{translate(language, "settings.group.stocks.description")}</small></span>
+      </div>
+
+      <section className="panel settings-panel settings-anchor" id="settings-position">
         <div className="panel__header"><div><h2>{translate(language, "settings.position.title")}</h2><p>{translate(language, "settings.position.description")}</p></div></div>
         <div className="settings-list settings-list--two">
           <SettingField label={translate(language, "settings.minimumValue")} description={translate(language, "settings.minimumValue.description")} value={draft.minimumPositionValue} min={1} max={10000} step={1} suffix="US$" icon={<WalletCards size={20} />} onChange={(value) => update("minimumPositionValue", value)} />
@@ -84,7 +108,7 @@ export function Settings({ settings, onSave, language, onLanguageChange }: Setti
         </div>
       </section>
 
-      <section className="panel settings-panel">
+      <section className="panel settings-panel settings-anchor" id="settings-sell">
         <div className="panel__header"><div><h2>{translate(language, "settings.sell.title")}</h2><p>{translate(language, "settings.sell.description")}</p></div></div>
         <div className="settings-list">
           <SettingField label={translate(language, "settings.highDistance")} description={translate(language, "settings.highDistance.description")} value={draft.sellDistanceFromHighPercent} min={0.5} max={25} suffix="%" icon={<Target size={20} />} onChange={(value) => update("sellDistanceFromHighPercent", value)} />
@@ -94,7 +118,7 @@ export function Settings({ settings, onSave, language, onLanguageChange }: Setti
         </div>
       </section>
 
-      <section className="panel settings-panel">
+      <section className="panel settings-panel settings-anchor" id="settings-buy">
         <div className="panel__header"><div><h2>{translate(language, "settings.buy.title")}</h2><p>{translate(language, "settings.buy.description")}</p></div></div>
         <div className="settings-list">
           <SettingField label={translate(language, "settings.upperLimit")} description={translate(language, "settings.upperLimit.description")} value={draft.buyZoneUpperPercent} min={1} max={100} suffix="%" icon={<TrendingDown size={20} />} onChange={(value) => update("buyZoneUpperPercent", value)} />
