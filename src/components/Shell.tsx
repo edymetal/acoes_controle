@@ -205,6 +205,10 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           <span className="brand__mark"><BarChart3 size={23} /></span>
           <span><strong>Controle</strong><small>{translate(language, "brand.subtitle")}</small><span className="brand__version">v{packageJson.version}</span></span>
         </div>
+        <div className="sidebar__mobile-actions">
+          <button type="button" onClick={isPrivacyLocked ? unlockValues : lockValues} disabled={isAuthenticating} aria-label={translate(language, isPrivacyLocked ? "privacy.show" : "privacy.hide")} title={translate(language, isPrivacyLocked ? "privacy.show" : "privacy.hide")}>{isPrivacyLocked ? <EyeOff size={17} /> : <Eye size={17} />}</button>
+          <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label={translate(language, "refresh.action")} title={translate(language, "refresh.action")}><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
+        </div>
         <nav className="main-nav" aria-label={translate(language, "nav.aria")}>
           <button
             type="button"
