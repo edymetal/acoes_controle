@@ -8,6 +8,7 @@ import { calculateFixedIncome } from "./lib/fixedIncome";
 import { fetchDataFile } from "./lib/dataSource";
 import { parseCryptoData, parseFiiData, parseFixedIncomeData, parsePortfolioData } from "./lib/dataValidation";
 import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
+import { loadAppLanguage, saveAppLanguage } from "./lib/i18n";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then((module) => ({ default: module.Dashboard })));
@@ -63,10 +64,15 @@ export default function App() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshMessage, setRefreshMessage] = useState<RefreshMessage | null>(null);
   const [settings, setSettings] = useState(loadStrategySettings);
+  const [language, setLanguage] = useState(loadAppLanguage);
   const model = useMemo(() => data ? calculatePortfolio(data) : null, [data]);
   const fiiModel = useMemo(() => fiiData ? calculateFiiPortfolio(fiiData) : null, [fiiData]);
   const cryptoModel = useMemo(() => cryptoData ? calculateCryptoPortfolio(cryptoData) : null, [cryptoData]);
   const fixedIncomeModel = useMemo(() => fixedIncomeData ? calculateFixedIncome(fixedIncomeData) : null, [fixedIncomeData]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -155,6 +161,10 @@ export default function App() {
     setSettings(saveStrategySettings(nextSettings));
   };
 
+  const updateLanguage = (nextLanguage: typeof language) => {
+    setLanguage(saveAppLanguage(nextLanguage));
+  };
+
   if (error) {
     return (
       <main className="state-screen">
@@ -169,14 +179,14 @@ export default function App() {
   }
 
   return (
-    <Shell page={page} onPageChange={navigate} updatedAt={page.startsWith("fii-") ? fiiData?.generatedAt ?? data.generatedAt : page.startsWith("crypto-") ? cryptoData?.generatedAt ?? data.generatedAt : page.startsWith("fixed-income-") ? fixedIncomeData?.generatedAt ?? data.generatedAt : data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData}>
+    <Shell page={page} onPageChange={navigate} updatedAt={page.startsWith("fii-") ? fiiData?.generatedAt ?? data.generatedAt : page.startsWith("crypto-") ? cryptoData?.generatedAt ?? data.generatedAt : page.startsWith("fixed-income-") ? fixedIncomeData?.generatedAt ?? data.generatedAt : data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData} language={language}>
       <Suspense fallback={<div className="page-loader"><LoaderCircle size={24} /> Carregando painel…</div>}>
         {page === "overview" && <Overview stockModel={model} fiiModel={fiiModel} cryptoModel={cryptoModel} fixedIncomeModel={fixedIncomeModel} brlPerUsd={fiiData?.exchangeRate.brlPerUsd ?? fixedIncomeData?.exchangeRate.brlPerUsd ?? null} errors={{ fiis: fiiError, crypto: cryptoError, fixedIncome: fixedIncomeError }} onNavigate={navigate} />}
         {page === "dashboard" && <Dashboard data={data} model={model} settings={settings} onNavigate={navigate} />}
         {page === "portfolio" && <Portfolio model={model} />}
         {page === "history" && <History model={model} />}
         {page === "strategy" && <Strategy data={data} model={model} settings={settings} />}
-        {page === "settings" && <Settings settings={settings} onSave={updateSettings} />}
+        {page === "settings" && <Settings settings={settings} onSave={updateSettings} language={language} onLanguageChange={updateLanguage} />}
         {page === "fii-dashboard" && fiiModel && <FiiDashboard model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} onNavigate={navigate} />}
         {page === "fii-portfolio" && fiiModel && <FiiPortfolio model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} />}
         {page === "fii-history" && fiiModel && <FiiHistory model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} />}

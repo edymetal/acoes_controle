@@ -17,42 +17,43 @@ import {
   Landmark,
 } from "lucide-react";
 import { formatDateTime } from "../lib/format";
+import { translate, type AppLanguage, type TranslationKey } from "../lib/i18n";
 import packageJson from "../../package.json";
 
 export type PageId = "overview" | "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
 
-type Topic = "overview" | "stocks" | "fiis" | "crypto" | "fixed-income";
-interface PageDefinition { id: PageId; label: string; description: string; icon: ReactNode; topic: Topic }
+type Topic = "overview" | "stocks" | "fiis" | "crypto" | "fixed-income" | "settings";
+interface PageDefinition { id: PageId; labelKey: TranslationKey; descriptionKey: TranslationKey; icon: ReactNode; topic: Topic }
 
-const overviewPage: PageDefinition = { id: "overview", label: "Visão geral", description: "Panorama consolidado de todos os seus investimentos", icon: <LayoutDashboard size={19} />, topic: "overview" };
+const overviewPage: PageDefinition = { id: "overview", labelKey: "nav.overview", descriptionKey: "nav.overview.description", icon: <LayoutDashboard size={19} />, topic: "overview" };
 
 const stockPages: PageDefinition[] = [
-  { id: "dashboard", label: "Dashboard", description: "Visão consolidada da sua carteira", icon: <LayoutDashboard size={19} />, topic: "stocks" },
-  { id: "portfolio", label: "Carteira", description: "Posições e resultado em aberto", icon: <BriefcaseBusiness size={19} />, topic: "stocks" },
-  { id: "history", label: "Movimentações", description: "Histórico completo de compras e vendas", icon: <Clock3 size={19} />, topic: "stocks" },
-  { id: "strategy", label: "Estratégia anual", description: "Sinais pela faixa de preço de 12 meses", icon: <Sparkles size={19} />, topic: "stocks" },
-  { id: "settings", label: "Configurações", description: "Personalize os limites dos sinais", icon: <Settings2 size={19} />, topic: "stocks" },
+  { id: "dashboard", labelKey: "page.dashboard", descriptionKey: "page.dashboard.description", icon: <LayoutDashboard size={19} />, topic: "stocks" },
+  { id: "portfolio", labelKey: "page.portfolio", descriptionKey: "page.portfolio.description", icon: <BriefcaseBusiness size={19} />, topic: "stocks" },
+  { id: "history", labelKey: "page.history", descriptionKey: "page.history.description", icon: <Clock3 size={19} />, topic: "stocks" },
+  { id: "strategy", labelKey: "page.strategy", descriptionKey: "page.strategy.description", icon: <Sparkles size={19} />, topic: "stocks" },
 ];
 
 const fiiPages: PageDefinition[] = [
-  { id: "fii-dashboard", label: "Visão geral", description: "Resumo exclusivo da sua carteira de fundos imobiliários", icon: <LayoutDashboard size={19} />, topic: "fiis" },
-  { id: "fii-portfolio", label: "Carteira de FIIs", description: "Cotas, custos e valores atuais dos fundos", icon: <Building2 size={19} />, topic: "fiis" },
-  { id: "fii-history", label: "Movimentações", description: "Histórico separado de compras e vendas de FIIs", icon: <Clock3 size={19} />, topic: "fiis" },
+  { id: "fii-dashboard", labelKey: "nav.overview", descriptionKey: "page.fiiOverview.description", icon: <LayoutDashboard size={19} />, topic: "fiis" },
+  { id: "fii-portfolio", labelKey: "page.fiiPortfolio", descriptionKey: "page.fiiPortfolio.description", icon: <Building2 size={19} />, topic: "fiis" },
+  { id: "fii-history", labelKey: "page.history", descriptionKey: "page.fiiHistory.description", icon: <Clock3 size={19} />, topic: "fiis" },
 ];
 
 const cryptoPages: PageDefinition[] = [
-  { id: "crypto-dashboard", label: "Visão geral", description: "Resumo exclusivo da sua carteira de criptomoedas", icon: <LayoutDashboard size={19} />, topic: "crypto" },
-  { id: "crypto-portfolio", label: "Carteira de Cripto", description: "Posições, custos e valores atuais de Bitcoin, Ethereum e BNB", icon: <Bitcoin size={19} />, topic: "crypto" },
-  { id: "crypto-history", label: "Movimentações", description: "Histórico separado de compras e vendas de criptomoedas", icon: <Clock3 size={19} />, topic: "crypto" },
+  { id: "crypto-dashboard", labelKey: "nav.overview", descriptionKey: "page.cryptoOverview.description", icon: <LayoutDashboard size={19} />, topic: "crypto" },
+  { id: "crypto-portfolio", labelKey: "page.cryptoPortfolio", descriptionKey: "page.cryptoPortfolio.description", icon: <Bitcoin size={19} />, topic: "crypto" },
+  { id: "crypto-history", labelKey: "page.history", descriptionKey: "page.cryptoHistory.description", icon: <Clock3 size={19} />, topic: "crypto" },
 ];
 
 const fixedIncomePages: PageDefinition[] = [
-  { id: "fixed-income-dashboard", label: "Visão geral", description: "Resumo exclusivo dos seus investimentos de renda fixa", icon: <LayoutDashboard size={19} />, topic: "fixed-income" },
-  { id: "fixed-income-portfolio", label: "Carteira de Renda Fixa", description: "Aportes, vencimentos, valores a receber e lucros", icon: <Landmark size={19} />, topic: "fixed-income" },
-  { id: "fixed-income-ladder", label: "Escada de vencimentos", description: "Cobertura dos 12 meses e oportunidades para completar a estratégia", icon: <CalendarRange size={19} />, topic: "fixed-income" },
+  { id: "fixed-income-dashboard", labelKey: "nav.overview", descriptionKey: "page.fixedIncomeOverview.description", icon: <LayoutDashboard size={19} />, topic: "fixed-income" },
+  { id: "fixed-income-portfolio", labelKey: "page.fixedIncomePortfolio", descriptionKey: "page.fixedIncomePortfolio.description", icon: <Landmark size={19} />, topic: "fixed-income" },
+  { id: "fixed-income-ladder", labelKey: "page.fixedIncomeLadder", descriptionKey: "page.fixedIncomeLadder.description", icon: <CalendarRange size={19} />, topic: "fixed-income" },
 ];
 
-const pages = [overviewPage, ...stockPages, ...fiiPages, ...cryptoPages, ...fixedIncomePages];
+const settingsPage: PageDefinition = { id: "settings", labelKey: "nav.settings", descriptionKey: "nav.settings.description", icon: <Settings2 size={19} />, topic: "settings" };
+const pages = [overviewPage, ...stockPages, ...fiiPages, ...cryptoPages, ...fixedIncomePages, settingsPage];
 
 interface ShellProps {
   page: PageId;
@@ -61,6 +62,7 @@ interface ShellProps {
   isRefreshing: boolean;
   refreshMessage: { kind: "success" | "warning" | "error"; text: string } | null;
   onRefresh: () => void;
+  language: AppLanguage;
   children: ReactNode;
 }
 
@@ -85,17 +87,18 @@ function supportsDeviceAuthentication() {
   return typeof window !== "undefined" && "PublicKeyCredential" in window && Boolean(navigator.credentials);
 }
 
-export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, children }: ShellProps) {
+export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, language, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
   const currentTopic = current.topic;
-  const [openTopic, setOpenTopic] = useState<Topic | null>(currentTopic === "overview" ? null : currentTopic);
+  const [openTopic, setOpenTopic] = useState<Topic | null>(currentTopic === "overview" || currentTopic === "settings" ? null : currentTopic);
   const [privacyCredential, setPrivacyCredential] = useState(() => localStorage.getItem(PRIVACY_CREDENTIAL_KEY));
   const [isPrivacyLocked, setIsPrivacyLocked] = useState(() => Boolean(localStorage.getItem(PRIVACY_CREDENTIAL_KEY)));
   const [privacyMessage, setPrivacyMessage] = useState<string | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
-    if (currentTopic !== "overview") setOpenTopic(currentTopic);
+    if (currentTopic === "overview" || currentTopic === "settings") setOpenTopic(null);
+    else setOpenTopic(currentTopic);
   }, [currentTopic]);
 
   const lockValues = async () => {
@@ -158,7 +161,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
     }
   };
 
-  const renderTopic = (topic: Topic, label: string, topicPages: PageDefinition[]) => {
+  const renderTopic = (topic: Topic, labelKey: TranslationKey, topicPages: PageDefinition[]) => {
     const isOpen = openTopic === topic;
     const panelId = `nav-topic-${topic}`;
 
@@ -174,7 +177,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
             onPageChange(topicPages[0].id);
           }}
         >
-          <span>{label}</span><ChevronDown size={17} aria-hidden="true" />
+          <span>{translate(language, labelKey)}</span><ChevronDown size={17} aria-hidden="true" />
         </button>
         {isOpen && (
           <div className="main-nav__pages" id={panelId}>
@@ -186,7 +189,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
                 aria-current={page === item.id ? "page" : undefined}
                 onClick={() => onPageChange(item.id)}
               >
-                {item.icon}<span>{item.label}</span>
+                {item.icon}<span>{translate(language, item.labelKey)}</span>
               </button>
             ))}
           </div>
@@ -200,36 +203,44 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
       <aside className="sidebar">
         <div className="brand">
           <span className="brand__mark"><BarChart3 size={23} /></span>
-          <span><strong>Controle</strong><small>de Investimentos</small><span className="brand__version">v{packageJson.version}</span></span>
+          <span><strong>Controle</strong><small>{translate(language, "brand.subtitle")}</small><span className="brand__version">v{packageJson.version}</span></span>
         </div>
-        <nav className="main-nav" aria-label="Navegação principal">
+        <nav className="main-nav" aria-label={translate(language, "nav.aria")}>
           <button
             type="button"
             className={`main-nav__overview ${page === "overview" ? "active" : ""}`}
             aria-current={page === "overview" ? "page" : undefined}
             onClick={() => onPageChange("overview")}
           >
-            {overviewPage.icon}<span>{overviewPage.label}</span>
+            {overviewPage.icon}<span>{translate(language, overviewPage.labelKey)}</span>
           </button>
-          {renderTopic("stocks", "AÇÕES", stockPages)}
-          {renderTopic("fiis", "FIIs", fiiPages)}
-          {renderTopic("crypto", "CRIPTO", cryptoPages)}
-          {renderTopic("fixed-income", "RENDA FIXA", fixedIncomePages)}
+          {renderTopic("stocks", "nav.stocks", stockPages)}
+          {renderTopic("fiis", "nav.fiis", fiiPages)}
+          {renderTopic("crypto", "nav.crypto", cryptoPages)}
+          {renderTopic("fixed-income", "nav.fixedIncome", fixedIncomePages)}
+          <button
+            type="button"
+            className={`main-nav__settings ${page === "settings" ? "active" : ""}`}
+            aria-current={page === "settings" ? "page" : undefined}
+            onClick={() => onPageChange("settings")}
+          >
+            {settingsPage.icon}<span>{translate(language, settingsPage.labelKey)}</span>
+          </button>
         </nav>
       </aside>
 
       <div className="workspace">
         <header className="topbar">
           <div className="topbar__title">
-            <span className="eyebrow"><Activity size={14} /> {current.topic === "overview" ? "TODOS OS INVESTIMENTOS" : current.topic === "fiis" ? "FUNDOS IMOBILIÁRIOS · B3" : current.topic === "crypto" ? "MERCADO DE CRIPTOMOEDAS · USD" : current.topic === "fixed-income" ? "RENDA FIXA · BRL" : "MERCADO AMERICANO"}</span>
-            <h1>{current.label}</h1>
-            <p>{current.description}</p>
+            <span className="eyebrow"><Activity size={14} /> {translate(language, current.topic === "overview" ? "eyebrow.all" : current.topic === "fiis" ? "eyebrow.fiis" : current.topic === "crypto" ? "eyebrow.crypto" : current.topic === "fixed-income" ? "eyebrow.fixedIncome" : current.topic === "settings" ? "eyebrow.settings" : "eyebrow.stocks")}</span>
+            <h1>{translate(language, current.labelKey)}</h1>
+            <p>{translate(language, current.descriptionKey)}</p>
           </div>
           <div className="sync-status">
             <span className="sync-status__dot" aria-hidden="true" />
-            <span><small>Atualizado em</small><strong>{formatDateTime(updatedAt)}</strong></span>
-            <button type="button" onClick={isPrivacyLocked ? unlockValues : lockValues} disabled={isAuthenticating} aria-label={isPrivacyLocked ? "Mostrar valores com biometria" : "Ocultar valores com biometria"} title={isPrivacyLocked ? "Mostrar valores com biometria" : "Ocultar valores com biometria"}>{isPrivacyLocked ? <EyeOff size={17} /> : <Eye size={17} />}</button>
-            <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label="Recarregar dados publicados" title="Recarregar dados publicados"><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
+            <span><small>{translate(language, "sync.updated")}</small><strong>{formatDateTime(updatedAt)}</strong></span>
+            <button type="button" onClick={isPrivacyLocked ? unlockValues : lockValues} disabled={isAuthenticating} aria-label={translate(language, isPrivacyLocked ? "privacy.show" : "privacy.hide")} title={translate(language, isPrivacyLocked ? "privacy.show" : "privacy.hide")}>{isPrivacyLocked ? <EyeOff size={17} /> : <Eye size={17} />}</button>
+            <button type="button" onClick={onRefresh} disabled={isRefreshing} aria-label={translate(language, "refresh.action")} title={translate(language, "refresh.action")}><RefreshCw className={isRefreshing ? "spin" : undefined} size={17} /></button>
           </div>
         </header>
         {refreshMessage && <div className={`refresh-message refresh-message--${refreshMessage.kind}`} role="status">{refreshMessage.text}</div>}

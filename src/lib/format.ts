@@ -1,5 +1,7 @@
+import { loadAppLanguage } from "./i18n";
+
 export const formatCurrency = (value: number, compact = false, currency = "USD") =>
-  new Intl.NumberFormat("pt-BR", {
+  new Intl.NumberFormat(loadAppLanguage(), {
     style: "currency",
     currency,
     notation: compact ? "compact" : "standard",
@@ -13,23 +15,23 @@ export const formatUsdFromBrl = (value: number, brlPerUsd: number | null) =>
   brlPerUsd && brlPerUsd > 0 ? formatCurrency(value / brlPerUsd) : "US$ —";
 
 export const formatNumber = (value: number, digits = 4) =>
-  new Intl.NumberFormat("pt-BR", {
+  new Intl.NumberFormat(loadAppLanguage(), {
     minimumFractionDigits: 0,
     maximumFractionDigits: digits,
   }).format(value);
 
 export const formatPercent = (value: number, digits = 1) =>
-  new Intl.NumberFormat("pt-BR", {
+  new Intl.NumberFormat(loadAppLanguage(), {
     style: "percent",
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value);
 
 export const formatDate = (value: string) =>
-  new Intl.DateTimeFormat("pt-BR").format(new Date(`${value}T12:00:00`));
+  new Intl.DateTimeFormat(loadAppLanguage()).format(new Date(`${value}T12:00:00`));
 
 export const formatDateTime = (value: string) =>
-  new Intl.DateTimeFormat("pt-BR", {
+  new Intl.DateTimeFormat(loadAppLanguage(), {
     dateStyle: "short",
     timeStyle: "short",
   }).format(new Date(value));
