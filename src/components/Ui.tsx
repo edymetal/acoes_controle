@@ -91,18 +91,19 @@ export function MetricCard({ label, value, secondaryValue, icon, helper, change,
 interface SectionProps {
   title: string;
   subtitle?: string;
+  sensitiveSubtitle?: boolean;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
 }
 
-export function Section({ title, subtitle, action, children, className = "" }: SectionProps) {
+export function Section({ title, subtitle, sensitiveSubtitle = false, action, children, className = "" }: SectionProps) {
   return (
     <section className={`panel ${className}`}>
       <header className="panel__header">
         <div>
           <h2>{title}</h2>
-          {subtitle && <p>{subtitle}</p>}
+          {subtitle && <p className={sensitiveSubtitle ? "privacy-value" : undefined}>{subtitle}</p>}
         </div>
         {action}
       </header>
@@ -126,5 +127,5 @@ export function EmptyState({ title, description }: { title: string; description:
 }
 
 export function Value({ value, children }: { value: number; children: ReactNode }) {
-  return <span className={`value--${toneForValue(value)}`}>{children}</span>;
+  return <span className={`privacy-value value--${toneForValue(value)}`}>{children}</span>;
 }

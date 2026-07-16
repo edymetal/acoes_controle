@@ -98,6 +98,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
         <Section
           title="Sinais em destaque"
           subtitle={`${buySignals.length} sinais de compra · ${breakoutSignals.length} sinais de venda ou rompimento`}
+          sensitiveSubtitle
           action={<button className="text-button" type="button" onClick={() => onNavigate("strategy")}>Ver estratégia <ArrowRight size={15} /></button>}
         >
           <div className="signal-list">
@@ -115,6 +116,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
         <Section
           title="Movimentações recentes"
           subtitle={`${transactions.length} registros processados`}
+          sensitiveSubtitle
           action={<button className="text-button" type="button" onClick={() => onNavigate("history")}>Ver histórico <ArrowRight size={15} /></button>}
         >
           <div className="compact-table">

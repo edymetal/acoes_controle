@@ -54,7 +54,7 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
           </div>
         </Section>
 
-        <Section title="Movimentações recentes" subtitle={`${transactions.length} registros de cripto processados`} action={<button className="text-button" type="button" onClick={() => onNavigate("crypto-history")}>Ver histórico <ArrowRight size={15} /></button>}>
+        <Section title="Movimentações recentes" subtitle={`${transactions.length} registros de cripto processados`} sensitiveSubtitle action={<button className="text-button" type="button" onClick={() => onNavigate("crypto-history")}>Ver histórico <ArrowRight size={15} /></button>}>
           <div className="compact-table">
             {transactions.slice(0, 6).map((item) => <div key={item.id}><CryptoLogo ticker={item.ticker} size="compact" /><span><strong>{item.ticker}</strong><small>{item.type === "buy" ? "Compra" : "Venda"} · {formatDate(item.date)}</small></span><span><strong>{formatCurrency(item.total)}</strong><small>{formatNumber(item.quantity, 8)} moedas</small></span></div>)}
           </div>

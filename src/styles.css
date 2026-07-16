@@ -86,7 +86,23 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .content--protected .overview-allocation__chart > div:last-child strong,
 .content--protected .overview-allocation__legend small,
 .content--protected .overview-allocation__legend b { filter: blur(8px); user-select: none; }
-.content--protected .overview-allocation .recharts-tooltip-wrapper { visibility: hidden !important; }
+.content--protected .privacy-value,
+.content--protected .metric-card__helper,
+.content--protected .portfolio-table td:nth-child(n+2),
+.content--protected .history-table td:nth-child(n+4),
+.content--protected .fixed-income-table td:nth-child(2),
+.content--protected .compact-table > div > span:last-child,
+.content--protected .donut-center strong,
+.content--protected .chart-legend > div > span:last-child,
+.content--protected .month-coverage > strong,
+.content--protected .maturity-month > header small,
+.content--protected .strategy-card__range-info,
+.content--protected .strategy-card footer > span:not(.strategy-card__range-info),
+.content--protected .signal-row__price,
+.content--protected .range-track { filter: blur(8px); user-select: none; }
+.content--protected .chart-box .recharts-wrapper,
+.content--protected .overview-allocation__chart .recharts-wrapper { filter: blur(10px); opacity: .35; pointer-events: none; user-select: none; }
+.content--protected .recharts-tooltip-wrapper { visibility: hidden !important; }
 .privacy-notice { margin-bottom: 16px; padding: 10px 12px; border: 1px solid rgba(255, 184, 107, .35); border-radius: 10px; color: var(--amber); background: rgba(255, 184, 107, .08); font-size: 12px; }
 .page-stack { display: flex; flex-direction: column; gap: 20px; animation: page-in .3s ease; }
 .page-loader { min-height: 50vh; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 14px; }
