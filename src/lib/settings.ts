@@ -19,8 +19,23 @@ export const DEFAULT_STRATEGY_SETTINGS: StrategySettings = {
 
 export function getStrategyLevelValues(settings: StrategySettings) {
   const positionRange = Math.max(0, settings.maximumPositionValue - settings.minimumPositionValue);
+  const breakdownBuyPositionValue = Math.min(
+    settings.maximumPositionValue,
+    settings.minimumPositionValue + settings.breakdownBuyAmount,
+  );
+  const strongBuyPositionValue = Math.min(
+    settings.maximumPositionValue,
+    breakdownBuyPositionValue + settings.strongBuyAmount,
+  );
+  const moderateBuyPositionValue = Math.min(
+    settings.maximumPositionValue,
+    strongBuyPositionValue + settings.moderateBuyAmount,
+  );
   return {
     positionRange,
+    breakdownBuyPositionValue,
+    strongBuyPositionValue,
+    moderateBuyPositionValue,
     initialSellAmount: positionRange * (settings.initialSellPercent / 100),
     breakoutSellAmount: positionRange * (settings.breakoutSellPercent / 100),
   };
