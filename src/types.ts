@@ -212,6 +212,7 @@ export interface StrategySignal {
   rangePositionPercent: number | null;
   positionValue: number;
   actionAmount: number;
+  remainingToMaximum: number;
   actionPercent: number | null;
 }
 

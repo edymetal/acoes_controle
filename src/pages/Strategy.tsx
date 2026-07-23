@@ -49,7 +49,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
     const positions = new Map(model.positions.map((position) => [position.ticker, position]));
     return data.assets.map((asset) => {
       const holding = positions.get(asset.ticker);
-      return { asset, holding, signal: getStrategySignal(asset, settings, holding?.marketValue ?? 0) };
+      return { asset, holding, signal: getStrategySignal(asset, settings, holding?.marketValue ?? 0, holding?.costBasis ?? 0) };
     });
   }, [data.assets, model.positions, settings]);
   const filtered = useMemo(() => {
@@ -62,16 +62,17 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
   const sellCount = signals.filter(({ signal }) => (signal.kind === "sell" || signal.kind === "breakout") && signal.actionAmount > 0).length;
   const breakoutCount = signals.filter(({ signal }) => signal.kind === "breakout").length;
   const buyTotal = signals.reduce((total, { signal }) => total + (signal.kind === "buy" ? signal.actionAmount : 0), 0);
+  const buyTargetTotal = signals.reduce((total, { signal }) => total + (signal.kind === "buy" ? signal.remainingToMaximum : 0), 0);
   const sellTotal = signals.reduce((total, { signal }) => total + (signal.kind === "sell" || signal.kind === "breakout" ? signal.actionAmount : 0), 0);
 
   return (
     <div className="page-stack">
       <section className="strategy-intro">
-        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão mostra o valor exato da próxima operação e respeita a faixa configurada por ação.</p></div>
+        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão separa a parcela sugerida do total necessário para completar a posição.</p></div>
       </section>
 
       <section className="metrics-grid metrics-grid--three">
-        <MetricCard label="Comprar agora" value={String(buyCount)} secondaryValue={`Total ${formatCurrency(buyTotal)}`} icon={<TrendingDown size={19} />} helper="Sinais com valor de compra" accent="green" />
+        <MetricCard label="Comprar agora" value={String(buyCount)} secondaryValue={`Parcelas ${formatCurrency(buyTotal)}`} icon={<TrendingDown size={19} />} helper={`Total até o teto ${formatCurrency(buyTargetTotal)}`} accent="green" />
         <MetricCard label="Sinal de venda" value={String(sellCount)} secondaryValue={`Total ${formatCurrency(sellTotal)}`} icon={<Target size={19} />} helper={`Até ${settings.sellDistanceFromHighPercent}% da máxima anual e rompimentos`} accent="amber" />
         <MetricCard label="Em rompimento" value={String(breakoutCount)} icon={<ArrowUpRight size={19} />} helper="Acima da máxima anual" accent="violet" />
       </section>
@@ -91,15 +92,23 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
             const rangePosition = annual && range > 0 ? Math.max(0, Math.min(100, ((asset.currentPrice - annual.min) / range) * 100)) : 0;
             const profit = holding?.unrealized ?? 0;
             const rangeDetails = getRangeDetails(asset, signal, settings);
+            const remainingAfterAction = Math.max(0, signal.remainingToMaximum - signal.actionAmount);
+            const completesPosition = remainingAfterAction < 0.005;
             const style = { "--signal-strength": signal.strength } as CSSProperties;
             return (
               <article className={`strategy-card strategy-card--${signal.kind}`} style={style} key={asset.ticker}>
                 <header><StockLogo ticker={asset.ticker} /><span><strong>{asset.ticker}</strong><small>{asset.name}</small></span><SignalBadge signal={signal} /></header>
                 <div className="strategy-card__price"><span><small>Cotação atual</small><strong>{formatCurrency(asset.currentPrice)}</strong></span>{signal.rangePositionPercent !== null && <span><small>No intervalo anual</small><strong>{formatPercent(signal.rangePositionPercent / 100)}</strong></span>}</div>
                 <div className={`strategy-action strategy-action--${signal.actionAmount > 0 ? signal.kind : "waiting"}`}>
-                  <span><small>Próxima operação</small><strong>{signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR" : "VENDER") : "AGUARDAR"}</strong></span>
+                  <span><small>{signal.kind === "buy" ? "Parcela sugerida" : "Próxima operação"}</small><strong>{signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR" : "VENDER") : "AGUARDAR"}</strong></span>
                   <b>{signal.actionAmount > 0 ? formatCurrency(signal.actionAmount) : "—"}</b>
                 </div>
+                {signal.kind === "buy" && signal.actionAmount > 0 && (
+                  <div className={`strategy-buy-plan strategy-buy-plan--${completesPosition ? "complete" : "pending"}`}>
+                    <span><small>Total estimado para completar</small><strong>{formatCurrency(signal.remainingToMaximum)}</strong></span>
+                    <span><small>Depois desta parcela</small><strong>{completesPosition ? "POSIÇÃO COMPLETA" : `Ainda faltarão ${formatCurrency(remainingAfterAction)}`}</strong></span>
+                  </div>
+                )}
                 <div className="strategy-position">
                   <span><small>Comprado</small><strong>{formatCurrency(holding?.costBasis ?? 0)}</strong></span>
                   <span><small>Atual</small><strong>{formatCurrency(holding?.marketValue ?? 0)}</strong></span>

@@ -169,8 +169,15 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
   };
 }
 
-export function getStrategySignal(asset: Asset, settings: StrategySettings = DEFAULT_STRATEGY_SETTINGS, positionValue = 0): StrategySignal {
+export function getStrategySignal(
+  asset: Asset,
+  settings: StrategySettings = DEFAULT_STRATEGY_SETTINGS,
+  positionValue = 0,
+  positionCost = positionValue,
+): StrategySignal {
   const annual = asset.annual;
+  const positionReferenceValue = Math.max(positionValue, positionCost);
+  const remainingToMaximum = Math.max(0, settings.maximumPositionValue - positionReferenceValue);
   if (!annual || annual.min <= 0 || annual.average <= 0 || annual.max <= annual.min) {
     return {
       kind: "unavailable",
@@ -182,6 +189,7 @@ export function getStrategySignal(asset: Asset, settings: StrategySettings = DEF
       rangePositionPercent: null,
       positionValue,
       actionAmount: 0,
+      remainingToMaximum,
       actionPercent: null,
     };
   }
@@ -193,8 +201,8 @@ export function getStrategySignal(asset: Asset, settings: StrategySettings = DEF
   const sellDistance = settings.sellDistanceFromHighPercent / 100;
   const allocationRange = Math.max(0, settings.maximumPositionValue - settings.minimumPositionValue);
   const sellableValue = Math.max(0, positionValue - settings.minimumPositionValue);
-  const availableToBuy = Math.max(0, settings.maximumPositionValue - positionValue);
-  const base = { distanceToAverage, distanceToHigh, rangePositionPercent, positionValue };
+  const availableToBuy = remainingToMaximum;
+  const base = { distanceToAverage, distanceToHigh, rangePositionPercent, positionValue, remainingToMaximum };
 
   if (price > annual.max) {
     const scheduledAmount = allocationRange * (settings.breakoutSellPercent / 100);
@@ -239,7 +247,7 @@ export function getStrategySignal(asset: Asset, settings: StrategySettings = DEF
     return {
       kind: canBuy ? "buy" : "neutral",
       label: canBuy ? label : "Limite atingido",
-      description: canBuy ? description : `A posição já atingiu o teto de ${formatStrategyMoney(settings.maximumPositionValue)}.`,
+      description: canBuy ? description : `A posição já atingiu o teto de ${formatStrategyMoney(settings.maximumPositionValue)} considerando o maior valor entre custo e cotação atual.`,
       strength,
       ...base,
       actionAmount: canBuy ? actionAmount : 0,
