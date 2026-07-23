@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BadgeDollarSign, Filter, HandCoins, Search, ShoppingCart, WalletCards, X } from "lucide-react";
+import { useSortableTable } from "../../components/SortableTable";
+import { getTransactionSortValue, TransactionTableHead, type TransactionSortKey } from "../../components/TransactionTableHead";
 import { EmptyState, MetricCard, Section, Value } from "../../components/Ui";
 import { formatBrl, formatDate, formatNumber, formatUsdFromBrl } from "../../lib/format";
 import type { PortfolioModel, TransactionType } from "../../types";
@@ -14,6 +16,8 @@ export function FiiHistory({ model, usdRate }: { model: PortfolioModel; usdRate:
     const query = search.trim().toUpperCase();
     return model.transactions.filter((item) => (!query || item.ticker.includes(query)) && (!ticker || item.ticker === ticker) && (type === "all" || item.type === type));
   }, [model.transactions, search, ticker, type]);
+  const { requestSort, sortedRows, sortConfig } =
+    useSortableTable<typeof rows[number], TransactionSortKey>(rows, getTransactionSortValue);
 
   const selectedSummary = useMemo(() => {
     if (!selectedTicker) return null;
@@ -61,8 +65,8 @@ export function FiiHistory({ model, usdRate }: { model: PortfolioModel; usdRate:
         <label className="select-field"><select aria-label="Filtrar por fundo" value={ticker} onChange={(event) => setTicker(event.target.value)}><option value="">Todos os fundos</option>{tickers.map((item) => <option key={item}>{item}</option>)}</select></label>
       </div>
       <div className="filter-summary"><span><strong>{rows.length}</strong> movimentações de FIIs</span></div>
-      {rows.length ? <div className="table-wrap"><table className="history-table"><thead><tr><th>Data</th><th>Tipo</th><th>Fundo</th><th>Cotas</th><th>Preço unitário</th><th>Valor total</th><th>Custo descontado</th><th>Lucro realizado</th></tr></thead><tbody>
-        {rows.map((item) => <tr key={item.id}><td>{formatDate(item.date)}</td><td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td><td><button className="ticker-link" type="button" onClick={() => setSelectedTicker(item.ticker)}>{item.ticker}</button></td><td>{formatNumber(item.quantity, 4)}</td><td>{formatBrl(item.unitPrice)}</td><td><strong>{formatBrl(item.total)}</strong></td><td>{item.type === "sell" && item.costBasis !== null ? formatBrl(item.costBasis) : <span className="table-dash">—</span>}</td><td>{item.type === "sell" && item.realizedProfit !== null ? <Value value={item.realizedProfit}><strong>{formatBrl(item.realizedProfit)}</strong></Value> : <span className="table-dash">—</span>}</td></tr>)}
+      {rows.length ? <div className="table-wrap"><table className="history-table"><TransactionTableHead assetLabel="Fundo" quantityLabel="Cotas" sortConfig={sortConfig} onSort={requestSort} /><tbody>
+        {sortedRows.map((item) => <tr key={item.id}><td>{formatDate(item.date)}</td><td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td><td><button className="ticker-link" type="button" onClick={() => setSelectedTicker(item.ticker)}>{item.ticker}</button></td><td>{formatNumber(item.quantity, 4)}</td><td>{formatBrl(item.unitPrice)}</td><td><strong>{formatBrl(item.total)}</strong></td><td>{item.type === "sell" && item.costBasis !== null ? formatBrl(item.costBasis) : <span className="table-dash">—</span>}</td><td>{item.type === "sell" && item.realizedProfit !== null ? <Value value={item.realizedProfit}><strong>{formatBrl(item.realizedProfit)}</strong></Value> : <span className="table-dash">—</span>}</td></tr>)}
       </tbody></table></div> : <EmptyState title="Nenhuma movimentação encontrada" description="Remova ou ajuste os filtros aplicados." />}
     </Section>
     {selectedSummary && <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedTicker(null); }}>

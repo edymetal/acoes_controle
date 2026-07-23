@@ -11,6 +11,7 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
+import { SortableHeader, useSortableTable, type SortValue } from "../components/SortableTable";
 import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
 import type { PortfolioModel, ProcessedTransaction, TransactionType } from "../types";
@@ -21,6 +22,23 @@ interface HistoryRow extends ProcessedTransaction {
   operationCount: number;
   startDate: string;
   endDate: string;
+}
+
+type HistorySortKey =
+  | "costBasis"
+  | "date"
+  | "operationCount"
+  | "quantity"
+  | "realizedProfit"
+  | "ticker"
+  | "total"
+  | "type"
+  | "unitPrice";
+
+function getHistorySortValue(item: HistoryRow, key: HistorySortKey): SortValue {
+  if (key === "date") return item.endDate;
+  if (key === "type") return item.type === "buy" ? "Compra" : "Venda";
+  return item[key];
 }
 
 export function History({ model }: { model: PortfolioModel }) {
@@ -94,6 +112,8 @@ export function History({ model }: { model: PortfolioModel }) {
       (a, b) => b.endDate.localeCompare(a.endDate) || a.ticker.localeCompare(b.ticker),
     );
   }, [filtered, grouped]);
+  const { requestSort, resetSort, sortedRows: sortedDisplayRows, sortConfig } =
+    useSortableTable<HistoryRow, HistorySortKey>(displayRows, getHistorySortValue);
 
   const totals = useMemo(() => ({
     purchases: filtered
@@ -129,7 +149,11 @@ export function History({ model }: { model: PortfolioModel }) {
   }, [model.positions, model.transactions, selectedTicker]);
 
   const totalPages = Math.max(1, Math.ceil(displayRows.length / PAGE_SIZE));
-  const visible = displayRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const visible = sortedDisplayRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const handleSort = (key: HistorySortKey) => {
+    requestSort(key);
+    setPage(1);
+  };
 
   useEffect(() => setPage(1), [ticker, type, search, startDate, endDate, grouped]);
 
@@ -164,7 +188,7 @@ export function History({ model }: { model: PortfolioModel }) {
           <label className="search-field"><Search size={18} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar ticker" /></label>
           <label className="select-field"><Filter size={17} /><select value={type} onChange={(event) => setType(event.target.value as "all" | TransactionType)}><option value="all">Compras e vendas</option><option value="buy">Somente compras</option><option value="sell">Somente vendas</option></select></label>
           <label className="select-field"><select aria-label="Filtrar por ticker" value={ticker} onChange={(event) => setTicker(event.target.value)}><option value="">Todos os ativos</option>{tickers.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
-          <button className={`group-toggle ${grouped ? "active" : ""}`} type="button" aria-pressed={grouped} onClick={() => setGrouped((value) => !value)}><Layers3 size={17} /> Agrupar por ação</button>
+          <button className={`group-toggle ${grouped ? "active" : ""}`} type="button" aria-pressed={grouped} onClick={() => { setGrouped((value) => !value); resetSort(); }}><Layers3 size={17} /> Agrupar por ação</button>
           <label className="date-field"><span>De</span><input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} /></label>
           <label className="date-field"><span>Até</span><input type="date" value={endDate} onChange={(event) => setEndDate(event.target.value)} /></label>
         </div>
@@ -179,7 +203,17 @@ export function History({ model }: { model: PortfolioModel }) {
         {visible.length ? (
           <div className="table-wrap">
             <table className={`history-table ${grouped ? "history-table--grouped" : ""}`}>
-              <thead><tr><th>{grouped ? "Período" : "Data"}</th><th>Tipo</th><th>Ativo</th>{grouped && <th>Operações</th>}<th>Quantidade</th><th>{grouped ? "Preço médio" : "Preço unitário"}</th><th>Valor total</th><th>Custo descontado</th><th>Lucro realizado</th></tr></thead>
+              <thead><tr>
+                <SortableHeader sortKey="date" sortConfig={sortConfig} onSort={handleSort}>{grouped ? "Período" : "Data"}</SortableHeader>
+                <SortableHeader sortKey="type" sortConfig={sortConfig} onSort={handleSort}>Tipo</SortableHeader>
+                <SortableHeader sortKey="ticker" sortConfig={sortConfig} onSort={handleSort}>Ativo</SortableHeader>
+                {grouped && <SortableHeader sortKey="operationCount" sortConfig={sortConfig} onSort={handleSort}>Operações</SortableHeader>}
+                <SortableHeader sortKey="quantity" sortConfig={sortConfig} onSort={handleSort}>Quantidade</SortableHeader>
+                <SortableHeader sortKey="unitPrice" sortConfig={sortConfig} onSort={handleSort}>{grouped ? "Preço médio" : "Preço unitário"}</SortableHeader>
+                <SortableHeader sortKey="total" sortConfig={sortConfig} onSort={handleSort}>Valor total</SortableHeader>
+                <SortableHeader sortKey="costBasis" sortConfig={sortConfig} onSort={handleSort}>Custo descontado</SortableHeader>
+                <SortableHeader sortKey="realizedProfit" sortConfig={sortConfig} onSort={handleSort}>Lucro realizado</SortableHeader>
+              </tr></thead>
               <tbody>{visible.map((item) => (
                 <tr key={item.id}>
                   <td>{formatPeriod(item)}</td>

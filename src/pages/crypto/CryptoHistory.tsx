@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { BadgeDollarSign, Filter, HandCoins, Search, ShoppingCart } from "lucide-react";
+import { useSortableTable } from "../../components/SortableTable";
+import { getTransactionSortValue, TransactionTableHead, type TransactionSortKey } from "../../components/TransactionTableHead";
 import { CryptoLogo, EmptyState, MetricCard, Section, Value } from "../../components/Ui";
 import { formatCurrency, formatDate, formatNumber } from "../../lib/format";
 import type { PortfolioModel, TransactionType } from "../../types";
@@ -13,6 +15,8 @@ export function CryptoHistory({ model }: { model: PortfolioModel }) {
     const query = search.trim().toUpperCase();
     return model.transactions.filter((item) => (!query || item.ticker.includes(query)) && (!ticker || item.ticker === ticker) && (type === "all" || item.type === type));
   }, [model.transactions, search, ticker, type]);
+  const { requestSort, sortedRows, sortConfig } =
+    useSortableTable<typeof rows[number], TransactionSortKey>(rows, getTransactionSortValue);
 
   return <div className="page-stack">
     <section className="metrics-grid metrics-grid--three">
@@ -27,8 +31,8 @@ export function CryptoHistory({ model }: { model: PortfolioModel }) {
         <label className="select-field"><select aria-label="Filtrar por cripto" value={ticker} onChange={(event) => setTicker(event.target.value)}><option value="">Todas as criptos</option>{tickers.map((item) => <option key={item}>{item}</option>)}</select></label>
       </div>
       <div className="filter-summary"><span><strong>{rows.length}</strong> movimentações de cripto</span></div>
-      {rows.length ? <div className="table-wrap"><table className="history-table"><thead><tr><th>Data</th><th>Tipo</th><th>Cripto</th><th>Quantidade</th><th>Preço unitário</th><th>Valor total</th><th>Custo descontado</th><th>Lucro realizado</th></tr></thead><tbody>
-        {rows.map((item) => <tr key={item.id}><td>{formatDate(item.date)}</td><td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td><td><div className="asset-cell"><CryptoLogo ticker={item.ticker} size="compact" /><strong>{item.ticker}</strong></div></td><td>{formatNumber(item.quantity, 8)}</td><td>{formatCurrency(item.unitPrice)}</td><td><strong>{formatCurrency(item.total)}</strong></td><td>{item.type === "sell" && item.costBasis !== null ? formatCurrency(item.costBasis) : <span className="table-dash">—</span>}</td><td>{item.type === "sell" && item.realizedProfit !== null ? <Value value={item.realizedProfit}><strong>{formatCurrency(item.realizedProfit)}</strong></Value> : <span className="table-dash">—</span>}</td></tr>)}
+      {rows.length ? <div className="table-wrap"><table className="history-table"><TransactionTableHead assetLabel="Cripto" quantityLabel="Quantidade" sortConfig={sortConfig} onSort={requestSort} /><tbody>
+        {sortedRows.map((item) => <tr key={item.id}><td>{formatDate(item.date)}</td><td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td><td><div className="asset-cell"><CryptoLogo ticker={item.ticker} size="compact" /><strong>{item.ticker}</strong></div></td><td>{formatNumber(item.quantity, 8)}</td><td>{formatCurrency(item.unitPrice)}</td><td><strong>{formatCurrency(item.total)}</strong></td><td>{item.type === "sell" && item.costBasis !== null ? formatCurrency(item.costBasis) : <span className="table-dash">—</span>}</td><td>{item.type === "sell" && item.realizedProfit !== null ? <Value value={item.realizedProfit}><strong>{formatCurrency(item.realizedProfit)}</strong></Value> : <span className="table-dash">—</span>}</td></tr>)}
       </tbody></table></div> : <EmptyState title="Nenhuma movimentação encontrada" description="Remova ou ajuste os filtros aplicados." />}
     </Section>
   </div>;

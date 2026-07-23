@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { BriefcaseBusiness, Search, SlidersHorizontal, TrendingUp, WalletCards } from "lucide-react";
 import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
+import { getPositionSortValue, PortfolioTableHead, type PositionSortKey } from "../components/PortfolioTableHead";
+import { useSortableTable } from "../components/SortableTable";
 import { formatCurrency, formatNumber, formatPercent } from "../lib/format";
 import type { PortfolioModel } from "../types";
 
@@ -18,6 +20,12 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
         return b.marketValue - a.marketValue;
       });
   }, [model.positions, search, sort]);
+  const {
+    requestSort,
+    resetSort,
+    sortedRows: sortedPositions,
+    sortConfig,
+  } = useSortableTable<typeof positions[number], PositionSortKey>(positions, getPositionSortValue);
 
   return (
     <div className="page-stack">
@@ -30,15 +38,15 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
       <Section title="Posições atuais" subtitle="Custo médio móvel e marcação pela cotação mais recente">
         <div className="toolbar">
           <label className="search-field"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar ticker, empresa ou setor" /></label>
-          <label className="select-field"><SlidersHorizontal size={16} /><select value={sort} onChange={(event) => setSort(event.target.value)}><option value="market-desc">Maior posição</option><option value="pnl-desc">Maior rentabilidade</option><option value="pnl-asc">Menor rentabilidade</option><option value="ticker">Ticker A–Z</option></select></label>
+          <label className="select-field"><SlidersHorizontal size={16} /><select value={sort} onChange={(event) => { setSort(event.target.value); resetSort(); }}><option value="market-desc">Maior posição</option><option value="pnl-desc">Maior rentabilidade</option><option value="pnl-asc">Menor rentabilidade</option><option value="ticker">Ticker A–Z</option></select></label>
         </div>
 
         {positions.length ? (
           <div className="table-wrap">
             <table className="portfolio-table">
-              <thead><tr><th>Ativo</th><th>Quantidade</th><th>Preço médio</th><th>Cotação</th><th>Custo</th><th>Valor atual</th><th>Participação</th><th>Resultado aberto</th></tr></thead>
+              <PortfolioTableHead assetLabel="Ativo" quantityLabel="Quantidade" sortConfig={sortConfig} onSort={requestSort} />
               <tbody>
-                {positions.map((position) => (
+                {sortedPositions.map((position) => (
                   <tr key={position.ticker}>
                     <td><div className="asset-cell"><StockLogo ticker={position.ticker} /><span><strong>{position.ticker}</strong><small>{position.name} · {position.sector}</small></span></div></td>
                     <td>{formatNumber(position.quantity, 6)}</td>
