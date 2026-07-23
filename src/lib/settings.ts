@@ -17,6 +17,15 @@ export const DEFAULT_STRATEGY_SETTINGS: StrategySettings = {
   maximumPositionValue: 115,
 };
 
+export function getStrategyLevelValues(settings: StrategySettings) {
+  const positionRange = Math.max(0, settings.maximumPositionValue - settings.minimumPositionValue);
+  return {
+    positionRange,
+    initialSellAmount: positionRange * (settings.initialSellPercent / 100),
+    breakoutSellAmount: positionRange * (settings.breakoutSellPercent / 100),
+  };
+}
+
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const numberOr = (value: number, fallback: number) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
