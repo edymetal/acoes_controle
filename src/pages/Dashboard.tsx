@@ -128,8 +128,8 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
                 <span className="signal-row__name"><strong>{asset.ticker}</strong><small>{asset.name}</small></span>
                 <SignalBadge signal={signal} />
                 <span className="signal-row__price">
-                  <strong>{signal.actionAmount > 0 ? `${signal.kind === "buy" ? "Parcela" : "Vender"} ${formatCurrency(signal.actionAmount)}` : formatCurrency(asset.currentPrice)}</strong>
-                  <small>{signal.kind === "buy" ? `Total para completar ${formatCurrency(signal.remainingToMaximum)}` : signal.description}</small>
+                  <strong>{signal.actionAmount > 0 ? `${signal.kind === "buy" ? "Comprar" : "Vender"} ${formatCurrency(signal.actionAmount)}` : formatCurrency(asset.currentPrice)}</strong>
+                  <small>{signal.kind === "buy" ? `Alvo do nível ${formatCurrency(signal.targetPositionValue ?? 0)}` : signal.description}</small>
                 </span>
               </div>
             ))}

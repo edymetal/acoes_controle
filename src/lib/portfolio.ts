@@ -10,7 +10,7 @@ import type {
   StrategySignal,
   Transaction,
 } from "../types";
-import { DEFAULT_STRATEGY_SETTINGS } from "./settings";
+import { DEFAULT_STRATEGY_SETTINGS, getStrategyLevelValues } from "./settings";
 
 const EPSILON = 0.0000001;
 
@@ -176,8 +176,7 @@ export function getStrategySignal(
   positionCost = positionValue,
 ): StrategySignal {
   const annual = asset.annual;
-  const positionReferenceValue = Math.max(positionValue, positionCost);
-  const remainingToMaximum = Math.max(0, settings.maximumPositionValue - positionReferenceValue);
+  const remainingToMaximum = Math.max(0, settings.maximumPositionValue - positionCost);
   if (!annual || annual.min <= 0 || annual.average <= 0 || annual.max <= annual.min) {
     return {
       kind: "unavailable",
@@ -188,7 +187,10 @@ export function getStrategySignal(
       distanceToHigh: null,
       rangePositionPercent: null,
       positionValue,
+      positionCost,
+      targetPositionValue: null,
       actionAmount: 0,
+      remainingToTarget: 0,
       remainingToMaximum,
       actionPercent: null,
     };
@@ -201,8 +203,17 @@ export function getStrategySignal(
   const sellDistance = settings.sellDistanceFromHighPercent / 100;
   const allocationRange = Math.max(0, settings.maximumPositionValue - settings.minimumPositionValue);
   const sellableValue = Math.max(0, positionValue - settings.minimumPositionValue);
-  const availableToBuy = remainingToMaximum;
-  const base = { distanceToAverage, distanceToHigh, rangePositionPercent, positionValue, remainingToMaximum };
+  const levelValues = getStrategyLevelValues(settings);
+  const base = {
+    distanceToAverage,
+    distanceToHigh,
+    rangePositionPercent,
+    positionValue,
+    positionCost,
+    targetPositionValue: null,
+    remainingToTarget: 0,
+    remainingToMaximum,
+  };
 
   if (price > annual.max) {
     const scheduledAmount = allocationRange * (settings.breakoutSellPercent / 100);
@@ -241,30 +252,35 @@ export function getStrategySignal(
     };
   }
 
-  const buySignal = (amount: number, label: string, description: string, strength: number): StrategySignal => {
-    const actionAmount = Math.min(amount, availableToBuy);
+  const buySignal = (targetPositionValue: number, label: string, description: string, strength: number): StrategySignal => {
+    const remainingToTarget = Math.max(0, targetPositionValue - positionCost);
+    const actionAmount = Math.min(remainingToTarget, remainingToMaximum);
     const canBuy = actionAmount > EPSILON;
     return {
       kind: canBuy ? "buy" : "neutral",
-      label: canBuy ? label : "Limite atingido",
-      description: canBuy ? description : `A posição já atingiu o teto de ${formatStrategyMoney(settings.maximumPositionValue)} considerando o maior valor entre custo e cotação atual.`,
+      label: canBuy ? label : "Nível completo",
+      description: canBuy
+        ? `${description} Objetivo acumulado: ${formatStrategyMoney(targetPositionValue)}.`
+        : `O valor comprado já atingiu o objetivo de ${formatStrategyMoney(targetPositionValue)} deste nível.`,
       strength,
       ...base,
+      targetPositionValue,
+      remainingToTarget,
       actionAmount: canBuy ? actionAmount : 0,
       actionPercent: null,
     };
   };
 
   if (price < annual.min) {
-    return buySignal(settings.breakdownBuyAmount, "Comprar no rompimento", "Cotação abaixo da mínima anual.", 1);
+    return buySignal(levelValues.breakdownBuyPositionValue, "Comprar no rompimento", "Cotação abaixo da mínima anual.", 1);
   }
 
   if (rangePositionPercent >= settings.buyZoneMiddlePercent && rangePositionPercent <= settings.buyZoneUpperPercent) {
-    return buySignal(settings.moderateBuyAmount, "Comprar", `Cotação entre ${settings.buyZoneMiddlePercent}% e ${settings.buyZoneUpperPercent}% do intervalo anual.`, 0.55);
+    return buySignal(levelValues.moderateBuyPositionValue, "Comprar", `Cotação entre ${settings.buyZoneMiddlePercent}% e ${settings.buyZoneUpperPercent}% do intervalo anual.`, 0.55);
   }
 
   if (rangePositionPercent >= settings.buyZoneLowerPercent && rangePositionPercent < settings.buyZoneMiddlePercent) {
-    return buySignal(settings.strongBuyAmount, "Compra forte", `Cotação entre ${settings.buyZoneLowerPercent}% e ${settings.buyZoneMiddlePercent}% do intervalo anual.`, 0.8);
+    return buySignal(levelValues.strongBuyPositionValue, "Compra forte", `Cotação entre ${settings.buyZoneLowerPercent}% e ${settings.buyZoneMiddlePercent}% do intervalo anual.`, 0.8);
   }
 
   return {

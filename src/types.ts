@@ -211,7 +211,10 @@ export interface StrategySignal {
   distanceToHigh: number | null;
   rangePositionPercent: number | null;
   positionValue: number;
+  positionCost: number;
+  targetPositionValue: number | null;
   actionAmount: number;
+  remainingToTarget: number;
   remainingToMaximum: number;
   actionPercent: number | null;
 }

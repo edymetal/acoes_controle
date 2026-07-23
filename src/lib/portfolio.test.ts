@@ -80,50 +80,51 @@ describe("getStrategySignal", () => {
     annual: { min: 8, average: 18, max: 30, observations: 250, currency: "USD" },
   };
 
-  it("sugere US$ 10 entre 20% e 35% do intervalo anual", () => {
+  it("completa o alvo de US$ 115 entre 20% e 35% do intervalo anual", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 14 });
     expect(signal.kind).toBe("buy");
-    expect(signal.actionAmount).toBe(10);
+    expect(signal.targetPositionValue).toBe(115);
+    expect(signal.actionAmount).toBe(115);
   });
 
-  it("sugere US$ 25 entre 10% e 20% do intervalo anual", () => {
+  it("completa o alvo de US$ 105 entre 10% e 20% do intervalo anual", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 11 });
     expect(signal.kind).toBe("buy");
-    expect(signal.actionAmount).toBe(25);
+    expect(signal.targetPositionValue).toBe(105);
+    expect(signal.actionAmount).toBe(105);
   });
 
-  it("sugere US$ 15 quando rompe a mínima", () => {
+  it("completa o alvo de US$ 80 quando rompe a mínima", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 7 });
     expect(signal.kind).toBe("buy");
-    expect(signal.actionAmount).toBe(15);
+    expect(signal.targetPositionValue).toBe(80);
+    expect(signal.actionAmount).toBe(80);
+    expect(signal.remainingToTarget).toBe(80);
     expect(signal.remainingToMaximum).toBe(115);
   });
 
-  it("informa o total restante mesmo quando a compra é dividida em parcelas", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 82.17);
+  it("subtrai o valor comprado do alvo acumulado do nível", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 11 }, DEFAULT_STRATEGY_SETTINGS, 41.52, 40.37);
     expect(signal.kind).toBe("buy");
-    expect(signal.actionAmount).toBe(15);
-    expect(signal.remainingToMaximum).toBeCloseTo(32.83);
+    expect(signal.targetPositionValue).toBe(105);
+    expect(signal.positionCost).toBeCloseTo(40.37);
+    expect(signal.actionAmount).toBeCloseTo(64.63);
+    expect(signal.remainingToTarget).toBeCloseTo(64.63);
   });
 
-  it("reduz a última parcela ao valor exato que falta para atingir o teto", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 113.07);
-    expect(signal.kind).toBe("buy");
-    expect(signal.actionAmount).toBeCloseTo(1.93);
-    expect(signal.remainingToMaximum).toBeCloseTo(1.93);
-  });
-
-  it("usa o custo da posição para não reabrir compras após uma queda", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 107.19, 116.24);
+  it("não recomenda nova compra quando o valor comprado já atingiu o alvo do nível", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 82.17, 82.17);
     expect(signal.kind).toBe("neutral");
+    expect(signal.targetPositionValue).toBe(80);
     expect(signal.actionAmount).toBe(0);
-    expect(signal.remainingToMaximum).toBe(0);
+    expect(signal.remainingToTarget).toBe(0);
   });
 
-  it("limita a compra pelo custo quando ele é maior que o valor atual", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 97.17, 111.22);
+  it("compra somente o valor exato que falta para o alvo máximo", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 14 }, DEFAULT_STRATEGY_SETTINGS, 97.17, 111.22);
     expect(signal.kind).toBe("buy");
     expect(signal.actionAmount).toBeCloseTo(3.78);
+    expect(signal.remainingToTarget).toBeCloseTo(3.78);
     expect(signal.remainingToMaximum).toBeCloseTo(3.78);
   });
 
