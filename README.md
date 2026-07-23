@@ -22,6 +22,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Área independente de Cripto em dólares para Bitcoin, Ethereum e BNB, com visão geral, carteira e movimentações.
 - Área independente de Renda Fixa, com valores em reais e conversão secundária em dólares, carteira detalhada e escada de vencimentos para os 12 meses.
 - Atualização automática a cada 6 horas pelo GitHub Actions.
+- Sincronização imediata pelo botão de atualizar, usando acesso Google de somente leitura da conta autorizada.
 
 ## Arquitetura atual
 
@@ -38,6 +39,8 @@ JSON sanitizado ── build React/Vite ── GitHub Pages
 ```
 
 A credencial nunca é incluída no JavaScript do navegador. Localmente ela permanece em `auth/`, que está ignorada pelo Git. No GitHub, o conteúdo completo do JSON é armazenado no secret `GOOGLE_SERVICE_ACCOUNT_JSON`.
+
+No site estático, o botão de sincronização solicita à conta Google conectada o escopo `spreadsheets.readonly` e lê novamente todos os intervalos naquele momento. Essa atualização entra imediatamente na sessão aberta; o workflow programado continua responsável por persistir uma nova versão publicada para os próximos acessos.
 
 > O GitHub Pages é público. As linhas dos intervalos usados pelo site são publicadas nos JSONs finais, embora a chave e o restante da planilha continuem privados. O login Firebase restringe a interface, mas não impede o acesso direto a esses arquivos.
 

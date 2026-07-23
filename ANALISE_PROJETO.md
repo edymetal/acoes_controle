@@ -48,9 +48,11 @@ Recomendação: incluir no JSON a ordem da linha da planilha ou um timestamp/ín
 
 ### 4. Médio — o botão de atualização não sincroniza a planilha
 
-O botão apenas refaz o download dos JSONs já publicados, com cache busting. Ele não executa `sync:data` nem dispara o workflow. A mensagem “Dados atualizados com sucesso” pode dar a entender que uma nova leitura da planilha ocorreu.
+> Atualização: corrigido. No modo estático, o botão agora solicita acesso Google de somente leitura e busca novamente todos os intervalos da planilha na sessão atual.
 
-Recomendação: renomear a ação para “Recarregar dados publicados” e mostrar `generatedAt`, ou implementar uma sincronização autenticada no backend e aguardar a nova versão.
+Antes da correção, o botão apenas refazia o download dos JSONs já publicados, com cache busting. Ele não executava `sync:data` nem disparava o workflow. A mensagem “Dados atualizados com sucesso” podia dar a entender que uma nova leitura da planilha ocorreu.
+
+Solução implementada: a conta Google autorizada concede o escopo `spreadsheets.readonly`, o frontend relê a planilha diretamente e só informa sucesso depois de construir todas as bases com um novo `generatedAt`.
 
 ### 5. Médio — validação de entrada é superficial
 

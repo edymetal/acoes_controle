@@ -1,7 +1,7 @@
 {
   "name": "acoes-controle",
   "private": true,
-  "version": "1.3.4",
+  "version": "1.3.5",
   "packageManager": "pnpm@11.7.0",
   "type": "module",
   "scripts": {

@@ -5,10 +5,12 @@ import { calculatePortfolio } from "./lib/portfolio";
 import { calculateFiiPortfolio } from "./lib/fiiPortfolio";
 import { calculateCryptoPortfolio } from "./lib/cryptoPortfolio";
 import { calculateFixedIncome } from "./lib/fixedIncome";
-import { fetchDataFile } from "./lib/dataSource";
+import { fetchDataFile, usesPublicStaticData } from "./lib/dataSource";
 import { parseCryptoData, parseFiiData, parseFixedIncomeData, parsePortfolioData } from "./lib/dataValidation";
 import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
 import { loadAppLanguage, saveAppLanguage } from "./lib/i18n";
+import { syncSpreadsheetData } from "./lib/sheetSync";
+import { clearGoogleSheetsAccessToken, getGoogleSheetsAccessToken } from "./firebase";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then((module) => ({ default: module.Dashboard })));
@@ -117,6 +119,40 @@ export default function App() {
   const refreshData = async () => {
     setIsRefreshing(true);
     setRefreshMessage(null);
+
+    if (usesPublicStaticData) {
+      if (!data) {
+        setRefreshMessage({ kind: "error", text: "A base atual ainda não terminou de carregar." });
+        setIsRefreshing(false);
+        return;
+      }
+      try {
+        const accessToken = await getGoogleSheetsAccessToken();
+        const synchronized = await syncSpreadsheetData(accessToken, data);
+        setData(synchronized.portfolio);
+        setFiiData(synchronized.fiis);
+        setFiiError(null);
+        setCryptoData(synchronized.crypto);
+        setCryptoError(null);
+        setFixedIncomeData(synchronized.fixedIncome);
+        setFixedIncomeError(null);
+        const hasSheetWarnings = synchronized.portfolio.integrity.warnings.length > 0
+          || synchronized.fiis.integrity.warnings.length > 0
+          || synchronized.crypto.integrity.warnings.length > 0
+          || synchronized.fixedIncome.integrity.warnings.length > 0;
+        setRefreshMessage(hasSheetWarnings
+          ? { kind: "warning", text: "Planilha sincronizada agora, mas alguns registros possuem avisos de validação." }
+          : { kind: "success", text: "Planilha sincronizada agora com sucesso." });
+      } catch (reason) {
+        clearGoogleSheetsAccessToken();
+        const detail = reason instanceof Error ? reason.message : "Falha desconhecida.";
+        setRefreshMessage({ kind: "error", text: `Não foi possível sincronizar a planilha agora. ${detail}` });
+      } finally {
+        setIsRefreshing(false);
+      }
+      return;
+    }
+
     try {
       const [stockResult, fiiResult, cryptoResult, fixedIncomeResult] = await Promise.allSettled([fetchPortfolio(true), fetchFiis(true), fetchCrypto(true), fetchFixedIncome(true)]);
       if (stockResult.status === "fulfilled") setData(stockResult.value);
