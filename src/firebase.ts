@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, reauthenticateWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -21,13 +21,17 @@ sheetsProvider.addScope(SHEETS_READ_SCOPE);
 sheetsProvider.setCustomParameters({ prompt: "select_account" });
 
 let sheetsAccess: { token: string; expiresAt: number } | null = null;
+let sheetsAuthorization: Promise<string> | null = null;
 
-export async function getGoogleSheetsAccessToken() {
-  if (sheetsAccess && sheetsAccess.expiresAt > Date.now()) return sheetsAccess.token;
-  const user = auth.currentUser;
-  if (!user) throw new Error("Entre novamente com a conta Google para atualizar a planilha.");
+async function requestGoogleSheetsAccessToken() {
+  if (typeof navigator !== "undefined" && !navigator.onLine) {
+    throw new Error("O dispositivo está sem conexão. Reconecte-se à internet e tente novamente.");
+  }
 
-  const result = await reauthenticateWithPopup(user, sheetsProvider);
+  const result = await signInWithPopup(auth, sheetsProvider);
+  if (result.user.email?.toLowerCase() !== allowedEmail) {
+    throw new Error("Use a conta Google autorizada para atualizar a planilha.");
+  }
   const credential = GoogleAuthProvider.credentialFromResult(result);
   if (!credential?.accessToken) throw new Error("O Google não concedeu acesso de leitura à planilha.");
 
@@ -36,6 +40,21 @@ export async function getGoogleSheetsAccessToken() {
     expiresAt: Date.now() + 50 * 60 * 1000,
   };
   return sheetsAccess.token;
+}
+
+export async function signInWithGoogle() {
+  await getGoogleSheetsAccessToken();
+}
+
+export async function getGoogleSheetsAccessToken() {
+  if (sheetsAccess && sheetsAccess.expiresAt > Date.now()) return sheetsAccess.token;
+  if (!sheetsAuthorization) {
+    sheetsAuthorization = requestGoogleSheetsAccessToken()
+      .finally(() => {
+        sheetsAuthorization = null;
+      });
+  }
+  return sheetsAuthorization;
 }
 
 export function clearGoogleSheetsAccessToken() {

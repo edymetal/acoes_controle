@@ -1,16 +1,14 @@
 import { type ReactNode, useEffect, useState } from "react";
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { BarChart3, LoaderCircle, LogIn, ShieldCheck } from "lucide-react";
-import { allowedEmail, auth } from "../firebase";
+import { allowedEmail, auth, signInWithGoogle } from "../firebase";
+import { describeGoogleAuthorizationError } from "../lib/googleAuthError";
 
 type AuthGateProps = {
   children: ReactNode;
 };
 
 type AuthState = "loading" | "signed-out" | "authorized";
-
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
 
 export function AuthGate({ children }: AuthGateProps) {
   const [state, setState] = useState<AuthState>("loading");
@@ -38,9 +36,9 @@ export function AuthGate({ children }: AuthGateProps) {
     setMessage(null);
 
     try {
-      await signInWithPopup(auth, provider);
-    } catch {
-      setMessage("Não foi possível concluir o login. Verifique a conta selecionada e tente novamente.");
+      await signInWithGoogle();
+    } catch (reason) {
+      setMessage(describeGoogleAuthorizationError(reason));
     } finally {
       setIsSigningIn(false);
     }

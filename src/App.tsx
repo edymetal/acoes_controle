@@ -11,6 +11,7 @@ import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
 import { loadAppLanguage, saveAppLanguage } from "./lib/i18n";
 import { syncSpreadsheetData } from "./lib/sheetSync";
 import { clearGoogleSheetsAccessToken, getGoogleSheetsAccessToken } from "./firebase";
+import { describeGoogleAuthorizationError } from "./lib/googleAuthError";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then((module) => ({ default: module.Dashboard })));
@@ -145,7 +146,7 @@ export default function App() {
           : { kind: "success", text: "Planilha sincronizada agora com sucesso." });
       } catch (reason) {
         clearGoogleSheetsAccessToken();
-        const detail = reason instanceof Error ? reason.message : "Falha desconhecida.";
+        const detail = describeGoogleAuthorizationError(reason);
         setRefreshMessage({ kind: "error", text: `Não foi possível sincronizar a planilha agora. ${detail}` });
       } finally {
         setIsRefreshing(false);
