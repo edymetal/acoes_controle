@@ -248,7 +248,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .transaction-type { display: inline-flex; min-width: 64px; justify-content: center; padding: 6px 10px; border-radius: 99px; font-size: 12px; font-weight: 800; }.transaction-type--buy { color: var(--green); background: rgba(55, 221, 162, .09); }.transaction-type--sell { color: var(--red); background: rgba(248, 121, 155, .09); }
 .ticker-link { border: 0; padding: 3px 0; color: #bdefff; background: transparent; font-weight: 800; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(86, 216, 255, .28); text-underline-offset: 4px; }
 .ticker-link:hover { color: #ffffff; text-decoration-color: var(--blue); }
-.history-asset-link { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
+.history-table--stocks th:nth-child(3), .history-table--stocks td:nth-child(3) { text-align: left; }
+.history-table--stocks th:nth-child(3) .sortable-header { justify-content: flex-start; }
+.history-asset-link { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 9px; text-decoration: none; }
 .history-asset-link .ticker-avatar { width: 30px; height: 30px; border-radius: 8px; font-size: 10px; }
 .history-asset-link .stock-logo img { inset: 5px; width: calc(100% - 10px); height: calc(100% - 10px); }
 .history-asset-link > span:last-child { text-decoration: underline; text-decoration-color: rgba(86, 216, 255, .28); text-underline-offset: 4px; }

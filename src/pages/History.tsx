@@ -202,7 +202,7 @@ export function History({ model }: { model: PortfolioModel }) {
 
         {visible.length ? (
           <div className="table-wrap">
-            <table className={`history-table ${grouped ? "history-table--grouped" : ""}`}>
+            <table className={`history-table history-table--stocks ${grouped ? "history-table--grouped" : ""}`}>
               <thead><tr>
                 <SortableHeader sortKey="date" sortConfig={sortConfig} onSort={handleSort}>{grouped ? "Período" : "Data"}</SortableHeader>
                 <SortableHeader sortKey="type" sortConfig={sortConfig} onSort={handleSort}>Tipo</SortableHeader>
