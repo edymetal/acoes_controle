@@ -218,7 +218,7 @@ export function History({ model }: { model: PortfolioModel }) {
                 <tr key={item.id}>
                   <td>{formatPeriod(item)}</td>
                   <td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td>
-                  <td><button className="ticker-link" type="button" onClick={() => setSelectedTicker(item.ticker)}>{item.ticker}</button></td>
+                  <td><button className="ticker-link history-asset-link" type="button" aria-label={`Abrir resumo de ${item.ticker}`} onClick={() => setSelectedTicker(item.ticker)}><StockLogo ticker={item.ticker} /><span>{item.ticker}</span></button></td>
                   {grouped && <td><span className="operation-count">{item.operationCount}</span></td>}
                   <td>{formatNumber(item.quantity, 8)}</td>
                   <td>{formatCurrency(item.unitPrice)}</td>
