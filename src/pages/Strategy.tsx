@@ -118,12 +118,6 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                   <span><small>{signal.kind === "buy" ? "Valor para atingir o nível" : "Próxima operação"}</small><strong>{signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR" : "VENDER") : "AGUARDAR"}</strong></span>
                   <b>{signal.actionAmount > 0 ? formatCurrency(signal.actionAmount) : "—"}</b>
                 </div>
-                {signal.kind === "buy" && signal.actionAmount > 0 && (
-                  <div className="strategy-buy-plan strategy-buy-plan--complete">
-                    <span><small>Objetivo deste nível</small><strong>{formatCurrency(signal.targetPositionValue ?? 0)}</strong></span>
-                    <span><small>Cálculo da compra</small><strong>{formatCurrency(signal.targetPositionValue ?? 0)} − {formatCurrency(signal.positionCost)} = {formatCurrency(signal.actionAmount)}</strong></span>
-                  </div>
-                )}
                 <div className="strategy-position">
                   <span><small>Comprado</small><strong>{formatCurrency(holding?.costBasis ?? 0)}</strong></span>
                   <span><small>Atual</small><strong>{formatCurrency(holding?.marketValue ?? 0)}</strong></span>
