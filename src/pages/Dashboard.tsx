@@ -1,7 +1,7 @@
 import { ArrowRight, BadgeDollarSign, CircleDollarSign, Landmark, Layers3, TrendingUp, WalletCards } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { PageId } from "../components/Shell";
-import { EmptyState, MetricCard, Section, SignalBadge, StockLogo, Value } from "../components/Ui";
+import { DataHealthNotice, EmptyState, MetricCard, Section, SignalBadge, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
 import { getAnnualRealizedProfit, getStrategySignal } from "../lib/portfolio";
 import type { PortfolioData, PortfolioModel, StrategySettings } from "../types";
@@ -17,8 +17,11 @@ interface DashboardProps {
 
 export function Dashboard({ data, model, settings, onNavigate }: DashboardProps) {
   const { metrics, positions, transactions } = model;
-  const allocation = positions.slice(0, 7).map((position) => ({ name: position.ticker, value: position.marketValue }));
+  const quotedPositions = positions.filter((position) => position.quoteAvailable);
+  const valuationComplete = model.health.valuation === "complete";
+  const allocation = quotedPositions.slice(0, 7).map((position) => ({ name: position.ticker, value: position.marketValue }));
   const pnl = [...positions]
+    .filter((position) => position.quoteAvailable)
     .sort((a, b) => Math.abs(b.unrealized) - Math.abs(a.unrealized))
     .slice(0, 7)
     .map((position) => ({ ticker: position.ticker, value: position.unrealized }));
@@ -30,17 +33,19 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
   });
   const buySignals = strategy.filter((item) => item.signal.kind === "buy").sort((a, b) => b.signal.strength - a.signal.strength);
   const breakoutSignals = strategy.filter((item) => item.signal.kind === "breakout" || item.signal.kind === "sell");
+  const hasUnavailableSignals = strategy.some((item) => item.signal.kind === "unavailable");
 
   return (
     <div className="page-stack">
+      <DataHealthNotice model={model} />
       <section className="hero-card">
         <div>
-          <span className="eyebrow">VALOR ATUAL DA CARTEIRA</span>
+          <span className="eyebrow">{valuationComplete ? "VALOR ATUAL DA CARTEIRA" : "VALOR CONHECIDO DA CARTEIRA (PARCIAL)"}</span>
           <strong>{formatCurrency(metrics.marketValue)}</strong>
-          <p>
+          {valuationComplete ? <p>
             <Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value>
             <span> de resultado nas posições abertas</span>
-          </p>
+          </p> : <p>Resultado em aberto indisponível enquanto faltam cotações.</p>}
         </div>
         <div className="hero-card__summary">
           <span><small>Custo atual</small><strong>{formatCurrency(metrics.openCost)}</strong></span>
@@ -52,8 +57,8 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
       <section className="metrics-grid">
         <MetricCard label="Total histórico comprado" value={formatCurrency(metrics.historicalPurchases)} icon={<WalletCards size={19} />} helper="Aportes acumulados" accent="blue" />
         <MetricCard label="Lucro realizado" value={formatCurrency(metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Em operações encerradas" change={metrics.realizedProfit} accent="green" />
-        <MetricCard label="Resultado em aberto" value={formatCurrency(metrics.unrealizedProfit)} icon={<TrendingUp size={19} />} helper={formatPercent(metrics.openReturn)} change={metrics.unrealizedProfit} accent="violet" />
-        <MetricCard label="Resultado total" value={formatCurrency(metrics.totalProfit)} icon={<CircleDollarSign size={19} />} helper={`${formatPercent(metrics.totalReturnOnPurchases)} sobre compras`} change={metrics.totalProfit} accent="amber" />
+        <MetricCard label="Resultado em aberto" value={valuationComplete ? formatCurrency(metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={valuationComplete ? formatPercent(metrics.openReturn) : "Aguardando cotações"} change={valuationComplete ? metrics.unrealizedProfit : undefined} accent="violet" />
+        <MetricCard label="Resultado total" value={valuationComplete ? formatCurrency(metrics.totalProfit) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={valuationComplete ? `${formatPercent(metrics.totalReturnOnPurchases)} sobre compras` : "Aguardando cotações"} change={valuationComplete ? metrics.totalProfit : undefined} accent="amber" />
       </section>
 
       <section className="dashboard-grid">
@@ -68,10 +73,10 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
                   <Tooltip formatter={(value) => formatCurrency(Number(value))} contentStyle={{ background: "#101d30", border: "1px solid #273851", borderRadius: 12 }} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="donut-center"><Layers3 size={17} /><strong>{positions.length}</strong><small>posições</small></div>
+              <div className="donut-center"><Layers3 size={17} /><strong>{quotedPositions.length}</strong><small>cotadas</small></div>
             </div>
             <div className="chart-legend">
-              {positions.slice(0, 7).map((position, index) => (
+              {quotedPositions.slice(0, 7).map((position, index) => (
                 <div key={position.ticker}>
                   <span className="legend-dot" style={{ background: CHART_COLORS[index % CHART_COLORS.length] }} />
                   <strong>{position.ticker}</strong><span>{formatPercent(position.allocation)}</span>
@@ -121,7 +126,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
           sensitiveSubtitle
           action={<button className="text-button" type="button" onClick={() => onNavigate("strategy")}>Ver estratégia <ArrowRight size={15} /></button>}
         >
-          <div className="signal-list">
+          {[...buySignals, ...breakoutSignals].length ? <div className="signal-list">
             {[...buySignals.slice(0, 3), ...breakoutSignals.slice(0, 2)].slice(0, 5).map(({ asset, signal }) => (
               <div className="signal-row" key={asset.ticker}>
                 <StockLogo ticker={asset.ticker} />
@@ -133,7 +138,12 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
                 </span>
               </div>
             ))}
-          </div>
+          </div> : <EmptyState
+            title="Nenhum sinal disponível"
+            description={hasUnavailableSignals
+              ? "Os sinais reaparecerão quando as estatísticas anuais forem atualizadas com dados válidos."
+              : "Nenhum ativo está nas faixas configuradas para compra ou venda."}
+          />}
         </Section>
 
         <Section

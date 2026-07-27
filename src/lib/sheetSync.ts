@@ -8,6 +8,7 @@ import type {
   PortfolioData,
   Transaction,
 } from "../types";
+import { fetchWithRetry } from "./fetchRetry";
 
 const SPREADSHEET_ID = "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0";
 const RANGES = {
@@ -122,7 +123,12 @@ function mapSales(rows: SheetRow[], warnings: string[]): Transaction[] {
   });
 }
 
-function mapAssets(rows: SheetRow[], warnings: string[], previousAnnualByTicker: Map<string, AnnualStats>): Asset[] {
+function mapAssets(
+  rows: SheetRow[],
+  warnings: string[],
+  previousAnnualByTicker: Map<string, AnnualStats>,
+  generatedAt: string,
+): Asset[] {
   const seen = new Set<string>();
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
@@ -165,7 +171,9 @@ function mapAssets(rows: SheetRow[], warnings: string[], previousAnnualByTicker:
         max: annualMax,
         observations: 365,
         currency: "USD",
-      } : previousAnnual,
+        asOf: generatedAt,
+        isFallback: false,
+      } : previousAnnual ? { ...previousAnnual, isFallback: true } : null,
     }];
   });
 }
@@ -369,13 +377,16 @@ export function buildSpreadsheetData(
   const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange,
     cryptoTransactionRange, cryptoAssetRange, fixedIncomeRange, fixedIncomeUsdRateRange] = valueRanges;
   const previousAnnualByTicker = new Map(
-    previousPortfolio.assets.flatMap((asset) => asset.annual ? [[asset.ticker, asset.annual] as const] : []),
+    previousPortfolio.assets.flatMap((asset) => asset.annual ? [[asset.ticker, {
+      ...asset.annual,
+      asOf: asset.annual.asOf ?? previousPortfolio.generatedAt,
+    }] as const] : []),
   );
 
   const warnings: string[] = [];
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
-  const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker);
+  const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker, generatedAt);
 
   const fiiWarnings: string[] = [];
   const fiiPurchases = mapFiiPurchases(fiiPurchaseRange?.values ?? [], fiiWarnings);
@@ -480,12 +491,13 @@ export async function syncSpreadsheetData(accessToken: string, previousPortfolio
     dateTimeRenderOption: "SERIAL_NUMBER",
   });
   for (const range of ALL_RANGES) search.append("ranges", range);
-  const response = await fetch(
+  const response = await fetchWithRetry(
     `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${search}`,
     {
       cache: "no-store",
       headers: { Authorization: `Bearer ${accessToken}` },
     },
+    { maxAttempts: 3, timeoutMs: 60_000 },
   );
   if (!response.ok) {
     const error = await response.json().catch(() => ({})) as { error?: { message?: string } };

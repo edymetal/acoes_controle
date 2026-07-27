@@ -23,6 +23,8 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Área independente de Renda Fixa, com valores em reais e conversão secundária em dólares, carteira detalhada e escada de vencimentos para os 12 meses.
 - Atualização automática a cada 6 horas pelo GitHub Actions.
 - Sincronização imediata pelo botão de atualizar, usando acesso Google de somente leitura da conta autorizada.
+- Indicadores explícitos de avaliação parcial quando uma posição está sem cotação, sem converter o custo da posição em prejuízo fictício.
+- Suspensão automática dos sinais quando as estatísticas anuais precisaram ser reaproveitadas de uma atualização anterior.
 
 ## Arquitetura atual
 
@@ -90,6 +92,14 @@ O motor consolida as movimentações cronologicamente usando custo médio móvel
 
 O painel mostra separadamente o total histórico comprado e o custo ainda aberto para evitar ambiguidade em “total investido”.
 
+### Saúde e contingência dos dados
+
+- Uma posição aberta sem cotação continua na carteira, mas seu preço, valor de mercado e resultado aparecem como indisponíveis.
+- Os totais de patrimônio passam a ser identificados como valores conhecidos e parciais até que todas as posições tenham cotação.
+- Resultado em aberto, resultado total e rentabilidade não são apresentados como definitivos enquanto a avaliação estiver parcial.
+- Quando a faixa anual atual é inválida, a sincronização preserva a data do último histórico válido, marca o dado como contingência e suspende o respectivo sinal.
+- Leituras da API do Google Sheets usam limite de tempo e até três tentativas para erros transitórios (`408`, `429` e `5xx`), com espera exponencial e aleatória entre as tentativas.
+
 ## Estratégia anual
 
 Para cotação `P`, média `M`, mínima `L` e máxima `H`:
@@ -107,9 +117,12 @@ Requisitos: Node.js 24 e pnpm 11.
 
 ```bash
 pnpm install
+cp .env.example .env
 pnpm sync:data
 pnpm dev
 ```
+
+Preencha `VITE_FIREBASE_API_KEY` no `.env` antes de iniciar o site. A chave deve pertencer ao aplicativo Web do Firebase usado pelo projeto e aceitar a origem local. `VITE_DATA_BASE_URL` é opcional: deixe a variável vazia para usar `public/data/`.
 
 O sincronizador procura uma credencial nesta ordem:
 
@@ -117,7 +130,7 @@ O sincronizador procura uma credencial nesta ordem:
 2. caminho informado em `GOOGLE_APPLICATION_CREDENTIALS`;
 3. primeiro arquivo `.json` dentro de `auth/`.
 
-Copie `.env.example` para `.env` apenas se quiser testar uma fonte de dados autenticada. O backend precisa permitir CORS para a origem local e validar o token Firebase; não basta hospedar os mesmos arquivos em outra URL pública.
+Para testar uma fonte de dados autenticada, preencha também `VITE_DATA_BASE_URL`. O backend precisa permitir CORS para a origem local e validar o token Firebase; não basta hospedar os mesmos arquivos em outra URL pública.
 
 Comandos úteis:
 

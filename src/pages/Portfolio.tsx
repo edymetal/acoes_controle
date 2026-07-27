@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { BriefcaseBusiness, Search, SlidersHorizontal, TrendingUp, WalletCards } from "lucide-react";
-import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
+import { DataHealthNotice, EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
 import { getPositionSortValue, PortfolioTableHead, type PositionSortKey } from "../components/PortfolioTableHead";
 import { useSortableTable } from "../components/SortableTable";
 import { formatCurrency, formatNumber, formatPercent } from "../lib/format";
@@ -26,13 +26,15 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
     sortedRows: sortedPositions,
     sortConfig,
   } = useSortableTable<typeof positions[number], PositionSortKey>(positions, getPositionSortValue);
+  const valuationComplete = model.health.valuation === "complete";
 
   return (
     <div className="page-stack">
+      <DataHealthNotice model={model} />
       <section className="metrics-grid metrics-grid--three">
         <MetricCard label="Custo das posições" value={formatCurrency(model.metrics.openCost)} icon={<WalletCards size={19} />} helper="Base de custo em aberto" accent="blue" />
-        <MetricCard label="Valor de mercado" value={formatCurrency(model.metrics.marketValue)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} posições atuais`} accent="violet" />
-        <MetricCard label="Resultado em aberto" value={formatCurrency(model.metrics.unrealizedProfit)} icon={<TrendingUp size={19} />} helper={formatPercent(model.metrics.openReturn)} change={model.metrics.unrealizedProfit} accent="green" />
+        <MetricCard label={valuationComplete ? "Valor de mercado" : "Valor conhecido (parcial)"} value={formatCurrency(model.metrics.marketValue)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} posições atuais`} accent="violet" />
+        <MetricCard label="Resultado em aberto" value={valuationComplete ? formatCurrency(model.metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={valuationComplete ? formatPercent(model.metrics.openReturn) : "Aguardando cotações"} change={valuationComplete ? model.metrics.unrealizedProfit : undefined} accent="green" />
       </section>
 
       <Section title="Posições atuais" subtitle="Custo médio móvel e marcação pela cotação mais recente">
@@ -51,11 +53,11 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
                     <td><div className="asset-cell"><StockLogo ticker={position.ticker} /><span><strong>{position.ticker}</strong><small>{position.name} · {position.sector}</small></span></div></td>
                     <td>{formatNumber(position.quantity, 6)}</td>
                     <td>{formatCurrency(position.averageCost)}</td>
-                    <td>{formatCurrency(position.currentPrice)}</td>
+                    <td>{position.quoteAvailable ? formatCurrency(position.currentPrice) : <span className="data-unavailable">Indisponível</span>}</td>
                     <td>{formatCurrency(position.costBasis)}</td>
-                    <td><strong>{formatCurrency(position.marketValue)}</strong></td>
-                    <td><div className="allocation-cell"><span>{formatPercent(position.allocation)}</span><span className="mini-progress"><i style={{ width: `${Math.max(3, position.allocation * 100)}%` }} /></span></div></td>
-                    <td><Value value={position.unrealized}><strong>{formatCurrency(position.unrealized)}</strong><small>{formatPercent(position.unrealizedPercent)}</small></Value></td>
+                    <td>{position.quoteAvailable ? <strong>{formatCurrency(position.marketValue)}</strong> : <span className="data-unavailable">Indisponível</span>}</td>
+                    <td>{position.quoteAvailable ? <div className="allocation-cell"><span>{formatPercent(position.allocation)}</span><span className="mini-progress"><i style={{ width: `${Math.max(3, position.allocation * 100)}%` }} /></span></div> : <span className="data-unavailable">—</span>}</td>
+                    <td>{position.quoteAvailable ? <Value value={position.unrealized}><strong>{formatCurrency(position.unrealized)}</strong><small>{formatPercent(position.unrealizedPercent)}</small></Value> : <span className="data-unavailable">Indisponível</span>}</td>
                   </tr>
                 ))}
               </tbody>

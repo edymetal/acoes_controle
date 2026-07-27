@@ -33,4 +33,23 @@ describe("validação dos dados publicados", () => {
     investments[0].maturityDate = "2027-02-30";
     expect(() => parseFixedIncomeData(invalid)).toThrow("valores inconsistentes");
   });
+
+  it("aceita metadados de atualização no histórico anual", () => {
+    const enriched = structuredClone(portfolio) as unknown as Record<string, unknown>;
+    const assets = enriched.assets as Array<Record<string, unknown>>;
+    const annual = assets[0].annual as Record<string, unknown>;
+    annual.asOf = "2026-07-27T12:00:00.000Z";
+    annual.isFallback = false;
+
+    expect(parsePortfolioData(enriched).assets[0].annual?.isFallback).toBe(false);
+  });
+
+  it("rejeita histórico de contingência sem data de origem", () => {
+    const invalid = structuredClone(portfolio) as unknown as Record<string, unknown>;
+    const assets = invalid.assets as Array<Record<string, unknown>>;
+    const annual = assets[0].annual as Record<string, unknown>;
+    annual.isFallback = true;
+
+    expect(() => parsePortfolioData(invalid)).toThrow("valores inconsistentes");
+  });
 });

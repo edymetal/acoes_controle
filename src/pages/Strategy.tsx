@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { ArrowUpRight, Search, SlidersHorizontal, Sparkles, Target, TrendingDown, TrendingUp, WalletCards, X } from "lucide-react";
-import { EmptyState, MetricCard, SignalBadge, StockLogo } from "../components/Ui";
+import { DataHealthNotice, EmptyState, MetricCard, SignalBadge, StockLogo } from "../components/Ui";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
 import { getStrategyLevelValues } from "../lib/settings";
@@ -83,6 +83,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
 
   return (
     <div className="page-stack">
+      <DataHealthNotice model={model} />
       <section className="strategy-intro">
         <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão separa a parcela sugerida do total necessário para completar a posição.</p></div>
         <button className="strategy-levels-button" type="button" aria-haspopup="dialog" onClick={() => setShowLevels(true)}><SlidersHorizontal size={18} /> Ver níveis e valores</button>
@@ -104,7 +105,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
 
         {filtered.length ? <div className="strategy-grid">
           {filtered.map(({ asset, holding, signal }) => {
-            const annual = asset.annual;
+            const annual = signal.kind === "unavailable" ? null : asset.annual;
             const range = annual ? annual.max - annual.min : 0;
             const rangePosition = annual && range > 0 ? Math.max(0, Math.min(100, ((asset.currentPrice - annual.min) / range) * 100)) : 0;
             const profit = holding?.unrealized ?? 0;
@@ -126,7 +127,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                 {annual ? <>
                   <div className="range-track"><i style={{ left: `${rangePosition}%` }} /><span className="range-track__fill" style={{ width: `${rangePosition}%` }} /></div>
                   <div className="range-labels"><span><small>Mínima</small>{formatCurrency(annual.min)}</span><span><small>Média</small>{formatCurrency(annual.average)}</span><span><small>Máxima</small>{formatCurrency(annual.max)}</span></div>
-                </> : <div className="range-unavailable">Histórico anual não disponível para este ativo.</div>}
+                </> : <div className="range-unavailable">{signal.description}</div>}
                 <footer>
                   {rangeDetails ? <span className="strategy-card__range-info"><small>Faixa atual {rangeDetails.label}</small><strong>{formatPercent(rangeDetails.currentPercent / 100)} no intervalo anual</strong><em>Valores do grupo: {rangeDetails.priceLabel}</em></span> : <span>{signal.description}</span>}
                 </footer>

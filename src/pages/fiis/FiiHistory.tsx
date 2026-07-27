@@ -37,6 +37,7 @@ export function FiiHistory({ model, usdRate }: { model: PortfolioModel; usdRate:
       saleCount: sales.length,
       openQuantity: position?.quantity ?? 0,
       marketValue: position?.marketValue ?? 0,
+      quoteAvailable: position?.quoteAvailable ?? true,
     };
   }, [model.positions, model.transactions, selectedTicker]);
 
@@ -79,7 +80,7 @@ export function FiiHistory({ model, usdRate }: { model: PortfolioModel; usdRate:
           <article><ShoppingCart size={20} /><span><small>Total comprado</small><strong>{formatBrl(selectedSummary.purchaseTotal)}</strong><em>{selectedSummary.purchaseCount} operações · {formatNumber(selectedSummary.purchaseQuantity, 4)} cotas</em></span></article>
           <article><HandCoins size={20} /><span><small>Total vendido</small><strong>{formatBrl(selectedSummary.saleTotal)}</strong><em>{selectedSummary.saleCount} operações · {formatNumber(selectedSummary.saleQuantity, 4)} cotas</em></span></article>
           <article className="asset-modal__profit"><BadgeDollarSign size={20} /><span><small>Lucro realizado</small><Value value={selectedSummary.realizedProfit}><strong>{formatBrl(selectedSummary.realizedProfit)}</strong></Value><em>Valor já descontado do custo de compra</em></span></article>
-          <article><WalletCards size={20} /><span><small>Posição atual</small><strong>{formatNumber(selectedSummary.openQuantity, 4)} cotas</strong><em>{formatBrl(selectedSummary.marketValue)} em valor de mercado</em></span></article>
+          <article><WalletCards size={20} /><span><small>Posição atual</small><strong>{formatNumber(selectedSummary.openQuantity, 4)} cotas</strong><em>{selectedSummary.quoteAvailable ? `${formatBrl(selectedSummary.marketValue)} em valor de mercado` : "Cotação atual indisponível"}</em></span></article>
         </div>
         <p className="asset-modal__note">O lucro realizado usa o custo médio disponível na data de cada venda. A posição atual não interfere no resultado das vendas já concluídas.</p>
       </section>

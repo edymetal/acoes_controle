@@ -44,7 +44,10 @@ function isAnnualStats(value: unknown) {
     && value.average <= value.max
     && isFiniteNumber(value.observations)
     && value.observations > 0
-    && isString(value.currency);
+    && isString(value.currency)
+    && (value.asOf === undefined || isIsoDateTime(value.asOf))
+    && (value.isFallback === undefined || typeof value.isFallback === "boolean")
+    && (value.isFallback !== true || isIsoDateTime(value.asOf));
 }
 
 function isAsset(value: unknown) {

@@ -21,6 +21,8 @@ export interface AnnualStats {
   max: number;
   observations: number;
   currency: string;
+  asOf?: string;
+  isFallback?: boolean;
 }
 
 export interface Asset {
@@ -177,6 +179,7 @@ export interface Position {
   averageCost: number;
   costBasis: number;
   currentPrice: number;
+  quoteAvailable: boolean;
   marketValue: number;
   unrealized: number;
   unrealizedPercent: number;
@@ -234,6 +237,12 @@ export interface PortfolioModel {
     totalReturnOnPurchases: number;
     openPositions: number;
     assetCount: number;
+  };
+  health: {
+    valuation: "complete" | "partial";
+    missingQuoteTickers: string[];
+    staleAnnualTickers: string[];
+    staleAnnualAsOf: string | null;
   };
   warnings: string[];
 }

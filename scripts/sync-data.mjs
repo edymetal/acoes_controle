@@ -107,7 +107,7 @@ function mapSales(rows, warnings) {
   });
 }
 
-function mapAssets(rows, warnings, previousAnnualByTicker) {
+function mapAssets(rows, warnings, previousAnnualByTicker, generatedAt) {
   const seen = new Set();
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
@@ -156,7 +156,9 @@ function mapAssets(rows, warnings, previousAnnualByTicker) {
         max: annualMax,
         observations: 365,
         currency: "USD",
-      } : previousAnnual,
+        asOf: generatedAt,
+        isFallback: false,
+      } : previousAnnual ? { ...previousAnnual, isFallback: true } : null,
     }];
   });
 }
@@ -374,7 +376,10 @@ async function loadPreviousAnnualStats() {
     return new Map(
       (previous.assets ?? [])
         .filter((asset) => asset?.ticker && asset?.annual)
-        .map((asset) => [asset.ticker, asset.annual]),
+        .map((asset) => [asset.ticker, {
+          ...asset.annual,
+          asOf: asset.annual.asOf ?? previous.generatedAt,
+        }]),
     );
   } catch {
     return new Map();
@@ -383,6 +388,7 @@ async function loadPreviousAnnualStats() {
 
 async function main() {
   const warnings = [];
+  const generatedAt = new Date().toISOString();
   const previousAnnualByTicker = await loadPreviousAnnualStats();
   const response = await batchGetValues({
     spreadsheetId: SPREADSHEET_ID,
@@ -393,7 +399,7 @@ async function main() {
   const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange, cryptoTransactionRange, cryptoAssetRange, fixedIncomeRange, fixedIncomeUsdRateRange] = response.valueRanges;
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
-  const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker);
+  const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker, generatedAt);
   const fiiWarnings = [];
   const fiiPurchases = mapFiiPurchases(fiiPurchaseRange?.values ?? [], fiiWarnings);
   const fiiSales = mapFiiSales(fiiSaleRange?.values ?? [], fiiWarnings);
@@ -410,7 +416,7 @@ async function main() {
 
   const output = {
     schemaVersion: 1,
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     source: {
       spreadsheetId: SPREADSHEET_ID,
       ranges: RANGES,

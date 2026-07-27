@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { BriefcaseBusiness, Search, SlidersHorizontal, TrendingUp, WalletCards } from "lucide-react";
 import { getPositionSortValue, PortfolioTableHead, type PositionSortKey } from "../../components/PortfolioTableHead";
 import { useSortableTable } from "../../components/SortableTable";
-import { EmptyState, MetricCard, Section, Value } from "../../components/Ui";
+import { DataHealthNotice, EmptyState, MetricCard, Section, Value } from "../../components/Ui";
 import { formatBrl, formatNumber, formatPercent, formatUsdFromBrl } from "../../lib/format";
 import type { PortfolioModel } from "../../types";
 
@@ -20,12 +20,14 @@ export function FiiPortfolio({ model, usdRate }: { model: PortfolioModel; usdRat
   }, [model.positions, search, sort]);
   const { requestSort, resetSort, sortedRows: sortedPositions, sortConfig } =
     useSortableTable<typeof positions[number], PositionSortKey>(positions, getPositionSortValue);
+  const valuationComplete = model.health.valuation === "complete";
 
   return <div className="page-stack">
+    <DataHealthNotice model={model} showAnnual={false} />
     <section className="metrics-grid metrics-grid--three">
       <MetricCard label="Custo das posições" value={formatBrl(model.metrics.openCost)} secondaryValue={formatUsdFromBrl(model.metrics.openCost, usdRate)} icon={<WalletCards size={19} />} helper="Base de custo das cotas" accent="blue" />
-      <MetricCard label="Valor de mercado" value={formatBrl(model.metrics.marketValue)} secondaryValue={formatUsdFromBrl(model.metrics.marketValue, usdRate)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} fundos na carteira`} accent="violet" />
-      <MetricCard label="Resultado em aberto" value={formatBrl(model.metrics.unrealizedProfit)} secondaryValue={formatUsdFromBrl(model.metrics.unrealizedProfit, usdRate)} icon={<TrendingUp size={19} />} helper={formatPercent(model.metrics.openReturn)} change={model.metrics.unrealizedProfit} accent="green" />
+      <MetricCard label={valuationComplete ? "Valor de mercado" : "Valor conhecido (parcial)"} value={formatBrl(model.metrics.marketValue)} secondaryValue={formatUsdFromBrl(model.metrics.marketValue, usdRate)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} fundos na carteira`} accent="violet" />
+      <MetricCard label="Resultado em aberto" value={valuationComplete ? formatBrl(model.metrics.unrealizedProfit) : "Indisponível"} secondaryValue={valuationComplete ? formatUsdFromBrl(model.metrics.unrealizedProfit, usdRate) : undefined} icon={<TrendingUp size={19} />} helper={valuationComplete ? formatPercent(model.metrics.openReturn) : "Aguardando cotações"} change={valuationComplete ? model.metrics.unrealizedProfit : undefined} accent="green" />
     </section>
     <Section title="Posições em FIIs" subtitle="Custo médio móvel e cotação atual em reais">
       <div className="toolbar">
@@ -33,7 +35,7 @@ export function FiiPortfolio({ model, usdRate }: { model: PortfolioModel; usdRat
         <label className="select-field"><SlidersHorizontal size={16} /><select value={sort} onChange={(event) => { setSort(event.target.value); resetSort(); }}><option value="market-desc">Maior posição</option><option value="pnl-desc">Maior rentabilidade</option><option value="pnl-asc">Menor rentabilidade</option><option value="ticker">Código A–Z</option></select></label>
       </div>
       {positions.length ? <div className="table-wrap"><table className="portfolio-table"><PortfolioTableHead assetLabel="Fundo" quantityLabel="Cotas" sortConfig={sortConfig} onSort={requestSort} /><tbody>
-        {sortedPositions.map((position) => <tr key={position.ticker}><td><div className="asset-cell"><span className="ticker-avatar ticker-avatar--fii">{position.ticker.slice(0, 2)}</span><span><strong>{position.ticker}</strong><small>{position.name} · {position.sector}</small></span></div></td><td>{formatNumber(position.quantity, 4)}</td><td>{formatBrl(position.averageCost)}</td><td>{formatBrl(position.currentPrice)}</td><td>{formatBrl(position.costBasis)}</td><td><strong>{formatBrl(position.marketValue)}</strong></td><td><div className="allocation-cell"><span>{formatPercent(position.allocation)}</span><span className="mini-progress"><i style={{ width: `${Math.max(3, position.allocation * 100)}%` }} /></span></div></td><td><Value value={position.unrealized}><strong>{formatBrl(position.unrealized)}</strong><small>{formatPercent(position.unrealizedPercent)}</small></Value></td></tr>)}
+        {sortedPositions.map((position) => <tr key={position.ticker}><td><div className="asset-cell"><span className="ticker-avatar ticker-avatar--fii">{position.ticker.slice(0, 2)}</span><span><strong>{position.ticker}</strong><small>{position.name} · {position.sector}</small></span></div></td><td>{formatNumber(position.quantity, 4)}</td><td>{formatBrl(position.averageCost)}</td><td>{position.quoteAvailable ? formatBrl(position.currentPrice) : <span className="data-unavailable">Indisponível</span>}</td><td>{formatBrl(position.costBasis)}</td><td>{position.quoteAvailable ? <strong>{formatBrl(position.marketValue)}</strong> : <span className="data-unavailable">Indisponível</span>}</td><td>{position.quoteAvailable ? <div className="allocation-cell"><span>{formatPercent(position.allocation)}</span><span className="mini-progress"><i style={{ width: `${Math.max(3, position.allocation * 100)}%` }} /></span></div> : <span className="data-unavailable">—</span>}</td><td>{position.quoteAvailable ? <Value value={position.unrealized}><strong>{formatBrl(position.unrealized)}</strong><small>{formatPercent(position.unrealizedPercent)}</small></Value> : <span className="data-unavailable">Indisponível</span>}</td></tr>)}
       </tbody></table></div> : <EmptyState title="Nenhum FII encontrado" description="Ajuste a busca para visualizar outros fundos." />}
     </Section>
   </div>;

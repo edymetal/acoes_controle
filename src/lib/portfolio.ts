@@ -108,14 +108,19 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
 
   const assetByTicker = new Map(data.assets.map((asset) => [asset.ticker, asset]));
   const provisionalPositions: Position[] = [];
+  const missingQuoteTickers: string[] = [];
 
   for (const [symbol, state] of states) {
     if (state.quantity <= EPSILON) continue;
     const asset = assetByTicker.get(symbol);
-    if (!asset) warnings.push(`Cotação não encontrada para a posição ${symbol}.`);
-    const currentPrice = asset?.currentPrice ?? 0;
+    const quoteAvailable = Boolean(asset && asset.currentPrice > 0);
+    if (!quoteAvailable) {
+      missingQuoteTickers.push(symbol);
+      warnings.push(`Cotação não encontrada para a posição ${symbol}.`);
+    }
+    const currentPrice = quoteAvailable ? asset!.currentPrice : 0;
     const marketValue = state.quantity * currentPrice;
-    const unrealized = marketValue - state.cost;
+    const unrealized = quoteAvailable ? marketValue - state.cost : 0;
 
     provisionalPositions.push({
       ticker: symbol,
@@ -126,6 +131,7 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
       averageCost: state.cost / state.quantity,
       costBasis: state.cost,
       currentPrice,
+      quoteAvailable,
       marketValue,
       unrealized,
       unrealizedPercent: state.cost > EPSILON ? unrealized / state.cost : 0,
@@ -147,6 +153,12 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
   const realizedProfit = [...states.values()].reduce((sum, state) => sum + state.realized, 0);
   const historicalPurchases = data.purchases.reduce((sum, item) => sum + item.total, 0);
   const historicalSales = data.sales.reduce((sum, item) => sum + item.total, 0);
+  const staleAnnualTickers = data.assets
+    .filter((asset) => asset.annual?.isFallback)
+    .map((asset) => asset.ticker);
+  const staleAnnualAsOf = data.assets
+    .flatMap((asset) => asset.annual?.isFallback && asset.annual.asOf ? [asset.annual.asOf] : [])
+    .sort()[0] ?? null;
 
   return {
     positions,
@@ -165,6 +177,12 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
       openPositions: positions.length,
       assetCount: data.assets.length,
     },
+    health: {
+      valuation: missingQuoteTickers.length > 0 ? "partial" : "complete",
+      missingQuoteTickers: [...new Set(missingQuoteTickers)].sort(),
+      staleAnnualTickers: [...new Set(staleAnnualTickers)].sort(),
+      staleAnnualAsOf,
+    },
     warnings: [...new Set(warnings)],
   };
 }
@@ -177,6 +195,24 @@ export function getStrategySignal(
 ): StrategySignal {
   const annual = asset.annual;
   const remainingToMaximum = Math.max(0, settings.maximumPositionValue - positionCost);
+  if (annual?.isFallback) {
+    return {
+      kind: "unavailable",
+      label: "Dados desatualizados",
+      description: "As estatísticas anuais foram reaproveitadas de uma atualização anterior; o sinal fica suspenso até a próxima leitura válida.",
+      strength: 0,
+      distanceToAverage: null,
+      distanceToHigh: null,
+      rangePositionPercent: null,
+      positionValue,
+      positionCost,
+      targetPositionValue: null,
+      actionAmount: 0,
+      remainingToTarget: 0,
+      remainingToMaximum,
+      actionPercent: null,
+    };
+  }
   if (!annual || annual.min <= 0 || annual.average <= 0 || annual.max <= annual.min) {
     return {
       kind: "unavailable",

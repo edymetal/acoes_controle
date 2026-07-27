@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { AlertCircle, ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
-import type { StrategySignal } from "../types";
-import { toneForValue } from "../lib/format";
+import type { PortfolioModel, StrategySignal } from "../types";
+import { formatDateTime, toneForValue } from "../lib/format";
 
 const stockLogoDomains: Record<string, string> = {
   AAPL: "apple.com", ADBE: "adobe.com", AMZN: "amazon.com", AZN: "astrazeneca.com", BAC: "bankofamerica.com",
@@ -122,6 +122,36 @@ export function EmptyState({ title, description }: { title: string; description:
       <AlertCircle size={25} />
       <strong>{title}</strong>
       <p>{description}</p>
+    </div>
+  );
+}
+
+export function DataHealthNotice({
+  model,
+  showAnnual = true,
+}: {
+  model: PortfolioModel;
+  showAnnual?: boolean;
+}) {
+  const messages: string[] = [];
+  if (model.health.valuation === "partial") {
+    messages.push(
+      `Avaliação parcial: sem cotação atual para ${model.health.missingQuoteTickers.join(", ")}. O valor de mercado considera somente as posições cotadas, e os resultados em aberto ficam indisponíveis.`,
+    );
+  }
+  if (showAnnual && model.health.staleAnnualTickers.length > 0) {
+    const origin = model.health.staleAnnualAsOf
+      ? ` A base válida mais antiga é de ${formatDateTime(model.health.staleAnnualAsOf)}.`
+      : "";
+    messages.push(
+      `Sinais suspensos para ${model.health.staleAnnualTickers.length} ativo${model.health.staleAnnualTickers.length === 1 ? "" : "s"}: as estatísticas anuais vieram de uma atualização anterior.${origin}`,
+    );
+  }
+  if (messages.length === 0) return null;
+
+  return (
+    <div className="refresh-message refresh-message--warning data-health-notice" role="status">
+      {messages.map((message) => <span key={message}>{message}</span>)}
     </div>
   );
 }

@@ -50,6 +50,35 @@ describe("calculatePortfolio", () => {
     const model = calculatePortfolio(sameDayData);
     expect(model.warnings).toContain("Compra e venda de AAA em 2025-02-01 não possuem horário; a compra foi processada primeiro.");
   });
+
+  it("marca a avaliação como parcial sem transformar cotação ausente em prejuízo", () => {
+    const model = calculatePortfolio({ ...data, assets: [] });
+    const position = model.positions[0];
+
+    expect(model.health.valuation).toBe("partial");
+    expect(model.health.missingQuoteTickers).toEqual(["AAA"]);
+    expect(position.quoteAvailable).toBe(false);
+    expect(position.marketValue).toBe(0);
+    expect(position.unrealized).toBe(0);
+    expect(model.metrics.unrealizedProfit).toBe(0);
+  });
+
+  it("expõe a data de origem das estatísticas anuais reaproveitadas", () => {
+    const model = calculatePortfolio({
+      ...data,
+      assets: data.assets.map((asset) => ({
+        ...asset,
+        annual: {
+          ...asset.annual!,
+          asOf: "2026-01-01T00:00:00.000Z",
+          isFallback: true,
+        },
+      })),
+    });
+
+    expect(model.health.staleAnnualTickers).toEqual(["AAA"]);
+    expect(model.health.staleAnnualAsOf).toBe("2026-01-01T00:00:00.000Z");
+  });
 });
 
 describe("getAnnualRealizedProfit", () => {
@@ -152,5 +181,20 @@ describe("getStrategySignal", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 33 }, DEFAULT_STRATEGY_SETTINGS, 135);
     expect(signal.kind).toBe("breakout");
     expect(signal.actionAmount).toBe(20);
+  });
+
+  it("suspende o sinal quando as estatísticas anuais são de contingência", () => {
+    const signal = getStrategySignal({
+      ...base,
+      annual: {
+        ...base.annual!,
+        asOf: "2026-01-01T00:00:00.000Z",
+        isFallback: true,
+      },
+    });
+
+    expect(signal.kind).toBe("unavailable");
+    expect(signal.label).toBe("Dados desatualizados");
+    expect(signal.actionAmount).toBe(0);
   });
 });

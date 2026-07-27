@@ -1,7 +1,7 @@
 import { ArrowRight, BadgeDollarSign, Bitcoin, CircleDollarSign, Layers3, TrendingUp, WalletCards } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import type { PageId } from "../../components/Shell";
-import { CryptoLogo, MetricCard, Section, Value } from "../../components/Ui";
+import { CryptoLogo, DataHealthNotice, MetricCard, Section, Value } from "../../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent } from "../../lib/format";
 import type { PortfolioModel } from "../../types";
 
@@ -9,16 +9,22 @@ const CHART_COLORS = ["#f6b94a", "#7c8cff"];
 
 export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; onNavigate: (page: PageId) => void }) {
   const { metrics, positions, transactions } = model;
-  const allocation = positions.map((position) => ({ name: position.ticker, value: position.marketValue }));
+  const quotedPositions = positions.filter((position) => position.quoteAvailable);
+  const valuationComplete = model.health.valuation === "complete";
+  const allocation = quotedPositions.map((position) => ({ name: position.ticker, value: position.marketValue }));
+  const additionalWarnings = model.warnings.filter(
+    (warning) => !model.health.missingQuoteTickers.some((ticker) => warning.includes(ticker) && warning.includes("Cotação")),
+  );
 
   return (
     <div className="page-stack">
-      {model.warnings.length > 0 && <div className="refresh-message refresh-message--warning crypto-data-warning" role="status">{model.warnings.length === 1 ? model.warnings[0] : `${model.warnings.length} avisos de integridade foram identificados na carteira de cripto.`}</div>}
+      <DataHealthNotice model={model} showAnnual={false} />
+      {additionalWarnings.length > 0 && <div className="refresh-message refresh-message--warning crypto-data-warning" role="status">{additionalWarnings.length === 1 ? additionalWarnings[0] : `${additionalWarnings.length} avisos adicionais de integridade foram identificados na carteira de cripto.`}</div>}
       <section className="hero-card hero-card--crypto">
         <div>
-          <span className="eyebrow">VALOR ATUAL DA CARTEIRA DE CRIPTO</span>
+          <span className="eyebrow">{valuationComplete ? "VALOR ATUAL DA CARTEIRA DE CRIPTO" : "VALOR CONHECIDO DA CARTEIRA DE CRIPTO (PARCIAL)"}</span>
           <strong>{formatCurrency(metrics.marketValue)}</strong>
-          <p><Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas posições abertas</span></p>
+          {valuationComplete ? <p><Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas posições abertas</span></p> : <p>Resultado em aberto indisponível enquanto faltam cotações.</p>}
         </div>
         <div className="hero-card__summary">
           <span><small>Custo atual</small><strong>{formatCurrency(metrics.openCost)}</strong></span>
@@ -30,8 +36,8 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
       <section className="metrics-grid">
         <MetricCard label="Total histórico comprado" value={formatCurrency(metrics.historicalPurchases)} icon={<WalletCards size={19} />} helper="Aportes acumulados em cripto" accent="blue" />
         <MetricCard label="Lucro realizado" value={formatCurrency(metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Em criptos vendidas" change={metrics.realizedProfit} accent="green" />
-        <MetricCard label="Resultado em aberto" value={formatCurrency(metrics.unrealizedProfit)} icon={<TrendingUp size={19} />} helper={formatPercent(metrics.openReturn)} change={metrics.unrealizedProfit} accent="violet" />
-        <MetricCard label="Resultado total" value={formatCurrency(metrics.totalProfit)} icon={<CircleDollarSign size={19} />} helper={`${formatPercent(metrics.totalReturnOnPurchases)} sobre compras`} change={metrics.totalProfit} accent="amber" />
+        <MetricCard label="Resultado em aberto" value={valuationComplete ? formatCurrency(metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={valuationComplete ? formatPercent(metrics.openReturn) : "Aguardando cotações"} change={valuationComplete ? metrics.unrealizedProfit : undefined} accent="violet" />
+        <MetricCard label="Resultado total" value={valuationComplete ? formatCurrency(metrics.totalProfit) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={valuationComplete ? `${formatPercent(metrics.totalReturnOnPurchases)} sobre compras` : "Aguardando cotações"} change={valuationComplete ? metrics.totalProfit : undefined} accent="amber" />
       </section>
 
       <section className="dashboard-grid dashboard-grid--lower">
@@ -46,10 +52,10 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
                   <Tooltip formatter={(value) => formatCurrency(Number(value))} contentStyle={{ background: "#101d30", border: "1px solid #273851", borderRadius: 12 }} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="donut-center"><Layers3 size={17} /><strong>{positions.length}</strong><small>criptos</small></div>
+              <div className="donut-center"><Layers3 size={17} /><strong>{quotedPositions.length}</strong><small>cotadas</small></div>
             </div>
             <div className="chart-legend chart-legend--crypto">
-              {positions.map((position) => <div key={position.ticker}><CryptoLogo ticker={position.ticker} size="small" /><span className="crypto-legend__asset"><strong>{position.name}</strong><small>{position.ticker}</small></span><span>{formatPercent(position.allocation)}</span></div>)}
+              {quotedPositions.map((position) => <div key={position.ticker}><CryptoLogo ticker={position.ticker} size="small" /><span className="crypto-legend__asset"><strong>{position.name}</strong><small>{position.ticker}</small></span><span>{formatPercent(position.allocation)}</span></div>)}
             </div>
           </div>
         </Section>

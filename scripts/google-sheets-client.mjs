@@ -4,9 +4,61 @@ import path from "node:path";
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets.readonly";
+const RETRYABLE_STATUS_CODES = new Set([408, 429, 500, 502, 503, 504]);
 
 function encodeBase64Url(value) {
   return Buffer.from(value).toString("base64url");
+}
+
+const sleep = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs));
+
+function retryAfterMs(response) {
+  const value = response.headers.get("retry-after");
+  if (!value) return 0;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1_000;
+  const date = Date.parse(value);
+  return Number.isNaN(date) ? 0 : Math.max(0, date - Date.now());
+}
+
+export async function fetchWithRetry(url, init = {}, options = {}) {
+  const {
+    maxAttempts = 3,
+    timeoutMs = 90_000,
+    baseDelayMs = 1_000,
+    maxDelayMs = 16_000,
+    fetchImpl = fetch,
+    sleepImpl = sleep,
+    randomImpl = Math.random,
+  } = options;
+
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1) {
+    throw new Error("maxAttempts deve ser um inteiro maior que zero.");
+  }
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(new Error("Tempo limite da requisição excedido.")), timeoutMs);
+    let retryResponse = null;
+
+    try {
+      const response = await fetchImpl(url, { ...init, signal: controller.signal });
+      if (!RETRYABLE_STATUS_CODES.has(response.status) || attempt === maxAttempts) return response;
+      retryResponse = response;
+      await response.body?.cancel().catch(() => undefined);
+    } catch (error) {
+      if (attempt === maxAttempts) throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    const exponential = baseDelayMs * (2 ** Math.max(0, attempt - 1));
+    const withJitter = Math.min(maxDelayMs, exponential + Math.floor(randomImpl() * 1_000));
+    const delayMs = Math.min(maxDelayMs, Math.max(withJitter, retryResponse ? retryAfterMs(retryResponse) : 0));
+    await sleepImpl(delayMs);
+  }
+
+  throw new Error("Falha inesperada ao repetir a requisição.");
 }
 
 async function findLocalCredential() {
@@ -52,14 +104,14 @@ async function createAccessToken(credential) {
   const signature = signer.sign(credential.private_key, "base64url");
   const assertion = `${unsignedToken}.${signature}`;
 
-  const response = await fetch(TOKEN_URL, {
+  const response = await fetchWithRetry(TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
       assertion,
     }),
-  });
+  }, { timeoutMs: 30_000 });
 
   if (!response.ok) {
     throw new Error(`Falha na autenticação do Google (${response.status}).`);
@@ -84,9 +136,9 @@ export async function batchGetValues({
   }
 
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?${search}`;
-  const response = await fetch(url, {
+  const response = await fetchWithRetry(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  }, { timeoutMs: 90_000 });
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
@@ -96,4 +148,3 @@ export async function batchGetValues({
 
   return response.json();
 }
-

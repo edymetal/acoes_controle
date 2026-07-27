@@ -55,4 +55,37 @@ describe("buildSpreadsheetData", () => {
   it("recusa uma resposta parcial da planilha", () => {
     expect(() => buildSpreadsheetData([], previousPortfolio)).toThrow("A resposta da planilha está incompleta.");
   });
+
+  it("preserva a origem do último histórico anual válido e o marca como contingência", () => {
+    const previousWithAnnual: PortfolioData = {
+      ...previousPortfolio,
+      generatedAt: "2026-07-01T10:00:00.000Z",
+      assets: [{
+        ticker: "AAA",
+        name: "Empresa",
+        sector: "Tecnologia",
+        currentPrice: 10,
+        exchange: "NYSE",
+        annual: { min: 8, average: 10, max: 15, observations: 365, currency: "USD" },
+      }],
+    };
+    const result = buildSpreadsheetData([
+      { values: [] },
+      { values: [] },
+      { values: [["AAA", "Empresa", "", "Tecnologia", "", 11, null, null, null, "NYSE"]] },
+      { values: [] },
+      { values: [] },
+      { values: [] },
+      { values: [[5]] },
+      { values: [] },
+      { values: [] },
+      { values: [] },
+      { values: [[5]] },
+    ], previousWithAnnual, "2026-07-27T12:00:00.000Z");
+
+    expect(result.portfolio.assets[0].annual).toMatchObject({
+      asOf: "2026-07-01T10:00:00.000Z",
+      isFallback: true,
+    });
+  });
 });
