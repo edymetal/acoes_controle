@@ -48,6 +48,7 @@ describe("validação dos dados publicados", () => {
     const invalid = structuredClone(portfolio) as unknown as Record<string, unknown>;
     const assets = invalid.assets as Array<Record<string, unknown>>;
     const annual = assets[0].annual as Record<string, unknown>;
+    delete annual.asOf;
     annual.isFallback = true;
 
     expect(() => parsePortfolioData(invalid)).toThrow("valores inconsistentes");
