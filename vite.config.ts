@@ -25,17 +25,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png}"],
         cleanupOutdatedCaches: true,
-        runtimeCaching: process.env.VITE_DATA_BASE_URL ? [] : [
-          {
-            urlPattern: ({ url, sameOrigin }) => sameOrigin && /\/data\/(?:portfolio|fiis|crypto|fixed-income)\.json$/.test(url.pathname),
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "investment-data",
-              networkTimeoutSeconds: 8,
-              expiration: { maxEntries: 8, maxAgeSeconds: 24 * 60 * 60 },
-            },
-          },
-        ],
+        runtimeCaching: [],
       },
     }),
   ],

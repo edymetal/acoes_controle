@@ -4,17 +4,17 @@ Data da revisão: 12/07/2026
 
 Escopo: código-fonte, dados publicados, automação de deploy, testes, build e configuração do projeto.
 
-> Atualização: as correções locais recomendadas neste documento foram implementadas em 12/07/2026. A migração dos JSONs públicos depende da disponibilização de um backend autenticado; o frontend já aceita `VITE_DATA_BASE_URL` e envia o token Firebase para essa fonte.
+> Atualização de 27/07/2026: a entrega pública dos JSONs foi removida. O aplicativo lê a planilha privada diretamente após autorização Google, o workflow publica somente o frontend e o cache legado é apagado na inicialização. A limpeza dos arquivos no histórico Git ainda depende de uma reescrita coordenada e force push.
 
 ## Resumo executivo
 
-O projeto está organizado, usa TypeScript estrito, separa os cálculos financeiros da interface e passa nos testes e no build de produção. A principal fragilidade é de arquitetura: a autenticação Firebase protege apenas a renderização da interface, enquanto os dados financeiros continuam públicos no GitHub Pages e no próprio histórico do repositório.
+O projeto está organizado, usa TypeScript estrito, separa os cálculos financeiros da interface e passa nos testes e no build de produção. A exposição no GitHub Pages foi corrigida: a autenticação Firebase protege a interface e a planilha privada só é lida no navegador depois da autorização Google de somente leitura. Permanece uma pendência histórica, pois os datasets antigos continuam acessíveis em commits anteriores do repositório até uma reescrita coordenada.
 
 Também há uma inconsistência conceitual no patrimônio consolidado, que soma valores atuais de renda variável a valores futuros de renda fixa e combina resultados realizados, não realizados e projetados como se fossem equivalentes.
 
 ## Achados prioritários
 
-### 1. Crítico — os dados financeiros não são protegidos pela autenticação
+### 1. Crítico — exposição atual corrigida; histórico Git pendente
 
 Evidências:
 
@@ -26,6 +26,8 @@ Evidências:
 Impacto: movimentações, quantidades, custos, resultados e posições podem ser consultados diretamente sem passar pela tela de login. O Firebase API key no frontend não é, por si só, um segredo; o problema é usar arquivos estáticos públicos como armazenamento de dados privados.
 
 Recomendação: servir os dados por um backend autenticado, como Cloud Functions/Cloud Run ou Firestore/Cloud Storage com regras que validem o usuário autorizado. Enquanto houver requisito de privacidade, não publicar os JSONs no GitHub Pages nem mantê-los no Git. Após a migração, considerar a remoção dos dados históricos do repositório e revisar caches/CDN já publicados.
+
+Solução implementada: o modo padrão usa OAuth no navegador e consulta a API do Google Sheets diretamente, sem persistir token ou dados. O workflow não recebe credenciais da planilha, o build falha se um dos datasets financeiros for incluído e o aplicativo remove o cache legado. A recomendação de backend permanece como alternativa para cenários multiusuário ou maior controle operacional.
 
 ### 2. Alto — o patrimônio consolidado mistura bases incompatíveis
 
@@ -74,9 +76,7 @@ Prioridade sugerida: testar primeiro o sincronizador e os casos financeiros lim�
 
 ### PWA e cache
 
-Somente `portfolio.json` possui regra de cache em runtime. `fiis.json`, `crypto.json` e `fixed-income.json` não entram no precache nem recebem estratégia equivalente. Em uso offline ou rede instável, os módulos podem apresentar comportamentos diferentes.
-
-Recomendação: aplicar a mesma política `NetworkFirst` aos quatro datasets, decidir explicitamente se o aplicativo deve funcionar offline e testar atualização do service worker com dados antigos.
+> Atualização: corrigido para o modelo privado. Os datasets não são mais publicados ou mantidos no cache do service worker. O cache legado `investment-data` é removido quando a nova versão inicia; o aplicativo offline conserva apenas os arquivos estáticos da interface, nunca os dados financeiros.
 
 ### Dependências e cadeia de fornecimento
 

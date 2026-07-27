@@ -43,7 +43,11 @@ async function requestGoogleSheetsAccessToken() {
 }
 
 export async function signInWithGoogle() {
-  await getGoogleSheetsAccessToken();
+  return getGoogleSheetsAccessToken();
+}
+
+export function hasGoogleSheetsAccessToken() {
+  return Boolean(sheetsAccess && sheetsAccess.expiresAt > Date.now());
 }
 
 export async function getGoogleSheetsAccessToken() {

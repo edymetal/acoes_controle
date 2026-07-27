@@ -370,16 +370,16 @@ function mapFixedIncomeInvestments(rows: SheetRow[], warnings: string[]): FixedI
 
 export function buildSpreadsheetData(
   valueRanges: ValueRange[],
-  previousPortfolio: PortfolioData,
+  previousPortfolio: PortfolioData | null = null,
   generatedAt = new Date().toISOString(),
 ): SpreadsheetSyncResult {
   if (valueRanges.length < ALL_RANGES.length) throw new Error("A resposta da planilha está incompleta.");
   const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange,
     cryptoTransactionRange, cryptoAssetRange, fixedIncomeRange, fixedIncomeUsdRateRange] = valueRanges;
   const previousAnnualByTicker = new Map(
-    previousPortfolio.assets.flatMap((asset) => asset.annual ? [[asset.ticker, {
+    (previousPortfolio?.assets ?? []).flatMap((asset) => asset.annual ? [[asset.ticker, {
       ...asset.annual,
-      asOf: asset.annual.asOf ?? previousPortfolio.generatedAt,
+      asOf: asset.annual.asOf ?? previousPortfolio?.generatedAt,
     }] as const] : []),
   );
 
@@ -485,7 +485,11 @@ export function buildSpreadsheetData(
   };
 }
 
-export async function syncSpreadsheetData(accessToken: string, previousPortfolio: PortfolioData) {
+export async function syncSpreadsheetData(
+  accessToken: string,
+  previousPortfolio: PortfolioData | null = null,
+  signal?: AbortSignal,
+) {
   const search = new URLSearchParams({
     valueRenderOption: "UNFORMATTED_VALUE",
     dateTimeRenderOption: "SERIAL_NUMBER",
@@ -496,6 +500,7 @@ export async function syncSpreadsheetData(accessToken: string, previousPortfolio
     {
       cache: "no-store",
       headers: { Authorization: `Bearer ${accessToken}` },
+      signal,
     },
     { maxAttempts: 3, timeoutMs: 60_000 },
   );

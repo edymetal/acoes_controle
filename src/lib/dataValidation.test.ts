@@ -1,11 +1,87 @@
 import { describe, expect, it } from "vitest";
-import portfolio from "../../public/data/portfolio.json";
-import fiis from "../../public/data/fiis.json";
-import crypto from "../../public/data/crypto.json";
-import fixedIncome from "../../public/data/fixed-income.json";
+import type { CryptoData, FiiData, FixedIncomeData, PortfolioData } from "../types";
 import { parseCryptoData, parseFiiData, parseFixedIncomeData, parsePortfolioData } from "./dataValidation";
 
-describe("validação dos dados publicados", () => {
+const transaction = {
+  id: "buy-1",
+  type: "buy" as const,
+  date: "2026-01-01",
+  ticker: "AAA",
+  quantity: 1,
+  total: 10,
+  unitPrice: 10,
+};
+const asset = {
+  ticker: "AAA",
+  name: "Ativo",
+  sector: "Teste",
+  currentPrice: 11,
+  exchange: "NYSE",
+  annual: {
+    min: 8,
+    average: 10,
+    max: 12,
+    observations: 365,
+    currency: "USD",
+    asOf: "2026-07-27T12:00:00.000Z",
+    isFallback: false,
+  },
+};
+const portfolio: PortfolioData = {
+  schemaVersion: 1,
+  generatedAt: "2026-07-27T12:00:00.000Z",
+  source: { spreadsheetId: "test", ranges: {}, currentQuotes: "test", annualHistory: "test" },
+  purchases: [transaction],
+  sales: [],
+  assets: [asset],
+  integrity: { purchaseRows: 1, saleRows: 0, assetRows: 1, annualRows: 1, warnings: [] },
+};
+const fiis: FiiData = {
+  schemaVersion: 1,
+  generatedAt: portfolio.generatedAt,
+  source: { spreadsheetId: "test", ranges: {}, currentQuotes: "test" },
+  exchangeRate: { brlPerUsd: 5, source: "test" },
+  purchases: [transaction],
+  sales: [],
+  assets: [{ ...asset, annual: null }],
+  integrity: { purchaseRows: 1, saleRows: 0, assetRows: 1, warnings: [] },
+};
+const crypto: CryptoData = {
+  schemaVersion: 1,
+  generatedAt: portfolio.generatedAt,
+  source: { spreadsheetId: "test", ranges: {}, currentQuotes: "test" },
+  purchases: [transaction],
+  sales: [],
+  assets: [{ ...asset, annual: null }],
+  integrity: { purchaseRows: 1, saleRows: 0, assetRows: 1, warnings: [] },
+};
+const fixedIncome: FixedIncomeData = {
+  schemaVersion: 1,
+  generatedAt: portfolio.generatedAt,
+  source: { spreadsheetId: "test", ranges: {} },
+  exchangeRate: { brlPerUsd: 5, source: "test" },
+  investments: [{
+    id: "fixed-1",
+    risk: 1,
+    type: "CDB",
+    name: "Banco",
+    fgcGuarantee: true,
+    yield: 0.12,
+    maturityDate: "2027-01-01",
+    lockupDate: null,
+    periodMonths: 12,
+    investedAmount: 1_000,
+    purchaseDate: "2026-01-01",
+    grossAmount: 1_100,
+    taxAmount: 30,
+    taxRate: 0.15,
+    netAmount: 1_070,
+    profit: 70,
+  }],
+  integrity: { investmentRows: 1, warnings: [] },
+};
+
+describe("validação dos dados privados", () => {
   it("aceita os quatro datasets sincronizados", () => {
     expect(parsePortfolioData(portfolio).assets.length).toBeGreaterThan(0);
     expect(parseFiiData(fiis).assets.length).toBeGreaterThan(0);

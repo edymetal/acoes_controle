@@ -1,16 +1,16 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, BarChart3, LoaderCircle, RotateCcw } from "lucide-react";
+import { AlertTriangle, BarChart3, KeyRound, LoaderCircle, RotateCcw } from "lucide-react";
 import { Shell, type PageId } from "./components/Shell";
 import { calculatePortfolio } from "./lib/portfolio";
 import { calculateFiiPortfolio } from "./lib/fiiPortfolio";
 import { calculateCryptoPortfolio } from "./lib/cryptoPortfolio";
 import { calculateFixedIncome } from "./lib/fixedIncome";
-import { fetchDataFile, usesPublicStaticData } from "./lib/dataSource";
+import { fetchDataFile, usesAuthenticatedBackend } from "./lib/dataSource";
 import { parseCryptoData, parseFiiData, parseFixedIncomeData, parsePortfolioData } from "./lib/dataValidation";
 import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
 import { loadAppLanguage, saveAppLanguage } from "./lib/i18n";
-import { syncSpreadsheetData } from "./lib/sheetSync";
-import { clearGoogleSheetsAccessToken, getGoogleSheetsAccessToken } from "./firebase";
+import { syncSpreadsheetData, type SpreadsheetSyncResult } from "./lib/sheetSync";
+import { clearGoogleSheetsAccessToken, getGoogleSheetsAccessToken, hasGoogleSheetsAccessToken } from "./firebase";
 import { describeGoogleAuthorizationError } from "./lib/googleAuthError";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
@@ -64,6 +64,9 @@ export default function App() {
   const [fixedIncomeData, setFixedIncomeData] = useState<FixedIncomeData | null>(null);
   const [fixedIncomeError, setFixedIncomeError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [needsSheetAuthorization, setNeedsSheetAuthorization] = useState(false);
+  const [sheetAuthorizationError, setSheetAuthorizationError] = useState<string | null>(null);
+  const [isAuthorizingSheet, setIsAuthorizingSheet] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshMessage, setRefreshMessage] = useState<RefreshMessage | null>(null);
   const [settings, setSettings] = useState(loadStrategySettings);
@@ -77,8 +80,39 @@ export default function App() {
     document.documentElement.lang = language;
   }, [language]);
 
+  const applySpreadsheetData = (synchronized: SpreadsheetSyncResult) => {
+    setData(synchronized.portfolio);
+    setFiiData(synchronized.fiis);
+    setFiiError(null);
+    setCryptoData(synchronized.crypto);
+    setCryptoError(null);
+    setFixedIncomeData(synchronized.fixedIncome);
+    setFixedIncomeError(null);
+    setError(null);
+    setNeedsSheetAuthorization(false);
+    setSheetAuthorizationError(null);
+  };
+
   useEffect(() => {
     const controller = new AbortController();
+    if (!usesAuthenticatedBackend) {
+      if (!hasGoogleSheetsAccessToken()) {
+        setNeedsSheetAuthorization(true);
+        return () => controller.abort();
+      }
+
+      getGoogleSheetsAccessToken()
+        .then((accessToken) => syncSpreadsheetData(accessToken, null, controller.signal))
+        .then(applySpreadsheetData)
+        .catch((reason: unknown) => {
+          if (reason instanceof DOMException && reason.name === "AbortError") return;
+          clearGoogleSheetsAccessToken();
+          setSheetAuthorizationError(describeGoogleAuthorizationError(reason));
+          setNeedsSheetAuthorization(true);
+        });
+      return () => controller.abort();
+    }
+
     fetchPortfolio(false, controller.signal)
       .then((payload) => {
         setData(payload);
@@ -117,11 +151,27 @@ export default function App() {
     return () => controller.abort();
   }, []);
 
+  const authorizePrivateSheet = async () => {
+    setIsAuthorizingSheet(true);
+    setSheetAuthorizationError(null);
+    try {
+      const accessToken = await getGoogleSheetsAccessToken();
+      const synchronized = await syncSpreadsheetData(accessToken, data);
+      applySpreadsheetData(synchronized);
+    } catch (reason) {
+      clearGoogleSheetsAccessToken();
+      setSheetAuthorizationError(describeGoogleAuthorizationError(reason));
+      setNeedsSheetAuthorization(true);
+    } finally {
+      setIsAuthorizingSheet(false);
+    }
+  };
+
   const refreshData = async () => {
     setIsRefreshing(true);
     setRefreshMessage(null);
 
-    if (usesPublicStaticData) {
+    if (!usesAuthenticatedBackend) {
       if (!data) {
         setRefreshMessage({ kind: "error", text: "A base atual ainda não terminou de carregar." });
         setIsRefreshing(false);
@@ -130,13 +180,7 @@ export default function App() {
       try {
         const accessToken = await getGoogleSheetsAccessToken();
         const synchronized = await syncSpreadsheetData(accessToken, data);
-        setData(synchronized.portfolio);
-        setFiiData(synchronized.fiis);
-        setFiiError(null);
-        setCryptoData(synchronized.crypto);
-        setCryptoError(null);
-        setFixedIncomeData(synchronized.fixedIncome);
-        setFixedIncomeError(null);
+        applySpreadsheetData(synchronized);
         const hasSheetWarnings = synchronized.portfolio.integrity.warnings.length > 0
           || synchronized.fiis.integrity.warnings.length > 0
           || synchronized.crypto.integrity.warnings.length > 0
@@ -211,8 +255,26 @@ export default function App() {
     );
   }
 
+  if (needsSheetAuthorization && !data) {
+    return (
+      <main className="state-screen">
+        <div className="brand brand--center"><span className="brand__mark"><BarChart3 size={23} /></span><span><strong>Controle</strong><small>de Ações</small></span></div>
+        <div className="state-screen__card state-screen__card--private">
+          <KeyRound size={34} />
+          <h1>Carregar dados privados</h1>
+          <p>Autorize a leitura da planilha com sua conta Google. Os dados serão carregados somente nesta sessão e não fazem parte do site publicado.</p>
+          {sheetAuthorizationError && <code>{sheetAuthorizationError}</code>}
+          <button type="button" onClick={authorizePrivateSheet} disabled={isAuthorizingSheet}>
+            {isAuthorizingSheet ? <LoaderCircle className="spin" size={17} /> : <KeyRound size={17} />}
+            {isAuthorizingSheet ? "Carregando dados…" : "Autorizar planilha"}
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   if (!data || !model) {
-    return <main className="state-screen"><div className="loader-mark"><LoaderCircle size={34} /><span>Preparando sua carteira…</span></div></main>;
+    return <main className="state-screen"><div className="loader-mark"><LoaderCircle size={34} /><span>Carregando dados privados…</span></div></main>;
   }
 
   return (

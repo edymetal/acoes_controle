@@ -1,5 +1,6 @@
 # Credenciais e segredos locais
 auth/
+private-data/
 *.pem
 .env
 .env.*
@@ -14,4 +15,3 @@ coverage/
 .DS_Store
 Thumbs.db
 *.log
-

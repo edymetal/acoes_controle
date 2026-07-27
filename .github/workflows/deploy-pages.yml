@@ -1,10 +1,8 @@
-name: Sincronizar dados e publicar no GitHub Pages
+name: Validar e publicar no GitHub Pages
 
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: "15 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -35,11 +33,6 @@ jobs:
       - name: Instalar dependências
         run: pnpm install --frozen-lockfile
 
-      - name: Sincronizar a planilha e o histórico anual
-        env:
-          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-        run: pnpm sync:data
-
       - name: Executar testes
         run: pnpm test
 
@@ -52,6 +45,9 @@ jobs:
           VITE_DATA_BASE_URL: ${{ vars.VITE_DATA_BASE_URL }}
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
         run: pnpm build
+
+      - name: Verificar privacidade do artefato
+        run: pnpm verify:privacy
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6

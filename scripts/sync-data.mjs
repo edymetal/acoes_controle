@@ -22,10 +22,11 @@ const FIXED_INCOME_RANGES = {
   investments: "'Fixa Hist'!B36:Q1000",
   usdRate: "'Dólar'!G5",
 };
-const OUTPUT_PATH = path.resolve("public/data/portfolio.json");
-const FII_OUTPUT_PATH = path.resolve("public/data/fiis.json");
-const CRYPTO_OUTPUT_PATH = path.resolve("public/data/crypto.json");
-const FIXED_INCOME_OUTPUT_PATH = path.resolve("public/data/fixed-income.json");
+const OUTPUT_DIRECTORY = path.resolve(process.env.SYNC_OUTPUT_DIR ?? "private-data");
+const OUTPUT_PATH = path.join(OUTPUT_DIRECTORY, "portfolio.json");
+const FII_OUTPUT_PATH = path.join(OUTPUT_DIRECTORY, "fiis.json");
+const CRYPTO_OUTPUT_PATH = path.join(OUTPUT_DIRECTORY, "crypto.json");
+const FIXED_INCOME_OUTPUT_PATH = path.join(OUTPUT_DIRECTORY, "fixed-income.json");
 const CRYPTO_BY_NAME = new Map([
   ["BITCOIN", { ticker: "BTC", name: "Bitcoin" }],
   ["ETHEREUM", { ticker: "ETH", name: "Ethereum" }],
@@ -514,6 +515,7 @@ async function main() {
   console.log(
     `Renda fixa sincronizada: ${fixedIncomeInvestments.length} ativos, ${fixedIncomeWarnings.length} avisos.`,
   );
+  console.log(`Arquivos privados gravados em ${OUTPUT_DIRECTORY}.`);
 }
 
 await main();

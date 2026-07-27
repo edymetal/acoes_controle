@@ -21,43 +21,34 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
 - Área independente de Cripto em dólares para Bitcoin, Ethereum e BNB, com visão geral, carteira e movimentações.
 - Área independente de Renda Fixa, com valores em reais e conversão secundária em dólares, carteira detalhada e escada de vencimentos para os 12 meses.
-- Atualização automática a cada 6 horas pelo GitHub Actions.
-- Sincronização imediata pelo botão de atualizar, usando acesso Google de somente leitura da conta autorizada.
+- Carregamento privado direto da planilha após autorização Google de somente leitura.
+- Sincronização imediata pelo botão de atualizar, sem publicar uma cópia dos dados no GitHub Pages.
 - Indicadores explícitos de avaliação parcial quando uma posição está sem cotação, sem converter o custo da posição em prejuízo fictício.
 - Suspensão automática dos sinais quando as estatísticas anuais precisaram ser reaproveitadas de uma atualização anterior.
 
 ## Arquitetura atual
 
 ```text
-Google Sheets privado
-        │ conta de serviço (somente leitura)
-        ▼
-GitHub Actions ── coleta e valida os intervalos
+GitHub Actions ── testes, auditoria e build do aplicativo
         │
-        ├── cotação atual: planilha
-        ├── faixa anual: fechamentos diários de 1 ano
         ▼
-JSON sanitizado ── build React/Vite ── GitHub Pages
+GitHub Pages ── HTML, CSS, JavaScript e imagens
+
+Conta Google autorizada
+        │ OAuth 2.0 · spreadsheets.readonly
+        ▼
+Navegador autenticado ── Google Sheets API ── dados mantidos em memória
 ```
 
-A credencial nunca é incluída no JavaScript do navegador. Localmente ela permanece em `auth/`, que está ignorada pelo Git. No GitHub, o conteúdo completo do JSON é armazenado no secret `GOOGLE_SERVICE_ACCOUNT_JSON`.
+O artefato do GitHub Pages não contém movimentações, posições ou valores financeiros. Após o login, o navegador solicita o escopo `spreadsheets.readonly` e lê somente os intervalos documentados. O token de acesso fica em memória e precisa ser renovado quando a sessão da página é recriada.
 
-No site estático, o botão de sincronização solicita à conta Google conectada o escopo `spreadsheets.readonly` e lê novamente todos os intervalos naquele momento. Essa atualização entra imediatamente na sessão aberta; o workflow programado continua responsável por persistir uma nova versão publicada para os próximos acessos.
-
-> O GitHub Pages é público. As linhas dos intervalos usados pelo site são publicadas nos JSONs finais, embora a chave e o restante da planilha continuem privados. O login Firebase restringe a interface, mas não impede o acesso direto a esses arquivos.
+A conta de serviço continua disponível apenas para diagnóstico local pelo comando `pnpm sync:data`. A credencial permanece em `auth/`, e os arquivos resultantes são gravados em `private-data/`; ambas as pastas são ignoradas pelo Git.
 
 ### Fonte de dados autenticada
 
-O frontend também aceita `VITE_DATA_BASE_URL`, que deve apontar para um backend capaz de validar o token Firebase recebido em `Authorization: Bearer <token>`. Quando a variável está configurada, os quatro JSONs são buscados nesse endpoint em vez de `public/data/`.
+Por padrão, o frontend lê a planilha privada diretamente. Opcionalmente, `VITE_DATA_BASE_URL` pode apontar para um backend que valide o token Firebase recebido em `Authorization: Bearer <token>` e devolva os quatro contratos JSON.
 
-Para dados realmente privados:
-
-1. publique os quatro arquivos por um backend autenticado;
-2. configure a variável de repositório `VITE_DATA_BASE_URL` com a URL desse backend;
-3. remova `public/data/*.json` e seu histórico do repositório somente depois de validar a migração;
-4. revise caches e artefatos antigos já publicados.
-
-Sem `VITE_DATA_BASE_URL`, o comportamento público atual é mantido por compatibilidade e a interface informa essa condição explicitamente.
+Os JSONs foram removidos da branch atual e do artefato publicado. O aplicativo também apaga o antigo cache `investment-data` ao iniciar. As versões anteriores ainda existem no histórico Git até que seja feita uma reescrita coordenada do repositório; essa operação exige force push e deve ser aprovada separadamente.
 
 ## Intervalos lidos
 
@@ -118,36 +109,35 @@ Requisitos: Node.js 24 e pnpm 11.
 ```bash
 pnpm install
 cp .env.example .env
-pnpm sync:data
 pnpm dev
 ```
 
-Preencha `VITE_FIREBASE_API_KEY` no `.env` antes de iniciar o site. A chave deve pertencer ao aplicativo Web do Firebase usado pelo projeto e aceitar a origem local. `VITE_DATA_BASE_URL` é opcional: deixe a variável vazia para usar `public/data/`.
+Preencha `VITE_FIREBASE_API_KEY` no `.env` antes de iniciar o site. A chave deve pertencer ao aplicativo Web do Firebase usado pelo projeto e aceitar a origem local. Deixe `VITE_DATA_BASE_URL` vazia para usar a leitura privada direta da planilha.
 
-O sincronizador procura uma credencial nesta ordem:
+O comando opcional `pnpm sync:data` gera uma cópia local em `private-data/` para diagnóstico. O sincronizador procura uma credencial nesta ordem:
 
 1. conteúdo JSON em `GOOGLE_SERVICE_ACCOUNT_JSON`;
 2. caminho informado em `GOOGLE_APPLICATION_CREDENTIALS`;
 3. primeiro arquivo `.json` dentro de `auth/`.
 
-Para testar uma fonte de dados autenticada, preencha também `VITE_DATA_BASE_URL`. O backend precisa permitir CORS para a origem local e validar o token Firebase; não basta hospedar os mesmos arquivos em outra URL pública.
+Para testar um backend autenticado, preencha também `VITE_DATA_BASE_URL`. O backend precisa permitir CORS para a origem local e validar o token Firebase; não basta hospedar os mesmos arquivos em outra URL pública.
 
 Comandos úteis:
 
 ```bash
 pnpm test       # testes do motor financeiro e dos sinais
 pnpm build      # verificação TypeScript e build de produção
-pnpm check      # testes + build
+pnpm check      # testes + build + verificação de privacidade do artefato
 ```
 
 ## Configuração no GitHub
 
-1. Em **Settings → Secrets and variables → Actions**, crie o secret `GOOGLE_SERVICE_ACCOUNT_JSON` com o conteúdo completo do arquivo da conta de serviço.
-2. Em **Settings → Pages → Build and deployment**, selecione **GitHub Actions**.
-3. Opcionalmente, em **Settings → Secrets and variables → Actions → Variables**, defina `VITE_DATA_BASE_URL` para usar o backend autenticado.
-4. Execute manualmente o workflow **Sincronizar dados e publicar no GitHub Pages** ou envie um commit para `main`.
+1. Em **Settings → Pages → Build and deployment**, selecione **GitHub Actions**.
+2. Em **Settings → Secrets and variables → Actions → Secrets**, mantenha `VITE_FIREBASE_API_KEY`.
+3. Opcionalmente, defina `VITE_DATA_BASE_URL` em **Variables** para usar um backend autenticado.
+4. Execute manualmente o workflow **Validar e publicar no GitHub Pages** ou envie um commit para `main`.
 
-O workflow também roda automaticamente a cada 6 horas e publica um novo artefato somente se a sincronização, os testes e o build terminarem com sucesso.
+O workflow publica apenas o aplicativo depois que testes, auditoria de dependências e build terminam com sucesso. Ele não recebe credenciais da planilha e não gera datasets financeiros.
 
 Para publicar o login, defina `VITE_FIREBASE_API_KEY` em **Settings → Secrets and variables → Actions → Secrets** com uma chave Web nova do Firebase. Restrinja essa chave no Google Cloud às APIs e origens necessárias.
 
@@ -160,12 +150,8 @@ src/
   pages/            Dashboard, Carteira, Movimentações e Estratégia
 scripts/
   google-sheets-client.mjs
-  sync-data.mjs
-public/data/
-  portfolio.json    dados sanitizados consumidos pelo site
-  fiis.json         dados de FIIs, mantidos separados das ações
-  crypto.json       dados de Bitcoin, Ethereum e BNB, isolados dos demais tópicos
-  fixed-income.json dados de renda fixa e vencimentos, isolados dos demais tópicos
+  sync-data.mjs     diagnóstico local; grava somente em private-data/
+private-data/       saída local ignorada pelo Git
 .github/workflows/
   deploy-pages.yml
 ```

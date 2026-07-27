@@ -56,6 +56,25 @@ describe("buildSpreadsheetData", () => {
     expect(() => buildSpreadsheetData([], previousPortfolio)).toThrow("A resposta da planilha está incompleta.");
   });
 
+  it("inicia a sessão privada sem depender de um JSON publicado anteriormente", () => {
+    const result = buildSpreadsheetData([
+      { values: [] },
+      { values: [] },
+      { values: [["AAA", "Empresa", "", "Tecnologia", "", 11, null, null, null, "NYSE"]] },
+      { values: [] },
+      { values: [] },
+      { values: [] },
+      { values: [[5]] },
+      { values: [] },
+      { values: [] },
+      { values: [] },
+      { values: [[5]] },
+    ], null, "2026-07-27T12:00:00.000Z");
+
+    expect(result.portfolio.assets[0].annual).toBeNull();
+    expect(result.portfolio.integrity.warnings[0]).toContain("Preços anuais inválidos");
+  });
+
   it("preserva a origem do último histórico anual válido e o marca como contingência", () => {
     const previousWithAnnual: PortfolioData = {
       ...previousPortfolio,

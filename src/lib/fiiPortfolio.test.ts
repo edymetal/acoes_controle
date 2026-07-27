@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { FiiData } from "../types";
 import { calculateFiiPortfolio } from "./fiiPortfolio";
-import syncedJson from "../../public/data/fiis.json";
 
 const data: FiiData = {
   schemaVersion: 1,
@@ -31,8 +30,19 @@ describe("calculateFiiPortfolio", () => {
     expect(model.metrics.unrealizedProfit).toBe(225);
   });
 
-  it("processa integralmente o JSON sincronizado sem dados financeiros inválidos", () => {
-    const syncedData = syncedJson as unknown as FiiData;
+  it("processa integralmente um dataset privado com posição sem cotação", () => {
+    const syncedData: FiiData = {
+      ...data,
+      purchases: [
+        ...data.purchases,
+        { id: "fii-buy-missing", type: "buy", date: "2025-04-01", ticker: "SEM11", quantity: 1, unitPrice: 50, total: 50 },
+      ],
+      integrity: {
+        ...data.integrity,
+        purchaseRows: data.integrity.purchaseRows + 1,
+        warnings: ["Cotação não encontrada para a posição SEM11."],
+      },
+    };
     const model = calculateFiiPortfolio(syncedData);
 
     expect(syncedData.integrity.warnings.every((warning) => warning.trim().length > 0)).toBe(true);

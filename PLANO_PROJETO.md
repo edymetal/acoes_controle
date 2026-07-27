@@ -6,7 +6,7 @@ Criar um site moderno, profissional, responsivo e gratuito no GitHub Pages para 
 
 O sistema apresentará posição atual, histórico de compras e vendas, capital investido, lucro realizado, resultado em aberto e sinais baseados no preço médio, mínima e máxima dos últimos 12 meses.
 
-> Importante: o GitHub Pages é público. A credencial e a planilha continuarão privadas, mas os dados selecionados e publicados pelo site poderão ser consultados por qualquer pessoa que conheça a URL.
+> Atualização de 27/07/2026: o GitHub Pages publica somente o aplicativo. Os dados financeiros não fazem parte do artefato e só são lidos da planilha privada após autenticação Firebase e autorização Google de somente leitura. Os datasets de versões antigas ainda precisam ser removidos do histórico Git por uma operação coordenada.
 
 ## 2. Escopo funcional
 
@@ -57,12 +57,12 @@ O sistema apresentará posição atual, histórico de compras e vendas, capital 
 
 ## 4. Arquitetura
 
-1. A planilha permanece privada e compartilhada apenas com a conta de serviço em modo leitor.
-2. A chave da conta de serviço fica localmente em `auth/` durante o desenvolvimento e, no GitHub, em um secret do repositório chamado `GOOGLE_SERVICE_ACCOUNT_JSON`.
-3. Um script Node.js autentica na API do Google Sheets, lê somente os intervalos autorizados, valida e normaliza os dados.
-4. O script gera um JSON sanitizado para o site, sem qualquer credencial, fórmula ou célula fora do escopo.
-5. Um workflow do GitHub Actions executa a sincronização e o build de forma manual, em agenda periódica e em alterações do código.
-6. O artefato estático é publicado gratuitamente no GitHub Pages.
+1. A planilha permanece privada e é compartilhada somente com as contas Google autorizadas.
+2. O usuário entra pelo Firebase e autoriza temporariamente o escopo `spreadsheets.readonly`.
+3. O navegador lê os intervalos pela API do Google Sheets e normaliza os dados apenas em memória.
+4. O token OAuth e os dados financeiros não são persistidos no site nem adicionados ao cache do PWA.
+5. O script Node.js com conta de serviço continua opcional para diagnóstico local e grava somente em `private-data/`, ignorado pelo Git.
+6. O workflow executa testes, auditoria, build e verificação de privacidade antes de publicar somente o aplicativo no GitHub Pages.
 
 ## 5. Modelo financeiro e regras de cálculo
 
