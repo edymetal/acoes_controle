@@ -35,12 +35,18 @@ const CRYPTO_BY_NAME = new Map([
 ]);
 const SUPPORTED_CRYPTO_TICKERS = new Set([...CRYPTO_BY_NAME.values()].map((asset) => asset.ticker));
 
-function excelSerialToIsoDate(serial) {
+function excelSerialToSheetDate(serial) {
   if (typeof serial !== "number" || !Number.isFinite(serial)) return null;
   const excelEpoch = Date.UTC(1899, 11, 30);
-  return new Date(excelEpoch + Math.round(serial) * 86_400_000)
-    .toISOString()
-    .slice(0, 10);
+  const wholeDays = Math.floor(serial);
+  const seconds = Math.round((serial - wholeDays) * 86_400);
+  const secondsWithinDay = seconds % 86_400;
+  const timestamp = new Date(excelEpoch + wholeDays * 86_400_000 + seconds * 1_000)
+    .toISOString();
+  return {
+    date: timestamp.slice(0, 10),
+    time: secondsWithinDay > 0 ? timestamp.slice(11, 19) : undefined,
+  };
 }
 
 function numeric(value) {
@@ -59,13 +65,13 @@ function mapPurchases(rows, warnings) {
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
     if (text(row[0]).toUpperCase() === "DATA" && text(row[1]).toUpperCase() === "CODIGO") return [];
-    const date = excelSerialToIsoDate(row[0]);
+    const sheetDate = excelSerialToSheetDate(row[0]);
     const symbol = ticker(row[1]);
     const quantity = numeric(row[2]);
     const total = numeric(row[3]);
     const sheetUnitPrice = numeric(row[4]);
 
-    if (!date || !symbol || quantity === null || quantity <= 0 || total === null || total < 0) {
+    if (!sheetDate || !symbol || quantity === null || quantity <= 0 || total === null || total < 0) {
       warnings.push(`Compra inválida na linha ${index + 25}.`);
       return [];
     }
@@ -73,7 +79,7 @@ function mapPurchases(rows, warnings) {
     return [{
       id: `buy-${index + 25}`,
       type: "buy",
-      date,
+      ...sheetDate,
       ticker: symbol,
       quantity,
       total,
@@ -86,12 +92,12 @@ function mapSales(rows, warnings) {
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
     if (text(row[0]).toUpperCase() === "DATA" && text(row[1]).toUpperCase() === "CODIGO") return [];
-    const date = excelSerialToIsoDate(row[0]);
+    const sheetDate = excelSerialToSheetDate(row[0]);
     const symbol = ticker(row[1]);
     const quantity = numeric(row[2]);
     const total = numeric(row[3]);
 
-    if (!date || !symbol || quantity === null || quantity <= 0 || total === null || total < 0) {
+    if (!sheetDate || !symbol || quantity === null || quantity <= 0 || total === null || total < 0) {
       warnings.push(`Venda inválida na linha ${index + 25}.`);
       return [];
     }
@@ -99,7 +105,7 @@ function mapSales(rows, warnings) {
     return [{
       id: `sell-${index + 25}`,
       type: "sell",
-      date,
+      ...sheetDate,
       ticker: symbol,
       quantity,
       total,
@@ -168,13 +174,13 @@ function mapFiiPurchases(rows, warnings) {
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
     if (text(row[0]).toUpperCase() === "DATA" && text(row[1]).toUpperCase() === "CODIGO") return [];
-    const date = excelSerialToIsoDate(row[0]);
+    const sheetDate = excelSerialToSheetDate(row[0]);
     const symbol = ticker(row[1]);
     const quantity = numeric(row[2]);
     const unitPrice = numeric(row[3]);
 
-    if ((!symbol && !date) || (quantity === null && unitPrice === null) || (quantity === 0 && unitPrice === 0)) return [];
-    if (!date || !symbol || quantity === null || quantity <= 0 || unitPrice === null || unitPrice < 0) {
+    if ((!symbol && !sheetDate) || (quantity === null && unitPrice === null) || (quantity === 0 && unitPrice === 0)) return [];
+    if (!sheetDate || !symbol || quantity === null || quantity <= 0 || unitPrice === null || unitPrice < 0) {
       warnings.push(`Compra de FII inválida na linha ${index + 24}.`);
       return [];
     }
@@ -182,7 +188,7 @@ function mapFiiPurchases(rows, warnings) {
     return [{
       id: `fii-buy-${index + 24}`,
       type: "buy",
-      date,
+      ...sheetDate,
       ticker: symbol,
       quantity,
       total: quantity * unitPrice,
@@ -195,14 +201,14 @@ function mapFiiSales(rows, warnings) {
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
     if (text(row[0]).toUpperCase() === "DATA" && text(row[1]).toUpperCase() === "CODIGO") return [];
-    const date = excelSerialToIsoDate(row[0]);
+    const sheetDate = excelSerialToSheetDate(row[0]);
     const symbol = ticker(row[1]);
     const quantity = numeric(row[2]);
     const unitPrice = numeric(row[3]);
     const sheetTotal = numeric(row[4]);
 
-    if ((!symbol && !date) || (quantity === 0 && unitPrice === 0 && sheetTotal === 0)) return [];
-    if (!date || !symbol || quantity === null || quantity <= 0 || (unitPrice === null && sheetTotal === null)) {
+    if ((!symbol && !sheetDate) || (quantity === 0 && unitPrice === 0 && sheetTotal === 0)) return [];
+    if (!sheetDate || !symbol || quantity === null || quantity <= 0 || (unitPrice === null && sheetTotal === null)) {
       warnings.push(`Venda de FII inválida na linha ${index + 85}.`);
       return [];
     }
@@ -215,7 +221,7 @@ function mapFiiSales(rows, warnings) {
     return [{
       id: `fii-sell-${index + 85}`,
       type: "sell",
-      date,
+      ...sheetDate,
       ticker: symbol,
       quantity,
       total,
@@ -265,11 +271,11 @@ function mapCryptoTransactions(rows, warnings) {
 
     const rawType = text(row[0]).toUpperCase();
     const type = rawType === "COMPRA" ? "buy" : rawType === "VENDA" ? "sell" : null;
-    const date = excelSerialToIsoDate(row[1]);
+    const sheetDate = excelSerialToSheetDate(row[1]);
     const quantity = numeric(row[5]);
     const unitPrice = numeric(row[6]);
 
-    if (!type || !date || quantity === null || quantity <= 0 || unitPrice === null || unitPrice < 0) {
+    if (!type || !sheetDate || quantity === null || quantity <= 0 || unitPrice === null || unitPrice < 0) {
       warnings.push(`Movimentação de cripto inválida na linha ${index + 1} da aba Cripto.`);
       return;
     }
@@ -277,7 +283,8 @@ function mapCryptoTransactions(rows, warnings) {
     const transaction = {
       id: `crypto-${type}-${index + 1}`,
       type,
-      date,
+      ...sheetDate,
+      sourceOrder: index + 1,
       ticker: symbol,
       quantity,
       total: quantity * unitPrice,
@@ -331,11 +338,11 @@ function mapFixedIncomeInvestments(rows, warnings) {
     const risk = numeric(row[0]);
     const type = text(row[1]);
     const name = text(row[2]);
-    const maturityDate = excelSerialToIsoDate(row[6]);
-    const lockupDate = excelSerialToIsoDate(row[7]);
+    const maturityDate = excelSerialToSheetDate(row[6])?.date ?? null;
+    const lockupDate = excelSerialToSheetDate(row[7])?.date ?? null;
     const periodMonths = numeric(row[8]);
     const investedAmount = numeric(row[9]);
-    const purchaseDate = excelSerialToIsoDate(row[10]);
+    const purchaseDate = excelSerialToSheetDate(row[10])?.date ?? null;
     const grossAmount = numeric(row[11]);
     const taxAmount = numeric(row[12]);
     const taxRate = numeric(row[13]);

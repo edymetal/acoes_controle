@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { SortableHeader, useSortableTable, type SortValue } from "../components/SortableTable";
 import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
-import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
+import { formatCurrency, formatDate, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
 import type { PortfolioModel, ProcessedTransaction, TransactionType } from "../types";
 
 const PAGE_SIZE = 15;
@@ -36,7 +36,7 @@ type HistorySortKey =
   | "unitPrice";
 
 function getHistorySortValue(item: HistoryRow, key: HistorySortKey): SortValue {
-  if (key === "date") return item.endDate;
+  if (key === "date") return item.operationCount === 1 ? `${item.endDate}T${item.time ?? ""}` : item.endDate;
   if (key === "type") return item.type === "buy" ? "Compra" : "Venda";
   return item[key];
 }
@@ -50,7 +50,8 @@ export function History({ model }: { model: PortfolioModel }) {
   const [grouped, setGrouped] = useState(false);
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const realizedProfitShare = model.health.valuation === "complete" && model.metrics.totalProfit !== 0
+  const accountingComplete = model.health.accounting === "complete";
+  const realizedProfitShare = accountingComplete && model.health.valuation === "complete" && model.metrics.totalProfit !== 0
     ? model.metrics.realizedProfit / model.metrics.totalProfit
     : null;
 
@@ -126,6 +127,9 @@ export function History({ model }: { model: PortfolioModel }) {
       .filter((item) => item.type === "sell")
       .reduce((sum, item) => sum + (item.realizedProfit ?? 0), 0),
   }), [filtered]);
+  const filteredAccountingComplete = filtered.every(
+    (item) => !model.health.ambiguousTransactionTickers.includes(item.ticker),
+  );
 
   const selectedSummary = useMemo(() => {
     if (!selectedTicker) return null;
@@ -133,21 +137,25 @@ export function History({ model }: { model: PortfolioModel }) {
     const purchases = items.filter((item) => item.type === "buy");
     const sales = items.filter((item) => item.type === "sell");
     const position = model.positions.find((item) => item.ticker === selectedTicker);
+    const accountingReliable = !model.health.ambiguousTransactionTickers.includes(selectedTicker);
     return {
       ticker: selectedTicker,
       name: position?.name ?? selectedTicker,
       purchaseTotal: purchases.reduce((sum, item) => sum + item.total, 0),
       saleTotal: sales.reduce((sum, item) => sum + item.total, 0),
-      realizedProfit: sales.reduce((sum, item) => sum + (item.realizedProfit ?? 0), 0),
+      realizedProfit: accountingReliable
+        ? sales.reduce((sum, item) => sum + (item.realizedProfit ?? 0), 0)
+        : null,
+      accountingReliable,
       purchaseQuantity: purchases.reduce((sum, item) => sum + item.quantity, 0),
       saleQuantity: sales.reduce((sum, item) => sum + item.quantity, 0),
       purchaseCount: purchases.length,
       saleCount: sales.length,
       openQuantity: position?.quantity ?? 0,
-      marketValue: position?.marketValue ?? 0,
-      quoteAvailable: position?.quoteAvailable ?? true,
+      marketValue: accountingReliable ? position?.marketValue ?? 0 : 0,
+      quoteAvailable: accountingReliable && (position?.quoteAvailable ?? true),
     };
-  }, [model.positions, model.transactions, selectedTicker]);
+  }, [model.health.ambiguousTransactionTickers, model.positions, model.transactions, selectedTicker]);
 
   const totalPages = Math.max(1, Math.ceil(displayRows.length / PAGE_SIZE));
   const visible = sortedDisplayRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -172,8 +180,10 @@ export function History({ model }: { model: PortfolioModel }) {
     };
   }, [selectedTicker]);
 
-  const formatPeriod = (item: HistoryRow) => item.startDate === item.endDate
-    ? formatDate(item.endDate)
+  const formatPeriod = (item: HistoryRow) => item.operationCount === 1
+    ? formatTransactionDate(item.endDate, item.time)
+    : item.startDate === item.endDate
+      ? formatDate(item.endDate)
     : `${formatDate(item.startDate)} – ${formatDate(item.endDate)}`;
 
   return (
@@ -181,7 +191,7 @@ export function History({ model }: { model: PortfolioModel }) {
       <section className="metrics-grid metrics-grid--three">
         <MetricCard label="Total comprado" value={formatCurrency(model.metrics.historicalPurchases)} icon={<ShoppingCart size={19} />} helper={`${model.transactions.filter((item) => item.type === "buy").length} compras`} accent="blue" />
         <MetricCard label="Total vendido" value={formatCurrency(model.metrics.historicalSales)} icon={<HandCoins size={19} />} helper={`${model.transactions.filter((item) => item.type === "sell").length} vendas`} accent="violet" />
-        <MetricCard label="Lucro realizado" value={formatCurrency(model.metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper={realizedProfitShare === null ? "Após descontar o custo das compras" : `${formatPercent(realizedProfitShare)} do lucro total`} change={model.metrics.realizedProfit} accent="green" />
+        <MetricCard label="Lucro realizado" value={accountingComplete ? formatCurrency(model.metrics.realizedProfit) : "Indisponível"} icon={<BadgeDollarSign size={19} />} helper={accountingComplete ? (realizedProfitShare === null ? "Após descontar o custo das compras" : `${formatPercent(realizedProfitShare)} do lucro total`) : "Ordem das operações ambígua"} change={accountingComplete ? model.metrics.realizedProfit : undefined} accent="green" />
       </section>
 
       <Section title="Histórico de compras e vendas" subtitle="Consulte, agrupe e analise todas as movimentações registradas">
@@ -198,7 +208,7 @@ export function History({ model }: { model: PortfolioModel }) {
           <span><strong>{displayRows.length}</strong> {grouped ? "grupos" : "movimentações"}</span>
           <span>Compras filtradas <strong>{formatCurrency(totals.purchases)}</strong></span>
           <span>Vendas filtradas <strong>{formatCurrency(totals.sales)}</strong></span>
-          <span>Lucro filtrado <Value value={totals.realized}><strong>{formatCurrency(totals.realized)}</strong></Value></span>
+          <span>Lucro filtrado {filteredAccountingComplete ? <Value value={totals.realized}><strong>{formatCurrency(totals.realized)}</strong></Value> : <strong>Indisponível</strong>}</span>
         </div>
 
         {visible.length ? (
@@ -245,8 +255,8 @@ export function History({ model }: { model: PortfolioModel }) {
             <div className="asset-modal__metrics">
               <article><ShoppingCart size={20} /><span><small>Total comprado</small><strong>{formatCurrency(selectedSummary.purchaseTotal)}</strong><em>{selectedSummary.purchaseCount} operações · {formatNumber(selectedSummary.purchaseQuantity, 6)} ações</em></span></article>
               <article><HandCoins size={20} /><span><small>Total vendido</small><strong>{formatCurrency(selectedSummary.saleTotal)}</strong><em>{selectedSummary.saleCount} operações · {formatNumber(selectedSummary.saleQuantity, 6)} ações</em></span></article>
-              <article className="asset-modal__profit"><BadgeDollarSign size={20} /><span><small>Lucro realizado</small><Value value={selectedSummary.realizedProfit}><strong>{formatCurrency(selectedSummary.realizedProfit)}</strong></Value><em>Valor já descontado do custo de compra</em></span></article>
-              <article><WalletCards size={20} /><span><small>Posição atual</small><strong>{formatNumber(selectedSummary.openQuantity, 6)} ações</strong><em>{selectedSummary.quoteAvailable ? `${formatCurrency(selectedSummary.marketValue)} em valor de mercado` : "Cotação atual indisponível"}</em></span></article>
+              <article className="asset-modal__profit"><BadgeDollarSign size={20} /><span><small>Lucro realizado</small>{selectedSummary.accountingReliable && selectedSummary.realizedProfit !== null ? <Value value={selectedSummary.realizedProfit}><strong>{formatCurrency(selectedSummary.realizedProfit)}</strong></Value> : <strong>Indisponível</strong>}<em>{selectedSummary.accountingReliable ? "Valor já descontado do custo de compra" : "Informe a ordem das operações do mesmo dia"}</em></span></article>
+              <article><WalletCards size={20} /><span><small>Posição atual</small><strong>{selectedSummary.accountingReliable ? `${formatNumber(selectedSummary.openQuantity, 6)} ações` : "Indisponível"}</strong><em>{selectedSummary.quoteAvailable ? `${formatCurrency(selectedSummary.marketValue)} em valor de mercado` : selectedSummary.accountingReliable ? "Cotação atual indisponível" : "Ordem das operações do mesmo dia não informada"}</em></span></article>
             </div>
             <p className="asset-modal__note">O lucro realizado usa o custo médio disponível na data de cada venda. A posição atual não interfere no resultado das vendas já concluídas.</p>
           </section>

@@ -20,6 +20,9 @@ export function getTransactionSortValue(
   key: TransactionSortKey,
 ): SortValue {
   if (key === "type") return transaction.type === "buy" ? "Compra" : "Venda";
+  if (key === "date") {
+    return `${transaction.date}T${transaction.time ?? ""}-${String(transaction.sourceOrder ?? 0).padStart(8, "0")}`;
+  }
   return transaction[key];
 }
 

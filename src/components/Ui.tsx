@@ -139,6 +139,11 @@ export function DataHealthNotice({
       `Avaliação parcial: sem cotação atual para ${model.health.missingQuoteTickers.join(", ")}. O valor de mercado considera somente as posições cotadas, e os resultados em aberto ficam indisponíveis.`,
     );
   }
+  if (model.health.accounting === "ambiguous") {
+    messages.push(
+      `Posição e resultado indisponíveis para ${model.health.ambiguousTransactionTickers.join(", ")}: há compra e venda no mesmo dia sem horário ou sequência suficiente para determinar quantidade e custo reais. Esses ativos foram excluídos dos totais conhecidos.`,
+    );
+  }
   if (showAnnual && model.health.staleAnnualTickers.length > 0) {
     const origin = model.health.staleAnnualAsOf
       ? ` A base válida mais antiga é de ${formatDateTime(model.health.staleAnnualAsOf)}.`

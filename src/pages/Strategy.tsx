@@ -52,9 +52,10 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
     const positions = new Map(model.positions.map((position) => [position.ticker, position]));
     return data.assets.map((asset) => {
       const holding = positions.get(asset.ticker);
-      return { asset, holding, signal: getStrategySignal(asset, settings, holding?.marketValue ?? 0, holding?.costBasis ?? 0) };
+      const accountingReliable = !model.health.ambiguousTransactionTickers.includes(asset.ticker);
+      return { asset, holding, signal: getStrategySignal(asset, settings, holding?.marketValue ?? 0, holding?.costBasis ?? 0, accountingReliable) };
     });
-  }, [data.assets, model.positions, settings]);
+  }, [data.assets, model.health.ambiguousTransactionTickers, model.positions, settings]);
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return signals
@@ -106,6 +107,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
         {filtered.length ? <div className="strategy-grid">
           {filtered.map(({ asset, holding, signal }) => {
             const annual = signal.kind === "unavailable" ? null : asset.annual;
+            const accountingReliable = !model.health.ambiguousTransactionTickers.includes(asset.ticker);
             const range = annual ? annual.max - annual.min : 0;
             const rangePosition = annual && range > 0 ? Math.max(0, Math.min(100, ((asset.currentPrice - annual.min) / range) * 100)) : 0;
             const profit = holding?.unrealized ?? 0;
@@ -120,9 +122,9 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                   <b>{signal.actionAmount > 0 ? formatCurrency(signal.actionAmount) : "—"}</b>
                 </div>
                 <div className="strategy-position">
-                  <span><small>Comprado</small><strong>{formatCurrency(holding?.costBasis ?? 0)}</strong></span>
+                  <span><small>Comprado</small><strong>{accountingReliable ? formatCurrency(holding?.costBasis ?? 0) : "Indisponível"}</strong></span>
                   <span><small>Atual</small><strong>{formatCurrency(holding?.marketValue ?? 0)}</strong></span>
-                  <span className={profit > 0 ? "value--positive" : profit < 0 ? "value--negative" : ""}><small>Lucro</small><strong>{formatCurrency(profit)}</strong></span>
+                  <span className={accountingReliable ? (profit > 0 ? "value--positive" : profit < 0 ? "value--negative" : "") : ""}><small>Lucro</small><strong>{accountingReliable ? formatCurrency(profit) : "Indisponível"}</strong></span>
                 </div>
                 {annual ? <>
                   <div className="range-track"><i style={{ left: `${rangePosition}%` }} /><span className="range-track__fill" style={{ width: `${rangePosition}%` }} /></div>

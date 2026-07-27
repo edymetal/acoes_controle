@@ -96,6 +96,18 @@ describe("validação dos dados privados", () => {
     expect(() => parsePortfolioData(invalid)).toThrow("valores inconsistentes");
   });
 
+  it("aceita horário e ordem de origem válidos e rejeita horário malformado", () => {
+    const enriched = structuredClone(portfolio);
+    enriched.purchases[0].time = "09:30:00";
+    enriched.purchases[0].sourceOrder = 2;
+    expect(parsePortfolioData(enriched).purchases[0]).toMatchObject({ time: "09:30:00", sourceOrder: 2 });
+
+    const invalid = structuredClone(enriched) as unknown as Record<string, unknown>;
+    const purchases = invalid.purchases as Array<Record<string, unknown>>;
+    purchases[0].time = "9h30";
+    expect(() => parsePortfolioData(invalid)).toThrow("valores inconsistentes");
+  });
+
   it("rejeita data de vencimento inválida", () => {
     const invalid = structuredClone(fixedIncome) as unknown as Record<string, unknown>;
     const investments = invalid.investments as Array<Record<string, unknown>>;

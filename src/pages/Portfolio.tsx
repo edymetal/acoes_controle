@@ -27,14 +27,16 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
     sortConfig,
   } = useSortableTable<typeof positions[number], PositionSortKey>(positions, getPositionSortValue);
   const valuationComplete = model.health.valuation === "complete";
+  const accountingComplete = model.health.accounting === "complete";
+  const financialResultsComplete = valuationComplete && accountingComplete;
 
   return (
     <div className="page-stack">
       <DataHealthNotice model={model} />
       <section className="metrics-grid metrics-grid--three">
-        <MetricCard label="Custo das posições" value={formatCurrency(model.metrics.openCost)} icon={<WalletCards size={19} />} helper="Base de custo em aberto" accent="blue" />
-        <MetricCard label={valuationComplete ? "Valor de mercado" : "Valor conhecido (parcial)"} value={formatCurrency(model.metrics.marketValue)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} posições atuais`} accent="violet" />
-        <MetricCard label="Resultado em aberto" value={valuationComplete ? formatCurrency(model.metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={valuationComplete ? formatPercent(model.metrics.openReturn) : "Aguardando cotações"} change={valuationComplete ? model.metrics.unrealizedProfit : undefined} accent="green" />
+        <MetricCard label="Custo das posições" value={accountingComplete ? formatCurrency(model.metrics.openCost) : "Indisponível"} icon={<WalletCards size={19} />} helper={accountingComplete ? "Base de custo em aberto" : "Ordem das operações ambígua"} accent="blue" />
+        <MetricCard label={financialResultsComplete ? "Valor de mercado" : "Valor conhecido (parcial)"} value={formatCurrency(model.metrics.marketValue)} icon={<BriefcaseBusiness size={19} />} helper={`${model.metrics.openPositions} posições atuais`} accent="violet" />
+        <MetricCard label="Resultado em aberto" value={financialResultsComplete ? formatCurrency(model.metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={financialResultsComplete ? formatPercent(model.metrics.openReturn) : "Base financeira incompleta"} change={financialResultsComplete ? model.metrics.unrealizedProfit : undefined} accent="green" />
       </section>
 
       <Section title="Posições atuais" subtitle="Custo médio móvel e marcação pela cotação mais recente">
@@ -52,12 +54,12 @@ export function Portfolio({ model }: { model: PortfolioModel }) {
                   <tr key={position.ticker}>
                     <td><div className="asset-cell"><StockLogo ticker={position.ticker} /><span><strong>{position.ticker}</strong><small>{position.name} · {position.sector}</small></span></div></td>
                     <td>{formatNumber(position.quantity, 6)}</td>
-                    <td>{formatCurrency(position.averageCost)}</td>
+                    <td>{accountingComplete ? formatCurrency(position.averageCost) : <span className="data-unavailable">Indisponível</span>}</td>
                     <td>{position.quoteAvailable ? formatCurrency(position.currentPrice) : <span className="data-unavailable">Indisponível</span>}</td>
-                    <td>{formatCurrency(position.costBasis)}</td>
-                    <td>{position.quoteAvailable ? <strong>{formatCurrency(position.marketValue)}</strong> : <span className="data-unavailable">Indisponível</span>}</td>
-                    <td>{position.quoteAvailable ? <div className="allocation-cell"><span>{formatPercent(position.allocation)}</span><span className="mini-progress"><i style={{ width: `${Math.max(3, position.allocation * 100)}%` }} /></span></div> : <span className="data-unavailable">—</span>}</td>
-                    <td>{position.quoteAvailable ? <Value value={position.unrealized}><strong>{formatCurrency(position.unrealized)}</strong><small>{formatPercent(position.unrealizedPercent)}</small></Value> : <span className="data-unavailable">Indisponível</span>}</td>
+                    <td>{accountingComplete ? formatCurrency(position.costBasis) : <span className="data-unavailable">Indisponível</span>}</td>
+                    <td>{position.quoteAvailable && position.accountingReliable ? <strong>{formatCurrency(position.marketValue)}</strong> : <span className="data-unavailable">Indisponível</span>}</td>
+                    <td>{position.quoteAvailable && position.accountingReliable ? <div className="allocation-cell"><span>{formatPercent(position.allocation)}</span><span className="mini-progress"><i style={{ width: `${Math.max(3, position.allocation * 100)}%` }} /></span></div> : <span className="data-unavailable">—</span>}</td>
+                    <td>{position.quoteAvailable && position.accountingReliable ? <Value value={position.unrealized}><strong>{formatCurrency(position.unrealized)}</strong><small>{formatPercent(position.unrealizedPercent)}</small></Value> : <span className="data-unavailable">Indisponível</span>}</td>
                   </tr>
                 ))}
               </tbody>

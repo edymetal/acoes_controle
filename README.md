@@ -83,11 +83,16 @@ O motor consolida as movimentações cronologicamente usando custo médio móvel
 
 O painel mostra separadamente o total histórico comprado e o custo ainda aberto para evitar ambiguidade em “total investido”.
 
+No consolidado, ações, FIIs e cripto entram pelo valor de mercado atual. Como a planilha ainda não fornece saldo atualizado ou marcação a mercado para a renda fixa, essa classe entra apenas pelo principal aplicado, identificado como uma aproximação do valor atual. Valor bruto, valor líquido, lucro e retorno da renda fixa permanecem separados e rotulados como projeções no vencimento. A projeção não é somada ao resultado consolidado.
+
+Quando há compra e venda do mesmo ativo no mesmo dia, o motor usa primeiro o horário preservado na própria célula de data/hora. Para registros da mesma tabela cronológica, como cripto, usa a ordem da linha como alternativa. Se nenhuma dessas informações determinar a ordem real, posição, custo, valor de mercado, lucros, rentabilidades e sinais do ativo ficam indisponíveis até a planilha ser corrigida, e o ativo é excluído dos totais conhecidos; o sistema não apresenta mais uma estimativa silenciosa.
+
 ### Saúde e contingência dos dados
 
 - Uma posição aberta sem cotação continua na carteira, mas seu preço, valor de mercado e resultado aparecem como indisponíveis.
 - Os totais de patrimônio passam a ser identificados como valores conhecidos e parciais até que todas as posições tenham cotação.
 - Resultado em aberto, resultado total e rentabilidade não são apresentados como definitivos enquanto a avaliação estiver parcial.
+- Posições, custos, resultados e sinais são suspensos quando compras e vendas do mesmo ativo no mesmo dia não possuem horário ou sequência confiável; esses ativos não entram nos totais conhecidos.
 - Quando a faixa anual atual é inválida, a sincronização preserva a data do último histórico válido, marca o dado como contingência e suspende o respectivo sinal.
 - Leituras da API do Google Sheets usam limite de tempo e até três tentativas para erros transitórios (`408`, `429` e `5xx`), com espera exponencial e aleatória entre as tentativas.
 

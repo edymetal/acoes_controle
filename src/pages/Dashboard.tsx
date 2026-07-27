@@ -2,7 +2,7 @@ import { ArrowRight, BadgeDollarSign, CircleDollarSign, Landmark, Layers3, Trend
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { PageId } from "../components/Shell";
 import { DataHealthNotice, EmptyState, MetricCard, Section, SignalBadge, StockLogo, Value } from "../components/Ui";
-import { formatCurrency, formatDate, formatNumber, formatPercent } from "../lib/format";
+import { formatCurrency, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
 import { getAnnualRealizedProfit, getStrategySignal } from "../lib/portfolio";
 import type { PortfolioData, PortfolioModel, StrategySettings } from "../types";
 
@@ -17,19 +17,22 @@ interface DashboardProps {
 
 export function Dashboard({ data, model, settings, onNavigate }: DashboardProps) {
   const { metrics, positions, transactions } = model;
-  const quotedPositions = positions.filter((position) => position.quoteAvailable);
+  const quotedPositions = positions.filter((position) => position.quoteAvailable && position.accountingReliable);
   const valuationComplete = model.health.valuation === "complete";
+  const accountingComplete = model.health.accounting === "complete";
+  const financialResultsComplete = valuationComplete && accountingComplete;
   const allocation = quotedPositions.slice(0, 7).map((position) => ({ name: position.ticker, value: position.marketValue }));
   const pnl = [...positions]
-    .filter((position) => position.quoteAvailable)
+    .filter((position) => position.quoteAvailable && position.accountingReliable)
     .sort((a, b) => Math.abs(b.unrealized) - Math.abs(a.unrealized))
     .slice(0, 7)
     .map((position) => ({ ticker: position.ticker, value: position.unrealized }));
-  const annualRealizedProfit = getAnnualRealizedProfit(transactions);
+  const annualRealizedProfit = accountingComplete ? getAnnualRealizedProfit(transactions) : [];
   const positionsByTicker = new Map(positions.map((position) => [position.ticker, position]));
   const strategy = data.assets.map((asset) => {
     const position = positionsByTicker.get(asset.ticker);
-    return { asset, signal: getStrategySignal(asset, settings, position?.marketValue ?? 0, position?.costBasis ?? 0) };
+    const accountingReliable = !model.health.ambiguousTransactionTickers.includes(asset.ticker);
+    return { asset, signal: getStrategySignal(asset, settings, position?.marketValue ?? 0, position?.costBasis ?? 0, accountingReliable) };
   });
   const buySignals = strategy.filter((item) => item.signal.kind === "buy").sort((a, b) => b.signal.strength - a.signal.strength);
   const breakoutSignals = strategy.filter((item) => item.signal.kind === "breakout" || item.signal.kind === "sell");
@@ -40,15 +43,15 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
       <DataHealthNotice model={model} />
       <section className="hero-card">
         <div>
-          <span className="eyebrow">{valuationComplete ? "VALOR ATUAL DA CARTEIRA" : "VALOR CONHECIDO DA CARTEIRA (PARCIAL)"}</span>
+          <span className="eyebrow">{financialResultsComplete ? "VALOR ATUAL DA CARTEIRA" : "VALOR CONHECIDO DA CARTEIRA (PARCIAL)"}</span>
           <strong>{formatCurrency(metrics.marketValue)}</strong>
-          {valuationComplete ? <p>
+          {financialResultsComplete ? <p>
             <Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value>
             <span> de resultado nas posições abertas</span>
-          </p> : <p>Resultado em aberto indisponível enquanto faltam cotações.</p>}
+          </p> : <p>Resultado em aberto indisponível enquanto faltam cotações ou a ordem real das operações.</p>}
         </div>
         <div className="hero-card__summary">
-          <span><small>Custo atual</small><strong>{formatCurrency(metrics.openCost)}</strong></span>
+          <span><small>Custo atual</small><strong>{accountingComplete ? formatCurrency(metrics.openCost) : "Indisponível"}</strong></span>
           <span><small>Posições</small><strong>{metrics.openPositions}</strong></span>
           <span><small>Ativos monitorados</small><strong>{metrics.assetCount}</strong></span>
         </div>
@@ -56,9 +59,9 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
 
       <section className="metrics-grid">
         <MetricCard label="Total histórico comprado" value={formatCurrency(metrics.historicalPurchases)} icon={<WalletCards size={19} />} helper="Aportes acumulados" accent="blue" />
-        <MetricCard label="Lucro realizado" value={formatCurrency(metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Em operações encerradas" change={metrics.realizedProfit} accent="green" />
-        <MetricCard label="Resultado em aberto" value={valuationComplete ? formatCurrency(metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={valuationComplete ? formatPercent(metrics.openReturn) : "Aguardando cotações"} change={valuationComplete ? metrics.unrealizedProfit : undefined} accent="violet" />
-        <MetricCard label="Resultado total" value={valuationComplete ? formatCurrency(metrics.totalProfit) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={valuationComplete ? `${formatPercent(metrics.totalReturnOnPurchases)} sobre compras` : "Aguardando cotações"} change={valuationComplete ? metrics.totalProfit : undefined} accent="amber" />
+        <MetricCard label="Lucro realizado" value={accountingComplete ? formatCurrency(metrics.realizedProfit) : "Indisponível"} icon={<BadgeDollarSign size={19} />} helper={accountingComplete ? "Em operações encerradas" : "Ordem das operações ambígua"} change={accountingComplete ? metrics.realizedProfit : undefined} accent="green" />
+        <MetricCard label="Resultado em aberto" value={financialResultsComplete ? formatCurrency(metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={financialResultsComplete ? formatPercent(metrics.openReturn) : "Base financeira incompleta"} change={financialResultsComplete ? metrics.unrealizedProfit : undefined} accent="violet" />
+        <MetricCard label="Resultado total" value={financialResultsComplete ? formatCurrency(metrics.totalProfit) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={financialResultsComplete ? `${formatPercent(metrics.totalReturnOnPurchases)} sobre compras` : "Base financeira incompleta"} change={financialResultsComplete ? metrics.totalProfit : undefined} accent="amber" />
       </section>
 
       <section className="dashboard-grid">
@@ -115,7 +118,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-          </div> : <EmptyState title="Nenhum ano disponível" description="As movimentações anuais aparecerão quando houver dados processados." />}
+          </div> : <EmptyState title={accountingComplete ? "Nenhum ano disponível" : "Resultado anual indisponível"} description={accountingComplete ? "As movimentações anuais aparecerão quando houver dados processados." : "Informe horários distintos para as compras e vendas registradas no mesmo dia."} />}
         </Section>
       </section>
 
@@ -156,7 +159,7 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
             {transactions.slice(0, 6).map((item) => (
               <div key={item.id}>
                 <span className={`transaction-icon transaction-icon--${item.type}`}>{item.type === "buy" ? "+" : "−"}</span>
-                <span><strong>{item.ticker}</strong><small>{formatDate(item.date)}</small></span>
+                <span><strong>{item.ticker}</strong><small>{formatTransactionDate(item.date, item.time)}</small></span>
                 <span><strong>{formatCurrency(item.total)}</strong><small>{formatNumber(item.quantity)} ações</small></span>
               </div>
             ))}

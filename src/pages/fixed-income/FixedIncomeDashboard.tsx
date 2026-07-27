@@ -13,13 +13,13 @@ export function FixedIncomeDashboard({ model, usdRate, onNavigate }: { model: Fi
   return <div className="page-stack">
     {model.warnings.length > 0 && <div className="refresh-message refresh-message--warning" role="status">{model.warnings.length === 1 ? model.warnings[0] : `${model.warnings.length} avisos foram identificados na renda fixa.`}</div>}
     <section className="hero-card hero-card--fixed-income">
-      <div><span className="eyebrow">VALOR LÍQUIDO A RECEBER</span><strong>{formatBrl(metrics.netAmount)}</strong><small className="hero-card__converted currency-conversion">{formatUsdFromBrl(metrics.netAmount, usdRate)}</small><p><Value value={metrics.profit}>{formatBrl(metrics.profit)} ({formatPercent(metrics.returnRate)})</Value><span> de lucro previsto</span></p></div>
-      <div className="hero-card__summary"><span><small>Total aplicado</small><strong>{formatBrl(metrics.investedAmount)}</strong></span><span><small>Ativos</small><strong>{metrics.assetCount}</strong></span><span><small>Meses em {activeYear.year}</small><strong>{activeYear.metrics.coveredMonths}/12</strong></span></div>
+      <div><span className="eyebrow">VALOR LÍQUIDO PROJETADO NO VENCIMENTO</span><strong>{formatBrl(metrics.projectedNetAmount)}</strong><small className="hero-card__converted currency-conversion">{formatUsdFromBrl(metrics.projectedNetAmount, usdRate)}</small><p><Value value={metrics.projectedProfit}>{formatBrl(metrics.projectedProfit)} ({formatPercent(metrics.projectedReturnRate)})</Value><span> de lucro projetado</span></p></div>
+      <div className="hero-card__summary"><span><small>Principal aplicado</small><strong>{formatBrl(metrics.currentPrincipal)}</strong></span><span><small>Ativos</small><strong>{metrics.assetCount}</strong></span><span><small>Meses em {activeYear.year}</small><strong>{activeYear.metrics.coveredMonths}/12</strong></span></div>
     </section>
     <section className="metrics-grid">
-      <MetricCard label="Total aplicado" value={formatBrl(metrics.investedAmount)} secondaryValue={formatUsdFromBrl(metrics.investedAmount, usdRate)} icon={<PiggyBank size={19} />} helper={`${metrics.assetCount} aplicações`} accent="blue" />
-      <MetricCard label="Valor bruto" value={formatBrl(metrics.grossAmount)} secondaryValue={formatUsdFromBrl(metrics.grossAmount, usdRate)} icon={<CircleDollarSign size={19} />} helper="Antes dos impostos" accent="violet" />
-      <MetricCard label="Lucro previsto" value={formatBrl(metrics.profit)} secondaryValue={formatUsdFromBrl(metrics.profit, usdRate)} icon={<TrendingUp size={19} />} helper={formatPercent(metrics.returnRate)} change={metrics.profit} accent="green" />
+      <MetricCard label="Principal aplicado" value={formatBrl(metrics.currentPrincipal)} secondaryValue={formatUsdFromBrl(metrics.currentPrincipal, usdRate)} icon={<PiggyBank size={19} />} helper={`${metrics.assetCount} aplicações · proxy atual`} accent="blue" />
+      <MetricCard label="Bruto projetado" value={formatBrl(metrics.projectedGrossAmount)} secondaryValue={formatUsdFromBrl(metrics.projectedGrossAmount, usdRate)} icon={<CircleDollarSign size={19} />} helper="No vencimento, antes dos impostos" accent="violet" />
+      <MetricCard label="Lucro projetado" value={formatBrl(metrics.projectedProfit)} secondaryValue={formatUsdFromBrl(metrics.projectedProfit, usdRate)} icon={<TrendingUp size={19} />} helper={formatPercent(metrics.projectedReturnRate)} change={metrics.projectedProfit} accent="green" />
       <MetricCard label={`Meses sem ativo em ${activeYear.year}`} value={String(activeYear.metrics.missingMonths)} icon={<CalendarX2 size={19} />} helper="Meta: ao menos 1 por mês" accent="amber" />
     </section>
     <section className="dashboard-grid dashboard-grid--lower">

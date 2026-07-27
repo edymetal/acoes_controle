@@ -2,18 +2,22 @@ import { ArrowRight, BadgeDollarSign, Bitcoin, CircleDollarSign, Layers3, Trendi
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import type { PageId } from "../../components/Shell";
 import { CryptoLogo, DataHealthNotice, MetricCard, Section, Value } from "../../components/Ui";
-import { formatCurrency, formatDate, formatNumber, formatPercent } from "../../lib/format";
+import { formatCurrency, formatNumber, formatPercent, formatTransactionDate } from "../../lib/format";
 import type { PortfolioModel } from "../../types";
 
 const CHART_COLORS = ["#f6b94a", "#7c8cff"];
 
 export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; onNavigate: (page: PageId) => void }) {
   const { metrics, positions, transactions } = model;
-  const quotedPositions = positions.filter((position) => position.quoteAvailable);
+  const quotedPositions = positions.filter((position) => position.quoteAvailable && position.accountingReliable);
   const valuationComplete = model.health.valuation === "complete";
+  const accountingComplete = model.health.accounting === "complete";
+  const financialResultsComplete = valuationComplete && accountingComplete;
   const allocation = quotedPositions.map((position) => ({ name: position.ticker, value: position.marketValue }));
   const additionalWarnings = model.warnings.filter(
-    (warning) => !model.health.missingQuoteTickers.some((ticker) => warning.includes(ticker) && warning.includes("Cotação")),
+    (warning) =>
+      !model.health.missingQuoteTickers.some((ticker) => warning.includes(ticker) && warning.includes("Cotação"))
+      && !model.health.ambiguousTransactionTickers.some((ticker) => warning.includes(ticker) && warning.includes("Compra e venda")),
   );
 
   return (
@@ -22,12 +26,12 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
       {additionalWarnings.length > 0 && <div className="refresh-message refresh-message--warning crypto-data-warning" role="status">{additionalWarnings.length === 1 ? additionalWarnings[0] : `${additionalWarnings.length} avisos adicionais de integridade foram identificados na carteira de cripto.`}</div>}
       <section className="hero-card hero-card--crypto">
         <div>
-          <span className="eyebrow">{valuationComplete ? "VALOR ATUAL DA CARTEIRA DE CRIPTO" : "VALOR CONHECIDO DA CARTEIRA DE CRIPTO (PARCIAL)"}</span>
+          <span className="eyebrow">{financialResultsComplete ? "VALOR ATUAL DA CARTEIRA DE CRIPTO" : "VALOR CONHECIDO DA CARTEIRA DE CRIPTO (PARCIAL)"}</span>
           <strong>{formatCurrency(metrics.marketValue)}</strong>
-          {valuationComplete ? <p><Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas posições abertas</span></p> : <p>Resultado em aberto indisponível enquanto faltam cotações.</p>}
+          {financialResultsComplete ? <p><Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas posições abertas</span></p> : <p>Resultado em aberto indisponível enquanto faltam cotações ou a ordem real das operações.</p>}
         </div>
         <div className="hero-card__summary">
-          <span><small>Custo atual</small><strong>{formatCurrency(metrics.openCost)}</strong></span>
+          <span><small>Custo atual</small><strong>{accountingComplete ? formatCurrency(metrics.openCost) : "Indisponível"}</strong></span>
           <span><small>Posições</small><strong>{metrics.openPositions}</strong></span>
           <span><small>Criptos monitoradas</small><strong>{metrics.assetCount}</strong></span>
         </div>
@@ -35,9 +39,9 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
 
       <section className="metrics-grid">
         <MetricCard label="Total histórico comprado" value={formatCurrency(metrics.historicalPurchases)} icon={<WalletCards size={19} />} helper="Aportes acumulados em cripto" accent="blue" />
-        <MetricCard label="Lucro realizado" value={formatCurrency(metrics.realizedProfit)} icon={<BadgeDollarSign size={19} />} helper="Em criptos vendidas" change={metrics.realizedProfit} accent="green" />
-        <MetricCard label="Resultado em aberto" value={valuationComplete ? formatCurrency(metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={valuationComplete ? formatPercent(metrics.openReturn) : "Aguardando cotações"} change={valuationComplete ? metrics.unrealizedProfit : undefined} accent="violet" />
-        <MetricCard label="Resultado total" value={valuationComplete ? formatCurrency(metrics.totalProfit) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={valuationComplete ? `${formatPercent(metrics.totalReturnOnPurchases)} sobre compras` : "Aguardando cotações"} change={valuationComplete ? metrics.totalProfit : undefined} accent="amber" />
+        <MetricCard label="Lucro realizado" value={accountingComplete ? formatCurrency(metrics.realizedProfit) : "Indisponível"} icon={<BadgeDollarSign size={19} />} helper={accountingComplete ? "Em criptos vendidas" : "Ordem das operações ambígua"} change={accountingComplete ? metrics.realizedProfit : undefined} accent="green" />
+        <MetricCard label="Resultado em aberto" value={financialResultsComplete ? formatCurrency(metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={financialResultsComplete ? formatPercent(metrics.openReturn) : "Base financeira incompleta"} change={financialResultsComplete ? metrics.unrealizedProfit : undefined} accent="violet" />
+        <MetricCard label="Resultado total" value={financialResultsComplete ? formatCurrency(metrics.totalProfit) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={financialResultsComplete ? `${formatPercent(metrics.totalReturnOnPurchases)} sobre compras` : "Base financeira incompleta"} change={financialResultsComplete ? metrics.totalProfit : undefined} accent="amber" />
       </section>
 
       <section className="dashboard-grid dashboard-grid--lower">
@@ -62,7 +66,7 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
 
         <Section title="Movimentações recentes" subtitle={`${transactions.length} registros de cripto processados`} sensitiveSubtitle action={<button className="text-button" type="button" onClick={() => onNavigate("crypto-history")}>Ver histórico <ArrowRight size={15} /></button>}>
           <div className="compact-table">
-            {transactions.slice(0, 6).map((item) => <div key={item.id}><CryptoLogo ticker={item.ticker} size="compact" /><span><strong>{item.ticker}</strong><small>{item.type === "buy" ? "Compra" : "Venda"} · {formatDate(item.date)}</small></span><span><strong>{formatCurrency(item.total)}</strong><small>{formatNumber(item.quantity, 8)} moedas</small></span></div>)}
+            {transactions.slice(0, 6).map((item) => <div key={item.id}><CryptoLogo ticker={item.ticker} size="compact" /><span><strong>{item.ticker}</strong><small>{item.type === "buy" ? "Compra" : "Venda"} · {formatTransactionDate(item.date, item.time)}</small></span><span><strong>{formatCurrency(item.total)}</strong><small>{formatNumber(item.quantity, 8)} moedas</small></span></div>)}
           </div>
           <div className="source-strip"><Bitcoin size={15} /> Cotações de Bitcoin, Ethereum e BNB provenientes da aba Cripto Base</div>
         </Section>

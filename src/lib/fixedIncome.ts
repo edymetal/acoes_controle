@@ -23,8 +23,8 @@ export function calculateFixedIncome(data: FixedIncomeData): FixedIncomeModel {
         label,
         shortLabel,
         investments: monthInvestments,
-        amountToReceive: monthInvestments.reduce((sum, investment) => sum + investment.netAmount, 0),
-        profit: monthInvestments.reduce((sum, investment) => sum + investment.profit, 0),
+        projectedNetAmount: monthInvestments.reduce((sum, investment) => sum + investment.netAmount, 0),
+        projectedProfit: monthInvestments.reduce((sum, investment) => sum + investment.profit, 0),
         covered: monthInvestments.length > 0,
       };
     });
@@ -45,16 +45,16 @@ export function calculateFixedIncome(data: FixedIncomeData): FixedIncomeModel {
 }
 
 function calculateMetrics(investments: FixedIncomeInvestment[], coveredMonths: number): FixedIncomeMetrics {
-  const investedAmount = investments.reduce((sum, investment) => sum + investment.investedAmount, 0);
-  const grossAmount = investments.reduce((sum, investment) => sum + (investment.grossAmount ?? investment.netAmount), 0);
-  const netAmount = investments.reduce((sum, investment) => sum + investment.netAmount, 0);
-  const profit = investments.reduce((sum, investment) => sum + investment.profit, 0);
+  const currentPrincipal = investments.reduce((sum, investment) => sum + investment.investedAmount, 0);
+  const projectedGrossAmount = investments.reduce((sum, investment) => sum + (investment.grossAmount ?? investment.netAmount), 0);
+  const projectedNetAmount = investments.reduce((sum, investment) => sum + investment.netAmount, 0);
+  const projectedProfit = investments.reduce((sum, investment) => sum + investment.profit, 0);
   return {
-    investedAmount,
-    grossAmount,
-    netAmount,
-    profit,
-    returnRate: investedAmount > 0 ? profit / investedAmount : 0,
+    currentPrincipal,
+    projectedGrossAmount,
+    projectedNetAmount,
+    projectedProfit,
+    projectedReturnRate: currentPrincipal > 0 ? projectedProfit / currentPrincipal : 0,
     assetCount: investments.length,
     coveredMonths,
     missingMonths: 12 - coveredMonths,

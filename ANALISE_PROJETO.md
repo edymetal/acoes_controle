@@ -31,6 +31,8 @@ Solução implementada: o modo padrão usa OAuth no navegador e consulta a API d
 
 ### 2. Alto — o patrimônio consolidado mistura bases incompatíveis
 
+> Atualização de 27/07/2026: corrigido. O consolidado usa valor de mercado para renda variável e principal aplicado como aproximação explicitamente identificada para renda fixa. Valores e lucros no vencimento são tratados como projeções e não entram no resultado atual.
+
 Em `Overview.tsx`, ações, FIIs e cripto usam valor de mercado atual. Renda fixa usa `netAmount`, descrito pela própria interface como “valor líquido a receber”. O resultado consolidado também soma lucros realizados/não realizados das carteiras com lucro futuro previsto da renda fixa.
 
 Impacto: “patrimônio consolidado” e “resultado total” podem ficar superestimados ou representar datas e conceitos diferentes.
@@ -43,6 +45,8 @@ Recomendação: definir duas visões explícitas:
 Se a planilha não fornece saldo atual da renda fixa, usar temporariamente o valor aplicado no patrimônio atual e sinalizar a limitação.
 
 ### 3. Médio — operações no mesmo dia têm ordem artificial
+
+> Atualização de 27/07/2026: corrigido com controle de integridade. O sincronizador preserva o horário existente na célula e a ordem da fonte quando a tabela é cronológica. Sem informação suficiente, o cálculo é marcado como ambíguo; a posição é excluída dos totais conhecidos e posição, custos, resultados e sinais deixam de ser exibidos.
 
 `calculatePortfolio` ordena por data e, em empate, força compras antes de vendas. Como os dados não carregam horário ou uma sequência original estável, uma compra e uma venda do mesmo ticker na mesma data podem usar um custo médio diferente da ordem real.
 
@@ -119,8 +123,8 @@ Esses itens não são a causa da exposição dos dados, mas aumentam a divulgaç
 ## Ordem de ação sugerida
 
 1. Decidir se os dados devem ser privados. Se sim, interromper a publicação dos JSONs e migrar a entrega para um backend autenticado.
-2. Corrigir a definição do patrimônio e do resultado consolidados.
-3. Preservar a ordem real das operações e ampliar os testes financeiros/sincronizador.
+2. ~~Corrigir a definição do patrimônio e do resultado consolidados.~~ Concluído em 27/07/2026.
+3. ~~Preservar a ordem real das operações e ampliar os testes financeiros/sincronizador.~~ Concluído em 27/07/2026; registros sem horário são sinalizados como ambíguos.
 4. Adicionar validação runtime dos JSONs.
 5. Uniformizar atualização e cache dos quatro datasets.
 6. Endurecer dependências, workflow, source maps e exposição do e-mail.

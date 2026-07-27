@@ -27,7 +27,7 @@ describe("buildSpreadsheetData", () => {
   it("constrói todas as bases com o mesmo horário da atualização direta", () => {
     const generatedAt = "2026-07-23T21:30:00.000Z";
     const result = buildSpreadsheetData([
-      { values: [[45_292, "AAA", 2, 20, 10]] },
+      { values: [[45_292.5, "AAA", 2, 20, 10]] },
       { values: [[45_293, "AAA", 1, 12]] },
       { values: [["AAA", "Empresa", "", "Tecnologia", "", 11, 8, 10, 15, "NYSE"]] },
       { values: [[45_292, "FII11", 2, 100]] },
@@ -45,10 +45,12 @@ describe("buildSpreadsheetData", () => {
     expect(result.crypto.generatedAt).toBe(generatedAt);
     expect(result.fixedIncome.generatedAt).toBe(generatedAt);
     expect(result.portfolio.purchases).toHaveLength(1);
+    expect(result.portfolio.purchases[0]).toMatchObject({ date: "2024-01-01", time: "12:00:00" });
     expect(result.portfolio.sales).toHaveLength(1);
     expect(result.portfolio.assets[0].annual).toMatchObject({ min: 8, average: 10, max: 15 });
     expect(result.fiis.assets).toHaveLength(1);
     expect(result.crypto.assets).toHaveLength(3);
+    expect(result.crypto.purchases[0].sourceOrder).toBe(1);
     expect(result.fixedIncome.investments).toHaveLength(1);
   });
 

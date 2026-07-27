@@ -48,7 +48,92 @@ describe("calculatePortfolio", () => {
       integrity: { ...data.integrity, saleRows: 1 },
     };
     const model = calculatePortfolio(sameDayData);
-    expect(model.warnings).toContain("Compra e venda de AAA em 2025-02-01 não possuem horário; a compra foi processada primeiro.");
+    expect(model.health.accounting).toBe("ambiguous");
+    expect(model.health.ambiguousTransactionTickers).toEqual(["AAA"]);
+    expect(model.positions[0].accountingReliable).toBe(false);
+    expect(model.metrics.marketValue).toBe(0);
+    expect(model.warnings).toContain("Compra e venda de AAA em 2025-02-01 não possuem horários ou sequências distintos; a posição e os resultados contábeis são ambíguos.");
+    expect(model.transactions.find((transaction) => transaction.type === "sell")?.realizedProfit).toBeNull();
+  });
+
+  it("preserva o horário e processa venda antes da compra no mesmo dia", () => {
+    const timedData: PortfolioData = {
+      ...data,
+      purchases: data.purchases.map((transaction) =>
+        transaction.id === "buy-2" ? { ...transaction, time: "10:00:00" } : transaction,
+      ),
+      sales: [{
+        id: "sell-same-day",
+        type: "sell",
+        date: "2025-02-01",
+        time: "09:00:00",
+        ticker: "AAA",
+        quantity: 1,
+        total: 20,
+        unitPrice: 20,
+      }],
+      integrity: { ...data.integrity, saleRows: 1 },
+    };
+    const model = calculatePortfolio(timedData);
+
+    expect(model.health.accounting).toBe("complete");
+    expect(model.transactions.map((transaction) => transaction.id)).toEqual([
+      "buy-2",
+      "sell-same-day",
+      "buy-1",
+    ]);
+    expect(model.transactions.find((transaction) => transaction.id === "sell-same-day")?.realizedProfit).toBeCloseTo(10);
+    expect(model.positions[0].averageCost).toBeCloseTo(290 / 19);
+  });
+
+  it("usa a sequência da fonte quando compra e venda pertencem ao mesmo registro cronológico", () => {
+    const sequencedData: PortfolioData = {
+      ...data,
+      purchases: data.purchases.map((transaction) =>
+        transaction.id === "buy-2" ? { ...transaction, sourceOrder: 3 } : transaction,
+      ),
+      sales: [{
+        id: "sell-same-day",
+        type: "sell",
+        date: "2025-02-01",
+        sourceOrder: 2,
+        ticker: "AAA",
+        quantity: 1,
+        total: 20,
+        unitPrice: 20,
+      }],
+      integrity: { ...data.integrity, saleRows: 1 },
+    };
+    const model = calculatePortfolio(sequencedData);
+
+    expect(model.health.accounting).toBe("complete");
+    expect(model.transactions.find((transaction) => transaction.id === "sell-same-day")?.realizedProfit).toBeCloseTo(10);
+  });
+
+  it("mantém a venda sem posição sem inventar custo ou lucro", () => {
+    const model = calculatePortfolio({
+      ...data,
+      purchases: [],
+      sales: [{ id: "sell-only", type: "sell", date: "2025-03-01", ticker: "AAA", quantity: 2, total: 40, unitPrice: 20 }],
+      integrity: { ...data.integrity, purchaseRows: 0, saleRows: 1 },
+    });
+
+    expect(model.metrics.realizedProfit).toBe(0);
+    expect(model.transactions[0]).toMatchObject({ costBasis: null, realizedProfit: null });
+    expect(model.warnings).toContain("Venda de AAA em 2025-03-01 excede a posição disponível.");
+  });
+
+  it("calcula somente a parcela coberta quando a venda excede a posição", () => {
+    const model = calculatePortfolio({
+      ...data,
+      purchases: [{ id: "buy-small", type: "buy", date: "2025-01-01", ticker: "AAA", quantity: 2, total: 20, unitPrice: 10 }],
+      sales: [{ id: "sell-large", type: "sell", date: "2025-03-01", ticker: "AAA", quantity: 3, total: 60, unitPrice: 20 }],
+      integrity: { ...data.integrity, purchaseRows: 1, saleRows: 1 },
+    });
+
+    expect(model.metrics.realizedProfit).toBeCloseTo(20);
+    expect(model.transactions[0]).toMatchObject({ costBasis: 20, realizedProfit: 20 });
+    expect(model.warnings).toContain("Venda de AAA em 2025-03-01 excede a posição disponível.");
   });
 
   it("marca a avaliação como parcial sem transformar cotação ausente em prejuízo", () => {
@@ -195,6 +280,14 @@ describe("getStrategySignal", () => {
 
     expect(signal.kind).toBe("unavailable");
     expect(signal.label).toBe("Dados desatualizados");
+    expect(signal.actionAmount).toBe(0);
+  });
+
+  it("suspende o sinal quando o custo da posição depende de uma ordem ambígua", () => {
+    const signal = getStrategySignal(base, DEFAULT_STRATEGY_SETTINGS, 90, 80, false);
+
+    expect(signal.kind).toBe("unavailable");
+    expect(signal.label).toBe("Ordem ambígua");
     expect(signal.actionAmount).toBe(0);
   });
 });

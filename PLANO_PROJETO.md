@@ -78,6 +78,8 @@ As movimentações serão ordenadas cronologicamente e processadas por ticker co
 
 Serão exibidos separadamente o total histórico comprado e o custo das posições ainda abertas, evitando ambiguidade no termo “total investido”. Vendas acima da posição disponível, valores ausentes ou datas inválidas serão reportados como avisos de integridade.
 
+No patrimônio consolidado, a renda variável usa valor de mercado. A renda fixa usa temporariamente o principal aplicado como aproximação identificada, pois a origem não fornece saldo atual ou marcação a mercado; valores líquidos e lucros no vencimento ficam em uma projeção separada. Operações do mesmo ativo no mesmo dia usam horário ou sequência da fonte e bloqueiam resultados dependentes do custo médio quando a ordem não puder ser determinada.
+
 ## 6. Regra dos sinais anuais
 
 Para preço atual `P`, média `M`, mínima `L` e máxima `H`:

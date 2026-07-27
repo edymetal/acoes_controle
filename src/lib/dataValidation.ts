@@ -7,6 +7,7 @@ const isString = (value: unknown): value is string => typeof value === "string" 
 const isFiniteNumber = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
 const isNullableNumber = (value: unknown) => value === null || isFiniteNumber(value);
 const isCount = (value: unknown) => isFiniteNumber(value) && Number.isInteger(value) && value >= 0;
+const isPositiveInteger = (value: unknown) => isFiniteNumber(value) && Number.isInteger(value) && value > 0;
 const isIsoDate = (value: unknown) => {
   if (!isString(value) || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const [year, month, day] = value.split("-").map(Number);
@@ -22,6 +23,8 @@ function isTransaction(value: unknown) {
   return isString(value.id)
     && (value.type === "buy" || value.type === "sell")
     && isIsoDate(value.date)
+    && (value.time === undefined || (typeof value.time === "string" && /^\d{2}:\d{2}:\d{2}$/.test(value.time)))
+    && (value.sourceOrder === undefined || isPositiveInteger(value.sourceOrder))
     && isString(value.ticker)
     && isFiniteNumber(value.quantity)
     && value.quantity > 0

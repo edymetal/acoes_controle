@@ -18,10 +18,10 @@ const data: FixedIncomeData = {
 describe("calculateFixedIncome", () => {
   it("consolida valores e retorno previstos", () => {
     const model = calculateFixedIncome(data);
-    expect(model.metrics.investedAmount).toBe(3500);
-    expect(model.metrics.netAmount).toBe(3950);
-    expect(model.metrics.profit).toBe(450);
-    expect(model.metrics.returnRate).toBeCloseTo(450 / 3500);
+    expect(model.metrics.currentPrincipal).toBe(3500);
+    expect(model.metrics.projectedNetAmount).toBe(3950);
+    expect(model.metrics.projectedProfit).toBe(450);
+    expect(model.metrics.projectedReturnRate).toBeCloseTo(450 / 3500);
   });
 
   it("separa os vencimentos entre o ano atual e os dois anos seguintes", () => {
@@ -29,18 +29,18 @@ describe("calculateFixedIncome", () => {
     expect(model.referenceYear).toBe(2026);
     expect(model.years.map(({ year }) => year)).toEqual([2026, 2027, 2028]);
     expect(model.years.every(({ months }) => months.length === 12)).toBe(true);
-    expect(model.years[1].months[0].amountToReceive).toBe(1140);
+    expect(model.years[1].months[0].projectedNetAmount).toBe(1140);
     expect(model.years[1].months[2].covered).toBe(true);
     expect(model.years[1].metrics.coveredMonths).toBe(2);
     expect(model.years[1].metrics.missingMonths).toBe(10);
-    expect(model.years[2].months[0].amountToReceive).toBe(2250);
+    expect(model.years[2].months[0].projectedNetAmount).toBe(2250);
   });
 
   it("exclui aplicações vencidas dos totais atuais", () => {
     const expired = { ...data.investments[0], id: "expired", maturityDate: "2025-12-31", netAmount: 5000 };
     const model = calculateFixedIncome({ ...data, investments: [...data.investments, expired] });
     expect(model.metrics.assetCount).toBe(3);
-    expect(model.metrics.netAmount).toBe(3950);
+    expect(model.metrics.projectedNetAmount).toBe(3950);
     expect(model.warnings).toContain("1 aplicação vencida foi excluída dos totais atuais.");
   });
 });

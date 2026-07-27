@@ -30,6 +30,9 @@ export const formatPercent = (value: number, digits = 1) =>
 export const formatDate = (value: string) =>
   new Intl.DateTimeFormat(loadAppLanguage()).format(new Date(`${value}T12:00:00`));
 
+export const formatTransactionDate = (date: string, time?: string) =>
+  time ? `${formatDate(date)} ${time.slice(0, 5)}` : formatDate(date);
+
 export const formatDateTime = (value: string) =>
   new Intl.DateTimeFormat(loadAppLanguage(), {
     dateStyle: "short",

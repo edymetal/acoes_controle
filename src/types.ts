@@ -4,6 +4,8 @@ export interface Transaction {
   id: string;
   type: TransactionType;
   date: string;
+  time?: string;
+  sourceOrder?: number;
   ticker: string;
   quantity: number;
   total: number;
@@ -139,17 +141,17 @@ export interface FixedIncomeMonth {
   label: string;
   shortLabel: string;
   investments: FixedIncomeInvestment[];
-  amountToReceive: number;
-  profit: number;
+  projectedNetAmount: number;
+  projectedProfit: number;
   covered: boolean;
 }
 
 export interface FixedIncomeMetrics {
-  investedAmount: number;
-  grossAmount: number;
-  netAmount: number;
-  profit: number;
-  returnRate: number;
+  currentPrincipal: number;
+  projectedGrossAmount: number;
+  projectedNetAmount: number;
+  projectedProfit: number;
+  projectedReturnRate: number;
   assetCount: number;
   coveredMonths: number;
   missingMonths: number;
@@ -180,6 +182,7 @@ export interface Position {
   costBasis: number;
   currentPrice: number;
   quoteAvailable: boolean;
+  accountingReliable: boolean;
   marketValue: number;
   unrealized: number;
   unrealizedPercent: number;
@@ -240,6 +243,9 @@ export interface PortfolioModel {
   };
   health: {
     valuation: "complete" | "partial";
+    accounting: "complete" | "ambiguous";
+    ambiguousTransactionKeys: string[];
+    ambiguousTransactionTickers: string[];
     missingQuoteTickers: string[];
     staleAnnualTickers: string[];
     staleAnnualAsOf: string | null;
