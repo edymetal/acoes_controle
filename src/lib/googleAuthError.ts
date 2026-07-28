@@ -20,7 +20,7 @@ export function describeGoogleAuthorizationError(reason: unknown) {
     case "auth/cancelled-popup-request":
       return "Já existe uma autorização do Google em andamento. Aguarde e tente novamente.";
     case "auth/unauthorized-domain":
-      return "Este endereço não está autorizado no Firebase. Revise os domínios permitidos do projeto.";
+      return "Este endereço não está autorizado no Google Cloud. Revise as origens do cliente OAuth.";
     default:
       return reason instanceof Error && !reason.message.startsWith("Firebase:")
         ? reason.message

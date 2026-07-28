@@ -35,12 +35,12 @@ GitHub Actions ── testes, auditoria e build do aplicativo
 GitHub Pages ── HTML, CSS, JavaScript e imagens
 
 Conta Google autorizada
-        │ OAuth 2.0 · spreadsheets.readonly
+        │ Google Identity Services · OAuth 2.0 · spreadsheets.readonly
         ▼
-Navegador autenticado ── Google Sheets API ── dados mantidos em memória
+Credencial Firebase no navegador ── Google Sheets API ── dados mantidos em memória
 ```
 
-O artefato do GitHub Pages não contém movimentações, posições ou valores financeiros. Após o login, o navegador solicita o escopo `spreadsheets.readonly` e lê somente os intervalos documentados. O token de acesso fica em memória e precisa ser renovado quando a sessão da página é recriada.
+O artefato do GitHub Pages não contém movimentações, posições ou valores financeiros. Ao autorizar a planilha, o navegador usa o modelo de token do Google Identity Services para solicitar o escopo `spreadsheets.readonly`, transforma o token em uma credencial Firebase e lê somente os intervalos documentados. O fluxo não usa o polling de janela do `signInWithPopup`. O token de acesso fica em memória e precisa ser renovado quando a sessão da página é recriada.
 
 A conta de serviço continua disponível apenas para diagnóstico local pelo comando `pnpm sync:data`. A credencial permanece em `auth/`, e os arquivos resultantes são gravados em `private-data/`; ambas as pastas são ignoradas pelo Git.
 
@@ -119,7 +119,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-Preencha `VITE_FIREBASE_API_KEY` no `.env` antes de iniciar o site. A chave deve pertencer ao aplicativo Web do Firebase usado pelo projeto e aceitar a origem local. Deixe `VITE_DATA_BASE_URL` vazia para usar a leitura privada direta da planilha.
+Preencha `VITE_FIREBASE_API_KEY` no `.env` antes de iniciar o site. A chave deve pertencer ao aplicativo Web do Firebase usado pelo projeto e aceitar a origem local. `VITE_GOOGLE_OAUTH_CLIENT_ID` é opcional e permite substituir o cliente OAuth público padrão; a origem exata do servidor local precisa estar autorizada nesse cliente. Deixe `VITE_DATA_BASE_URL` vazia para usar a leitura privada direta da planilha.
 
 O comando opcional `pnpm sync:data` gera uma cópia local em `private-data/` para diagnóstico. O sincronizador procura uma credencial nesta ordem:
 
@@ -142,7 +142,8 @@ pnpm check      # testes + build + verificação de privacidade do artefato
 1. Em **Settings → Pages → Build and deployment**, selecione **GitHub Actions**.
 2. Em **Settings → Secrets and variables → Actions → Secrets**, mantenha `VITE_FIREBASE_API_KEY`.
 3. Opcionalmente, defina `VITE_DATA_BASE_URL` em **Variables** para usar um backend autenticado.
-4. Execute manualmente o workflow **Validar e publicar no GitHub Pages** ou envie um commit para `main`.
+4. Se trocar o cliente OAuth, defina `VITE_GOOGLE_OAUTH_CLIENT_ID` em **Variables** e autorize a origem do GitHub Pages no Google Cloud.
+5. Execute manualmente o workflow **Validar e publicar no GitHub Pages** ou envie um commit para `main`.
 
 O workflow publica apenas o aplicativo depois que testes, auditoria de dependências e build terminam com sucesso. Ele não recebe credenciais da planilha e não gera datasets financeiros.
 

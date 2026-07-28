@@ -44,6 +44,7 @@ jobs:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
           VITE_DATA_BASE_URL: ${{ vars.VITE_DATA_BASE_URL }}
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_GOOGLE_OAUTH_CLIENT_ID: ${{ vars.VITE_GOOGLE_OAUTH_CLIENT_ID }}
         run: pnpm build
 
       - name: Verificar privacidade do artefato

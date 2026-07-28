@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from "firebase/auth";
+import { requestGoogleAccessToken } from "./lib/googleIdentity";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,9 +17,9 @@ export const auth = getAuth(app);
 export const allowedEmail = "edneypugleise@gmail.com";
 
 const SHEETS_READ_SCOPE = "https://www.googleapis.com/auth/spreadsheets.readonly";
-const sheetsProvider = new GoogleAuthProvider();
-sheetsProvider.addScope(SHEETS_READ_SCOPE);
-sheetsProvider.setCustomParameters({ prompt: "select_account" });
+const GOOGLE_IDENTITY_SCOPES = ["openid", "email", "profile", SHEETS_READ_SCOPE];
+const GOOGLE_OAUTH_CLIENT_ID = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID?.trim()
+  || "422180198859-9sk862qq6t4v53rh763a39qqmf8s3o2m.apps.googleusercontent.com";
 
 let sheetsAccess: { token: string; expiresAt: number } | null = null;
 let sheetsAuthorization: Promise<string> | null = null;
@@ -28,16 +29,17 @@ async function requestGoogleSheetsAccessToken() {
     throw new Error("O dispositivo está sem conexão. Reconecte-se à internet e tente novamente.");
   }
 
-  const result = await signInWithPopup(auth, sheetsProvider);
+  const googleToken = await requestGoogleAccessToken(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_IDENTITY_SCOPES);
+  const credential = GoogleAuthProvider.credential(null, googleToken.accessToken);
+  const result = await signInWithCredential(auth, credential);
   if (result.user.email?.toLowerCase() !== allowedEmail) {
+    await signOut(auth);
     throw new Error("Use a conta Google autorizada para atualizar a planilha.");
   }
-  const credential = GoogleAuthProvider.credentialFromResult(result);
-  if (!credential?.accessToken) throw new Error("O Google não concedeu acesso de leitura à planilha.");
 
   sheetsAccess = {
-    token: credential.accessToken,
-    expiresAt: Date.now() + 50 * 60 * 1000,
+    token: googleToken.accessToken,
+    expiresAt: Date.now() + Math.max(0, googleToken.expiresInSeconds - 300) * 1_000,
   };
   return sheetsAccess.token;
 }
