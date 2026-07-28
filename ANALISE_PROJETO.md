@@ -6,7 +6,7 @@ Escopo: código-fonte, dados publicados, automação de deploy, testes, build e 
 
 > Atualização de 27/07/2026: a entrega pública dos JSONs foi removida. O aplicativo lê a planilha privada diretamente após autorização Google, o workflow publica somente o frontend e o cache legado é apagado na inicialização. A limpeza dos arquivos no histórico Git ainda depende de uma reescrita coordenada e force push.
 >
-> Atualização de 28/07/2026: os quatro contratos agora são validados integralmente em runtime, inclusive após a leitura direta da planilha. A suíte foi ampliada para 70 testes em 14 arquivos, cobrindo contratos, sincronização e casos financeiros limítrofes.
+> Atualização de 28/07/2026: os quatro contratos agora são validados integralmente em runtime, inclusive após a leitura direta da planilha. Inconsistências isoladas nos campos complementares bruto/IR da renda fixa são removidas com aviso, sem bloquear os valores essenciais conciliados nem o restante da carteira. A suíte cobre contratos, sincronização e casos financeiros limítrofes.
 
 ## Resumo executivo
 
@@ -116,7 +116,7 @@ Esses itens não são a causa da exposição dos dados, mas aumentam a divulgaç
 ## Verificações executadas
 
 - `pnpm check`: aprovado.
-- Vitest: 14 arquivos e 70 testes aprovados.
+- Vitest: 14 arquivos e 72 testes aprovados.
 - TypeScript + Vite: build de produção aprovado.
 - PWA: service worker e manifesto gerados; 45 entradas em precache.
 - Git: branch `main` sincronizada com `origin/main` antes desta análise.

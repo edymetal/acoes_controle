@@ -64,6 +64,28 @@ describe("buildSpreadsheetData", () => {
       .toThrow("valores inconsistentes");
   });
 
+  it("mantém a renda fixa quando somente bruto e imposto estão inconsistentes", () => {
+    const valueRanges = Array.from(
+      { length: 11 },
+      (): { values: Array<Array<string | number | boolean | null>> } => ({ values: [] }),
+    );
+    valueRanges[6].values = [[5]];
+    valueRanges[9].values = [[
+      1, "CDB", "Banco", "", "SIM", 0.12, 46_000, null, 24, 1_000, 45_292, 900, 30, 0.15, 1_170, 170,
+    ]];
+    valueRanges[10].values = [[5]];
+
+    const result = buildSpreadsheetData(valueRanges, null, "2026-07-28T12:00:00.000Z");
+
+    expect(result.fixedIncome.investments[0]).toMatchObject({
+      grossAmount: null,
+      taxAmount: null,
+      taxRate: null,
+      netAmount: 1_170,
+    });
+    expect(result.fixedIncome.integrity.warnings[0]).toContain("campos complementares foram ignorados");
+  });
+
   it("inicia a sessão privada sem depender de um JSON publicado anteriormente", () => {
     const result = buildSpreadsheetData([
       { values: [] },

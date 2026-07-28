@@ -208,6 +208,26 @@ describe("validação dos dados privados", () => {
     expect(() => parseFixedIncomeData(invalidTaxRate)).toThrow("valores inconsistentes");
   });
 
+  it("isola campos bruto e de imposto inconsistentes sem perder o investimento", () => {
+    const inconsistent = structuredClone(fixedIncome);
+    inconsistent.investments[0].grossAmount = 900;
+
+    const parsed = parseFixedIncomeData(inconsistent);
+
+    expect(parsed.investments).toHaveLength(1);
+    expect(parsed.investments[0]).toMatchObject({
+      netAmount: 1_070,
+      profit: 70,
+      grossAmount: null,
+      taxAmount: null,
+      taxRate: null,
+    });
+    expect(parsed.integrity.warnings).toContain(
+      "Valores bruto e de imposto inconsistentes em fixed-1; os campos complementares foram ignorados.",
+    );
+    expect(inconsistent.investments[0].grossAmount).toBe(900);
+  });
+
   it("rejeita identificadores e contagem divergentes em renda fixa", () => {
     const duplicateId = structuredClone(fixedIncome);
     duplicateId.investments.push({ ...duplicateId.investments[0] });

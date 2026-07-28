@@ -186,6 +186,13 @@ function amountsMatch(left: number, right: number) {
   return Math.abs(left - right) <= Math.max(0.02, Math.max(Math.abs(left), Math.abs(right)) * 1e-9);
 }
 
+function hasInconsistentSupplementalAmounts(investment: FixedIncomeInvestment) {
+  if (investment.grossAmount === null) return investment.taxAmount !== null;
+  if (investment.grossAmount < investment.netAmount) return true;
+  return investment.taxAmount !== null
+    && !amountsMatch(investment.netAmount, investment.grossAmount - investment.taxAmount);
+}
+
 function fixedIncomeConsistencyIssue(investments: FixedIncomeInvestment[]) {
   if (!hasUniqueValues(investments.map((investment) => investment.id))) return "há identificadores de investimentos duplicados";
   for (const investment of investments) {
@@ -195,13 +202,6 @@ function fixedIncomeConsistencyIssue(investments: FixedIncomeInvestment[]) {
     }
     if (!amountsMatch(investment.netAmount, investment.investedAmount + investment.profit)) {
       return `o valor líquido de ${investment.id} não corresponde ao principal mais o resultado`;
-    }
-    if (investment.grossAmount !== null && investment.grossAmount < investment.netAmount) {
-      return `o valor bruto de ${investment.id} é menor que o valor líquido`;
-    }
-    if (investment.grossAmount !== null && investment.taxAmount !== null
-      && !amountsMatch(investment.netAmount, investment.grossAmount - investment.taxAmount)) {
-      return `o valor líquido de ${investment.id} não corresponde ao bruto menos o imposto`;
     }
   }
   return null;
@@ -217,5 +217,26 @@ export function parseFixedIncomeData(value: unknown): FixedIncomeData {
     invalidData("A base de renda fixa", "a contagem de investimentos não corresponde aos registros");
   }
   invalidDataIfPresent("A base de renda fixa", fixedIncomeConsistencyIssue(investments));
-  return value as unknown as FixedIncomeData;
+  const data = value as unknown as FixedIncomeData;
+  const inconsistentIds = new Set(
+    investments.filter(hasInconsistentSupplementalAmounts).map((investment) => investment.id),
+  );
+  if (inconsistentIds.size === 0) return data;
+  return {
+    ...data,
+    investments: data.investments.map((investment) => inconsistentIds.has(investment.id) ? {
+      ...investment,
+      grossAmount: null,
+      taxAmount: null,
+      taxRate: null,
+    } : investment),
+    integrity: {
+      ...data.integrity,
+      warnings: [
+        ...data.integrity.warnings,
+        ...[...inconsistentIds].map((id) =>
+          `Valores bruto e de imposto inconsistentes em ${id}; os campos complementares foram ignorados.`),
+      ],
+    },
+  };
 }

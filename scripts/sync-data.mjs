@@ -53,6 +53,10 @@ function numeric(value) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
+function amountsMatch(left, right) {
+  return Math.abs(left - right) <= Math.max(0.02, Math.max(Math.abs(left), Math.abs(right)) * 1e-9);
+}
+
 function ticker(value) {
   return typeof value === "string" ? value.trim().toUpperCase() : "";
 }
@@ -356,6 +360,14 @@ function mapFixedIncomeInvestments(rows, warnings) {
       return [];
     }
 
+    const supplementalAmountsAreConsistent = grossAmount === null
+      ? taxAmount === null
+      : grossAmount >= netAmount
+        && (taxAmount === null || amountsMatch(netAmount, grossAmount - taxAmount));
+    if (!supplementalAmountsAreConsistent) {
+      warnings.push(`Valores bruto e de imposto inconsistentes na linha ${index + 36} da aba Fixa Hist; os campos complementares foram ignorados.`);
+    }
+
     const rawYield = row[5];
     return [{
       id: `fixed-income-${index + 36}`,
@@ -369,9 +381,9 @@ function mapFixedIncomeInvestments(rows, warnings) {
       periodMonths,
       investedAmount,
       purchaseDate,
-      grossAmount,
-      taxAmount,
-      taxRate,
+      grossAmount: supplementalAmountsAreConsistent ? grossAmount : null,
+      taxAmount: supplementalAmountsAreConsistent ? taxAmount : null,
+      taxRate: supplementalAmountsAreConsistent ? taxRate : null,
       netAmount,
       profit,
     }];
