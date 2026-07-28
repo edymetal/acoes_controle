@@ -95,6 +95,7 @@ Quando há compra e venda do mesmo ativo no mesmo dia, o motor usa primeiro o ho
 - Posições, custos, resultados e sinais são suspensos quando compras e vendas do mesmo ativo no mesmo dia não possuem horário ou sequência confiável; esses ativos não entram nos totais conhecidos.
 - Quando a faixa anual atual é inválida, a sincronização preserva a data do último histórico válido, marca o dado como contingência e suspende o respectivo sinal.
 - Leituras da API do Google Sheets usam limite de tempo e até três tentativas para erros transitórios (`408`, `429` e `5xx`), com espera exponencial e aleatória entre as tentativas.
+- Antes dos cálculos, os quatro contratos são validados em runtime tanto no carregamento via backend quanto na leitura direta da planilha. A validação rejeita datas e horários impossíveis, números fora do domínio, IDs/tickers duplicados, contagens divergentes e relações financeiras incoerentes.
 
 ## Estratégia anual
 
@@ -130,7 +131,7 @@ Para testar um backend autenticado, preencha também `VITE_DATA_BASE_URL`. O bac
 Comandos úteis:
 
 ```bash
-pnpm test       # testes do motor financeiro e dos sinais
+pnpm test       # testes dos contratos, sincronização e motor financeiro
 pnpm build      # verificação TypeScript e build de produção
 pnpm check      # testes + build + verificação de privacidade do artefato
 ```

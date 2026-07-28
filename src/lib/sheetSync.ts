@@ -8,6 +8,7 @@ import type {
   PortfolioData,
   Transaction,
 } from "../types";
+import { parseCryptoData, parseFiiData, parseFixedIncomeData, parsePortfolioData } from "./dataValidation";
 import { fetchWithRetry } from "./fetchRetry";
 
 const SPREADSHEET_ID = "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0";
@@ -413,7 +414,7 @@ export function buildSpreadsheetData(
   const fixedIncomeBrlPerUsd = numeric(fixedIncomeUsdRateRange?.values?.[0]?.[0]);
   if (fixedIncomeBrlPerUsd === null || fixedIncomeBrlPerUsd <= 0) fixedIncomeWarnings.push("Cotação do dólar inválida na célula Dólar!G5.");
 
-  return {
+  const result: SpreadsheetSyncResult = {
     portfolio: {
       schemaVersion: 1,
       generatedAt,
@@ -491,6 +492,12 @@ export function buildSpreadsheetData(
         warnings: fixedIncomeWarnings,
       },
     },
+  };
+  return {
+    portfolio: parsePortfolioData(result.portfolio),
+    fiis: parseFiiData(result.fiis),
+    crypto: parseCryptoData(result.crypto),
+    fixedIncome: parseFixedIncomeData(result.fixedIncome),
   };
 }
 

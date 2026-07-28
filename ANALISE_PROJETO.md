@@ -5,12 +5,12 @@ Data da revisão: 12/07/2026
 Escopo: código-fonte, dados publicados, automação de deploy, testes, build e configuração do projeto.
 
 > Atualização de 27/07/2026: a entrega pública dos JSONs foi removida. O aplicativo lê a planilha privada diretamente após autorização Google, o workflow publica somente o frontend e o cache legado é apagado na inicialização. A limpeza dos arquivos no histórico Git ainda depende de uma reescrita coordenada e force push.
+>
+> Atualização de 28/07/2026: os quatro contratos agora são validados integralmente em runtime, inclusive após a leitura direta da planilha. A suíte foi ampliada para 70 testes em 14 arquivos, cobrindo contratos, sincronização e casos financeiros limítrofes.
 
 ## Resumo executivo
 
 O projeto está organizado, usa TypeScript estrito, separa os cálculos financeiros da interface e passa nos testes e no build de produção. A exposição no GitHub Pages foi corrigida: a autenticação Firebase protege a interface e a planilha privada só é lida no navegador depois da autorização Google de somente leitura. Permanece uma pendência histórica, pois os datasets antigos continuam acessíveis em commits anteriores do repositório até uma reescrita coordenada.
-
-Também há uma inconsistência conceitual no patrimônio consolidado, que soma valores atuais de renda variável a valores futuros de renda fixa e combina resultados realizados, não realizados e projetados como se fossem equivalentes.
 
 ## Achados prioritários
 
@@ -62,6 +62,8 @@ Solução implementada: a conta Google autorizada concede o escopo `spreadsheets
 
 ### 5. Médio — validação de entrada é superficial
 
+> Atualização de 28/07/2026: corrigido. Os contratos de ações, FIIs, cripto e renda fixa validam estrutura e semântica antes dos cálculos, tanto para respostas de backend quanto para a atualização direta da planilha. A validação inclui versões, timestamps UTC, datas e horários reais, domínios numéricos, unicidade, contagens de integridade e relações financeiras/cronológicas.
+
 O carregamento valida apenas `schemaVersion` e a presença de `assets`/`investments`. Campos internos, datas, números e as demais coleções são aceitos por coerção de tipo TypeScript, que não existe em runtime.
 
 Impacto: um JSON parcial ou corrompido pode produzir `NaN`, datas inválidas ou falhas de renderização em vez de uma mensagem controlada.
@@ -72,11 +74,11 @@ Recomendação: validar todo o payload em runtime, com schema próprio ou biblio
 
 ### Qualidade e testes
 
-- Existem 12 testes em 5 arquivos, todos concentrados nas bibliotecas de cálculo e configurações.
-- Faltam testes dos mapeadores de `sync-data.mjs`, do carregamento/erro/atualização de dados, da autenticação e dos principais fluxos de interface.
+- Existem 70 testes em 14 arquivos, cobrindo os contratos em runtime, a atualização direta da planilha, cálculos financeiros, consolidação, retentativas de rede, erros de autenticação, cache legado, configurações, ordenação e internacionalização.
+- Ainda faltam testes E2E da autenticação e dos principais fluxos de interface.
 - Não há comando de lint, teste de acessibilidade ou teste E2E.
 
-Prioridade sugerida: testar primeiro o sincronizador e os casos financeiros limítrofes (venda sem posição, venda acima da posição, operações no mesmo dia, números decimais e datas inválidas); depois adicionar smoke tests da interface.
+Prioridade sugerida: adicionar smoke tests dos fluxos autenticados e, em seguida, testes de acessibilidade e responsividade.
 
 ### PWA e cache
 
@@ -104,7 +106,7 @@ Esses itens não são a causa da exposição dos dados, mas aumentam a divulgaç
 ## Pontos positivos
 
 - TypeScript em modo estrito, incluindo verificações de símbolos e parâmetros não usados.
-- Cálculos financeiros isolados da interface e cobertos por testes unitários básicos.
+- Cálculos financeiros e contratos de dados isolados da interface e cobertos por testes unitários.
 - Build com code splitting por página.
 - Sincronizador mantém credenciais fora do bundle e usa conta de serviço somente no workflow.
 - Workflow usa instalação congelada, executa testes antes do build e restringe permissões do job.
@@ -114,9 +116,9 @@ Esses itens não são a causa da exposição dos dados, mas aumentam a divulgaç
 ## Verificações executadas
 
 - `pnpm check`: aprovado.
-- Vitest: 5 arquivos e 12 testes aprovados.
+- Vitest: 14 arquivos e 70 testes aprovados.
 - TypeScript + Vite: build de produção aprovado.
-- PWA: service worker e manifesto gerados; 41 entradas em precache.
+- PWA: service worker e manifesto gerados; 45 entradas em precache.
 - Git: branch `main` sincronizada com `origin/main` antes desta análise.
 - Auditoria de dependências: inconclusiva devido ao erro TLS descrito acima.
 
@@ -125,6 +127,6 @@ Esses itens não são a causa da exposição dos dados, mas aumentam a divulgaç
 1. Decidir se os dados devem ser privados. Se sim, interromper a publicação dos JSONs e migrar a entrega para um backend autenticado.
 2. ~~Corrigir a definição do patrimônio e do resultado consolidados.~~ Concluído em 27/07/2026.
 3. ~~Preservar a ordem real das operações e ampliar os testes financeiros/sincronizador.~~ Concluído em 27/07/2026; registros sem horário são sinalizados como ambíguos.
-4. Adicionar validação runtime dos JSONs.
+4. ~~Adicionar validação runtime dos JSONs e da sincronização direta.~~ Concluído em 28/07/2026.
 5. Uniformizar atualização e cache dos quatro datasets.
 6. Endurecer dependências, workflow, source maps e exposição do e-mail.

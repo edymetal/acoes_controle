@@ -58,6 +58,12 @@ describe("buildSpreadsheetData", () => {
     expect(() => buildSpreadsheetData([], previousPortfolio)).toThrow("A resposta da planilha está incompleta.");
   });
 
+  it("valida o contrato também na atualização direta da planilha", () => {
+    const completeEmptyResponse = Array.from({ length: 11 }, () => ({ values: [] }));
+    expect(() => buildSpreadsheetData(completeEmptyResponse, null, "data-inválida"))
+      .toThrow("valores inconsistentes");
+  });
+
   it("inicia a sessão privada sem depender de um JSON publicado anteriormente", () => {
     const result = buildSpreadsheetData([
       { values: [] },
