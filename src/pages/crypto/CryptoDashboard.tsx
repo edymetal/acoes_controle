@@ -28,7 +28,7 @@ export function CryptoDashboard({ model, onNavigate }: { model: PortfolioModel; 
         <div>
           <span className="eyebrow">{financialResultsComplete ? "VALOR ATUAL DA CARTEIRA DE CRIPTO" : "VALOR CONHECIDO DA CARTEIRA DE CRIPTO (PARCIAL)"}</span>
           <strong>{formatCurrency(metrics.marketValue)}</strong>
-          {financialResultsComplete ? <p><Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas posições abertas</span></p> : <p>Resultado em aberto indisponível enquanto faltam cotações ou a ordem real das operações.</p>}
+          {financialResultsComplete ? <p><Value value={metrics.unrealizedProfit}>{formatCurrency(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas posições abertas</span></p> : <p>Resultado em aberto indisponível enquanto faltam cotações.</p>}
         </div>
         <div className="hero-card__summary">
           <span><small>Custo atual</small><strong>{accountingComplete ? formatCurrency(metrics.openCost) : "Indisponível"}</strong></span>

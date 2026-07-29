@@ -41,19 +41,21 @@ describe("calculatePortfolio", () => {
     expect(sale?.realizedProfit).toBeCloseTo(25);
   });
 
-  it("avisa quando a ordem de compra e venda no mesmo dia é ambígua", () => {
+  it("considera a data suficiente quando há compra e venda no mesmo dia sem horário", () => {
     const sameDayData: PortfolioData = {
       ...data,
       sales: [{ id: "sell-same-day", type: "sell", date: "2025-02-01", ticker: "AAA", quantity: 1, total: 20, unitPrice: 20 }],
       integrity: { ...data.integrity, saleRows: 1 },
     };
     const model = calculatePortfolio(sameDayData);
-    expect(model.health.accounting).toBe("ambiguous");
-    expect(model.health.ambiguousTransactionTickers).toEqual(["AAA"]);
-    expect(model.positions[0].accountingReliable).toBe(false);
-    expect(model.metrics.marketValue).toBe(0);
-    expect(model.warnings).toContain("Compra e venda de AAA em 2025-02-01 não possuem horários ou sequências distintos; a posição e os resultados contábeis são ambíguos.");
-    expect(model.transactions.find((transaction) => transaction.type === "sell")?.realizedProfit).toBeNull();
+    expect(model.health.accounting).toBe("complete");
+    expect(model.health.ambiguousTransactionTickers).toEqual([]);
+    expect(model.positions[0].accountingReliable).toBe(true);
+    expect(model.positions[0].quantity).toBe(19);
+    expect(model.positions[0].averageCost).toBeCloseTo(15);
+    expect(model.metrics.marketValue).toBeCloseTo(475);
+    expect(model.transactions.find((transaction) => transaction.type === "sell")?.realizedProfit).toBeCloseTo(5);
+    expect(model.warnings).not.toContain(expect.stringContaining("horários ou sequências"));
   });
 
   it("preserva o horário e processa venda antes da compra no mesmo dia", () => {

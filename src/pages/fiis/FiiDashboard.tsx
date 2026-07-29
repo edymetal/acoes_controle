@@ -29,7 +29,7 @@ export function FiiDashboard({ model, usdRate, onNavigate }: { model: PortfolioM
           <span className="eyebrow">{financialResultsComplete ? "VALOR ATUAL DA CARTEIRA DE FIIs" : "VALOR CONHECIDO DA CARTEIRA DE FIIs (PARCIAL)"}</span>
           <strong>{formatBrl(metrics.marketValue)}</strong>
           <small className="hero-card__converted currency-conversion">{formatUsdFromBrl(metrics.marketValue, usdRate)}</small>
-          {financialResultsComplete ? <p><Value value={metrics.unrealizedProfit}>{formatBrl(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas cotas abertas</span></p> : <p>Resultado em aberto indisponível enquanto faltam cotações ou a ordem real das operações.</p>}
+          {financialResultsComplete ? <p><Value value={metrics.unrealizedProfit}>{formatBrl(metrics.unrealizedProfit)} ({formatPercent(metrics.openReturn)})</Value><span> de resultado nas cotas abertas</span></p> : <p>Resultado em aberto indisponível enquanto faltam cotações.</p>}
         </div>
         <div className="hero-card__summary">
           <span><small>Custo atual</small><strong>{accountingComplete ? formatBrl(metrics.openCost) : "Indisponível"}</strong></span>

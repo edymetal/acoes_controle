@@ -51,28 +51,6 @@ export function getAnnualRealizedProfit(transactions: ProcessedTransaction[]) {
 export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): PortfolioModel {
   const states = new Map<string, TickerState>();
   const warnings = [...data.integrity.warnings];
-  const transactionsByDay = new Map<string, Transaction[]>();
-  for (const transaction of [...data.purchases, ...data.sales]) {
-    const key = `${transaction.date}:${transaction.ticker}`;
-    const groupedTransactions = transactionsByDay.get(key) ?? [];
-    groupedTransactions.push(transaction);
-    transactionsByDay.set(key, groupedTransactions);
-  }
-  const ambiguousTransactionKeys = [...transactionsByDay.entries()].flatMap(([key, groupedTransactions]) => {
-    const purchases = groupedTransactions.filter((transaction) => transaction.type === "buy");
-    const sales = groupedTransactions.filter((transaction) => transaction.type === "sell");
-    if (purchases.length === 0 || sales.length === 0) return [];
-    const hasAmbiguousPair = purchases.some((purchase) =>
-      sales.some((sale) => compareExplicitTransactionOrder(purchase, sale) === null),
-    );
-    return hasAmbiguousPair ? [key] : [];
-  });
-  const ambiguousTransactionTickers = [...new Set(ambiguousTransactionKeys.map((key) => key.split(":")[1]))].sort();
-  const ambiguousTickerSet = new Set(ambiguousTransactionTickers);
-  for (const key of ambiguousTransactionKeys) {
-    const [date, ticker] = key.split(":");
-    warnings.push(`Compra e venda de ${ticker} em ${date} não possuem horários ou sequências distintos; a posição e os resultados contábeis são ambíguos.`);
-  }
   const transactions = [...data.purchases, ...data.sales].sort((a, b) => {
     const dateOrder = a.date.localeCompare(b.date);
     if (dateOrder !== 0) return dateOrder;
@@ -137,14 +115,13 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
     if (state.quantity <= EPSILON) continue;
     const asset = assetByTicker.get(symbol);
     const quoteAvailable = Boolean(asset && asset.currentPrice > 0);
-    const accountingReliable = !ambiguousTickerSet.has(symbol);
     if (!quoteAvailable) {
       missingQuoteTickers.push(symbol);
       warnings.push(`Cotação não encontrada para a posição ${symbol}.`);
     }
     const currentPrice = quoteAvailable ? asset!.currentPrice : 0;
-    const marketValue = quoteAvailable && accountingReliable ? state.quantity * currentPrice : 0;
-    const unrealized = quoteAvailable && accountingReliable ? marketValue - state.cost : 0;
+    const marketValue = quoteAvailable ? state.quantity * currentPrice : 0;
+    const unrealized = quoteAvailable ? marketValue - state.cost : 0;
 
     provisionalPositions.push({
       ticker: symbol,
@@ -156,7 +133,7 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
       costBasis: state.cost,
       currentPrice,
       quoteAvailable,
-      accountingReliable,
+      accountingReliable: true,
       marketValue,
       unrealized,
       unrealizedPercent: state.cost > EPSILON ? unrealized / state.cost : 0,
@@ -173,12 +150,9 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
       allocation: marketValue > EPSILON ? position.marketValue / marketValue : 0,
     }))
     .sort((a, b) => b.marketValue - a.marketValue);
-  const openCost = positions.reduce((sum, position) => sum + (position.accountingReliable ? position.costBasis : 0), 0);
+  const openCost = positions.reduce((sum, position) => sum + position.costBasis, 0);
   const unrealizedProfit = positions.reduce((sum, position) => sum + position.unrealized, 0);
-  const realizedProfit = [...states.entries()].reduce(
-    (sum, [symbol, state]) => sum + (ambiguousTickerSet.has(symbol) ? 0 : state.realized),
-    0,
-  );
+  const realizedProfit = [...states.values()].reduce((sum, state) => sum + state.realized, 0);
   const historicalPurchases = data.purchases.reduce((sum, item) => sum + item.total, 0);
   const historicalSales = data.sales.reduce((sum, item) => sum + item.total, 0);
   const staleAnnualTickers = data.assets
@@ -187,15 +161,10 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
   const staleAnnualAsOf = data.assets
     .flatMap((asset) => asset.annual?.isFallback && asset.annual.asOf ? [asset.annual.asOf] : [])
     .sort()[0] ?? null;
-  const safeProcessedTransactions = processedTransactions.map((transaction) =>
-    transaction.type === "sell" && ambiguousTickerSet.has(transaction.ticker)
-      ? { ...transaction, costBasis: null, realizedProfit: null }
-      : transaction,
-  );
 
   return {
     positions,
-    transactions: [...safeProcessedTransactions].reverse(),
+    transactions: [...processedTransactions].reverse(),
     metrics: {
       historicalPurchases,
       historicalSales,
@@ -212,9 +181,9 @@ export function calculatePortfolio(data: PortfolioData | FiiData | CryptoData): 
     },
     health: {
       valuation: missingQuoteTickers.length > 0 ? "partial" : "complete",
-      accounting: ambiguousTransactionKeys.length > 0 ? "ambiguous" : "complete",
-      ambiguousTransactionKeys,
-      ambiguousTransactionTickers,
+      accounting: "complete",
+      ambiguousTransactionKeys: [],
+      ambiguousTransactionTickers: [],
       missingQuoteTickers: [...new Set(missingQuoteTickers)].sort(),
       staleAnnualTickers: [...new Set(staleAnnualTickers)].sort(),
       staleAnnualAsOf,

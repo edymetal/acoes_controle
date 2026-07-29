@@ -50,13 +50,13 @@ Recomendação: definir duas visões explícitas:
 
 Se a planilha não fornece saldo atual da renda fixa, usar temporariamente o valor aplicado no patrimônio atual e sinalizar a limitação.
 
-### 3. Médio — operações no mesmo dia têm ordem artificial
+### 3. Médio — operações no mesmo dia precisam de ordem estável
 
-> Atualização de 27/07/2026: corrigido com controle de integridade. O sincronizador preserva o horário existente na célula e a ordem da fonte quando a tabela é cronológica. Sem informação suficiente, o cálculo é marcado como ambíguo; a posição é excluída dos totais conhecidos e posição, custos, resultados e sinais deixam de ser exibidos.
+> Atualização de 29/07/2026: corrigido conforme a regra do produto de que a data é suficiente. O sincronizador preserva horário e ordem da fonte como informações opcionais; sem elas, o cálculo processa compras antes das vendas na mesma data e não bloqueia posição, custos, resultados ou sinais.
 
-`calculatePortfolio` ordena por data e, em empate, força compras antes de vendas. Como os dados não carregam horário ou uma sequência original estável, uma compra e uma venda do mesmo ticker na mesma data podem usar um custo médio diferente da ordem real.
+`calculatePortfolio` ordena por data, usa horário ou sequência quando disponíveis e, no empate sem informação adicional, força compras antes de vendas. Essa política mantém o cálculo determinístico sem exigir horários na planilha.
 
-Recomendação: incluir no JSON a ordem da linha da planilha ou um timestamp/índice de operação e usá-lo como desempate. Adicionar um teste com compra e venda no mesmo dia.
+Solução implementada: a ausência de horário deixou de ser tratada como falha de integridade, e o teste financeiro cobre compra e venda do mesmo ativo na mesma data sem horário.
 
 ### 4. Médio — o botão de atualização não sincroniza a planilha
 
@@ -132,7 +132,7 @@ Esses itens não são a causa da exposição dos dados, mas aumentam a divulgaç
 
 1. Decidir se os dados devem ser privados. Se sim, interromper a publicação dos JSONs e migrar a entrega para um backend autenticado.
 2. ~~Corrigir a definição do patrimônio e do resultado consolidados.~~ Concluído em 27/07/2026.
-3. ~~Preservar a ordem real das operações e ampliar os testes financeiros/sincronizador.~~ Concluído em 27/07/2026; registros sem horário são sinalizados como ambíguos.
+3. ~~Definir uma ordem estável para operações na mesma data e ampliar os testes financeiros/sincronizador.~~ Concluído em 29/07/2026; a data é suficiente e registros sem horário usam compras antes das vendas.
 4. ~~Adicionar validação runtime dos JSONs e da sincronização direta.~~ Concluído em 28/07/2026.
 5. Uniformizar atualização e cache dos quatro datasets.
 6. Endurecer dependências, workflow, source maps e exposição do e-mail.
