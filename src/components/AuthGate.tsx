@@ -1,7 +1,7 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { BarChart3, LoaderCircle, LogIn, ShieldCheck } from "lucide-react";
-import { allowedEmail, auth, signInWithGoogle } from "../firebase";
+import { allowedEmail, auth, clearGoogleSheetsAccessToken, signInWithGoogle } from "../firebase";
 import { describeGoogleAuthorizationError } from "../lib/googleAuthError";
 
 type AuthGateProps = {
@@ -26,6 +26,7 @@ export function AuthGate({ children }: AuthGateProps) {
       return;
     }
 
+    clearGoogleSheetsAccessToken();
     await signOut(auth);
     setMessage("Esta conta não tem permissão para acessar o Controle de Ações.");
     setState("signed-out");

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { PortfolioData } from "../types";
-import { buildSpreadsheetData } from "./sheetSync";
+import { buildSpreadsheetData, isGoogleSheetsAuthorizationError } from "./sheetSync";
 
 const previousPortfolio: PortfolioData = {
   schemaVersion: 1,
@@ -136,5 +136,14 @@ describe("buildSpreadsheetData", () => {
       asOf: "2026-07-01T10:00:00.000Z",
       isFallback: true,
     });
+  });
+});
+
+describe("isGoogleSheetsAuthorizationError", () => {
+  it("identifica somente respostas que exigem nova autorização", () => {
+    expect(isGoogleSheetsAuthorizationError(Object.assign(new Error("expirado"), { status: 401 }))).toBe(true);
+    expect(isGoogleSheetsAuthorizationError(Object.assign(new Error("sem acesso"), { status: 403 }))).toBe(true);
+    expect(isGoogleSheetsAuthorizationError(Object.assign(new Error("limite"), { status: 429 }))).toBe(false);
+    expect(isGoogleSheetsAuthorizationError(new Error("falha de rede"))).toBe(false);
   });
 });

@@ -1,6 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from "firebase/auth";
 import { requestGoogleAccessToken } from "./lib/googleIdentity";
+import {
+  clearGoogleSheetsAccessSession,
+  loadGoogleSheetsAccessSession,
+  saveGoogleSheetsAccessSession,
+} from "./lib/googleSheetsAccessSession";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -21,8 +26,25 @@ const GOOGLE_IDENTITY_SCOPES = ["openid", "email", "profile", SHEETS_READ_SCOPE]
 const GOOGLE_OAUTH_CLIENT_ID = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID?.trim()
   || "422180198859-9sk862qq6t4v53rh763a39qqmf8s3o2m.apps.googleusercontent.com";
 
-let sheetsAccess: { token: string; expiresAt: number } | null = null;
+let sheetsAccess = loadGoogleSheetsAccessSession();
 let sheetsAuthorization: Promise<string> | null = null;
+
+function activeGoogleSheetsAccess() {
+  if (!sheetsAccess) return null;
+  if (sheetsAccess.expiresAt > Date.now()) return sheetsAccess;
+  sheetsAccess = null;
+  clearGoogleSheetsAccessSession();
+  return null;
+}
+
+async function authenticateFirebaseWithGoogleToken(accessToken: string) {
+  const credential = GoogleAuthProvider.credential(null, accessToken);
+  const result = await signInWithCredential(auth, credential);
+  if (result.user.email?.toLowerCase() !== allowedEmail) {
+    await signOut(auth);
+    throw new Error("Use a conta Google autorizada para atualizar a planilha.");
+  }
+}
 
 async function requestGoogleSheetsAccessToken() {
   if (typeof navigator !== "undefined" && !navigator.onLine) {
@@ -30,30 +52,32 @@ async function requestGoogleSheetsAccessToken() {
   }
 
   const googleToken = await requestGoogleAccessToken(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_IDENTITY_SCOPES);
-  const credential = GoogleAuthProvider.credential(null, googleToken.accessToken);
-  const result = await signInWithCredential(auth, credential);
-  if (result.user.email?.toLowerCase() !== allowedEmail) {
-    await signOut(auth);
-    throw new Error("Use a conta Google autorizada para atualizar a planilha.");
-  }
+  await authenticateFirebaseWithGoogleToken(googleToken.accessToken);
 
   sheetsAccess = {
     token: googleToken.accessToken,
     expiresAt: Date.now() + Math.max(0, googleToken.expiresInSeconds - 300) * 1_000,
   };
+  saveGoogleSheetsAccessSession(sheetsAccess);
   return sheetsAccess.token;
 }
 
 export async function signInWithGoogle() {
+  const activeAccess = activeGoogleSheetsAccess();
+  if (activeAccess) {
+    await authenticateFirebaseWithGoogleToken(activeAccess.token);
+    return activeAccess.token;
+  }
   return getGoogleSheetsAccessToken();
 }
 
 export function hasGoogleSheetsAccessToken() {
-  return Boolean(sheetsAccess && sheetsAccess.expiresAt > Date.now());
+  return Boolean(activeGoogleSheetsAccess());
 }
 
 export async function getGoogleSheetsAccessToken() {
-  if (sheetsAccess && sheetsAccess.expiresAt > Date.now()) return sheetsAccess.token;
+  const activeAccess = activeGoogleSheetsAccess();
+  if (activeAccess) return activeAccess.token;
   if (!sheetsAuthorization) {
     sheetsAuthorization = requestGoogleSheetsAccessToken()
       .finally(() => {
@@ -65,4 +89,5 @@ export async function getGoogleSheetsAccessToken() {
 
 export function clearGoogleSheetsAccessToken() {
   sheetsAccess = null;
+  clearGoogleSheetsAccessSession();
 }

@@ -57,6 +57,16 @@ export interface SpreadsheetSyncResult {
   fixedIncome: FixedIncomeData;
 }
 
+type GoogleSheetsHttpError = Error & {
+  status?: number;
+};
+
+export function isGoogleSheetsAuthorizationError(reason: unknown) {
+  if (!(reason instanceof Error)) return false;
+  const status = (reason as GoogleSheetsHttpError).status;
+  return status === 401 || status === 403;
+}
+
 function excelSerialToSheetDate(serial: unknown) {
   if (typeof serial !== "number" || !Number.isFinite(serial)) return null;
   const excelEpoch = Date.UTC(1899, 11, 30);
@@ -523,7 +533,9 @@ export async function syncSpreadsheetData(
   if (!response.ok) {
     const error = await response.json().catch(() => ({})) as { error?: { message?: string } };
     const message = error.error?.message ?? `HTTP ${response.status}`;
-    throw new Error(`Falha ao ler a planilha: ${message}`);
+    throw Object.assign(new Error(`Falha ao ler a planilha: ${message}`), {
+      status: response.status,
+    });
   }
   const payload = await response.json() as BatchGetResponse;
   return buildSpreadsheetData(payload.valueRanges ?? [], previousPortfolio);

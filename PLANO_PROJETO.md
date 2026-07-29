@@ -60,7 +60,7 @@ O sistema apresentará posição atual, histórico de compras e vendas, capital 
 1. A planilha permanece privada e é compartilhada somente com as contas Google autorizadas.
 2. O usuário entra pelo Firebase e autoriza temporariamente o escopo `spreadsheets.readonly`.
 3. O navegador lê os intervalos pela API do Google Sheets e normaliza os dados apenas em memória.
-4. O token OAuth e os dados financeiros não são persistidos no site nem adicionados ao cache do PWA.
+4. O token OAuth temporário é mantido no `sessionStorage` da aba até expirar, permitindo recarregar a página sem nova autorização. Os dados financeiros não são persistidos nem adicionados ao cache do PWA.
 5. O script Node.js com conta de serviço continua opcional para diagnóstico local e grava somente em `private-data/`, ignorado pelo Git.
 6. O workflow executa testes, auditoria, build e verificação de privacidade antes de publicar somente o aplicativo no GitHub Pages.
 

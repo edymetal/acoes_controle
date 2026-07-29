@@ -38,9 +38,11 @@ Conta Google autorizada
         │ Google Identity Services · OAuth 2.0 · spreadsheets.readonly
         ▼
 Credencial Firebase no navegador ── Google Sheets API ── dados mantidos em memória
+                  │
+                  └── token temporário no sessionStorage da aba
 ```
 
-O artefato do GitHub Pages não contém movimentações, posições ou valores financeiros. Ao autorizar a planilha, o navegador usa o modelo de token do Google Identity Services para solicitar o escopo `spreadsheets.readonly`, transforma o token em uma credencial Firebase e lê somente os intervalos documentados. O fluxo não usa o polling de janela do `signInWithPopup`. O token de acesso fica em memória e precisa ser renovado quando a sessão da página é recriada.
+O artefato do GitHub Pages não contém movimentações, posições ou valores financeiros. Ao autorizar a planilha, o navegador usa o modelo de token do Google Identity Services para solicitar o escopo `spreadsheets.readonly`, transforma o token em uma credencial Firebase e lê somente os intervalos documentados. O fluxo não usa o polling de janela do `signInWithPopup`. O token de acesso temporário é mantido no `sessionStorage` da aba até expirar, permitindo atualizar a página sem repetir a autorização. Tokens expirados, inválidos ou rejeitados são removidos automaticamente; os dados financeiros continuam somente em memória e fora do cache do PWA.
 
 Como o GitHub Pages não oferece configuração de cabeçalhos HTTP, o service worker do PWA acrescenta `Cross-Origin-Opener-Policy: same-origin-allow-popups` às respostas de navegação que controla. Na primeira visita, o aplicativo recarrega uma única vez quando o worker assume o controle; isso mantém a comunicação exigida pelo popup OAuth e elimina os avisos de acesso bloqueado a `window.closed`.
 

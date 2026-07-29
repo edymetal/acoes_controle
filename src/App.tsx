@@ -9,7 +9,11 @@ import { fetchDataFile, usesAuthenticatedBackend } from "./lib/dataSource";
 import { parseCryptoData, parseFiiData, parseFixedIncomeData, parsePortfolioData } from "./lib/dataValidation";
 import { loadStrategySettings, saveStrategySettings } from "./lib/settings";
 import { loadAppLanguage, saveAppLanguage } from "./lib/i18n";
-import { syncSpreadsheetData, type SpreadsheetSyncResult } from "./lib/sheetSync";
+import {
+  isGoogleSheetsAuthorizationError,
+  syncSpreadsheetData,
+  type SpreadsheetSyncResult,
+} from "./lib/sheetSync";
 import { clearGoogleSheetsAccessToken, getGoogleSheetsAccessToken, hasGoogleSheetsAccessToken } from "./firebase";
 import { describeGoogleAuthorizationError } from "./lib/googleAuthError";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
@@ -106,7 +110,7 @@ export default function App() {
         .then(applySpreadsheetData)
         .catch((reason: unknown) => {
           if (reason instanceof DOMException && reason.name === "AbortError") return;
-          clearGoogleSheetsAccessToken();
+          if (isGoogleSheetsAuthorizationError(reason)) clearGoogleSheetsAccessToken();
           setSheetAuthorizationError(describeGoogleAuthorizationError(reason));
           setNeedsSheetAuthorization(true);
         });
@@ -159,7 +163,7 @@ export default function App() {
       const synchronized = await syncSpreadsheetData(accessToken, data);
       applySpreadsheetData(synchronized);
     } catch (reason) {
-      clearGoogleSheetsAccessToken();
+      if (isGoogleSheetsAuthorizationError(reason)) clearGoogleSheetsAccessToken();
       setSheetAuthorizationError(describeGoogleAuthorizationError(reason));
       setNeedsSheetAuthorization(true);
     } finally {
@@ -189,7 +193,7 @@ export default function App() {
           ? { kind: "warning", text: "Planilha sincronizada agora, mas alguns registros possuem avisos de validação." }
           : { kind: "success", text: "Planilha sincronizada agora com sucesso." });
       } catch (reason) {
-        clearGoogleSheetsAccessToken();
+        if (isGoogleSheetsAuthorizationError(reason)) clearGoogleSheetsAccessToken();
         const detail = describeGoogleAuthorizationError(reason);
         setRefreshMessage({ kind: "error", text: `Não foi possível sincronizar a planilha agora. ${detail}` });
       } finally {

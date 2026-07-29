@@ -11,6 +11,8 @@ Escopo: código-fonte, dados publicados, automação de deploy, testes, build e 
 > Atualização de 28/07/2026: a autorização da planilha passou a usar o modelo de token do Google Identity Services e autenticação Firebase por credencial. A mudança remove o polling de `window.closed` do antigo `signInWithPopup`, preserva o token somente em memória e mantém o escopo de leitura da planilha.
 >
 > Atualização de 29/07/2026: o service worker passou a acrescentar `Cross-Origin-Opener-Policy: same-origin-allow-popups` às navegações do aplicativo. O cabeçalho mantém a comunicação do popup do Google Identity Services no GitHub Pages e remove os avisos COOP emitidos pelo próprio cliente GIS.
+>
+> Atualização de 29/07/2026: o token temporário da planilha passou a ser mantido no `sessionStorage` da aba até sua expiração. Isso preserva a autorização após uma atualização da página, sem introduzir backend, armazenamento permanente ou custo adicional.
 
 ## Resumo executivo
 
@@ -78,7 +80,7 @@ Recomendação: validar todo o payload em runtime, com schema próprio ou biblio
 
 ### Qualidade e testes
 
-- Existem 79 testes em 16 arquivos, cobrindo os contratos em runtime, a atualização direta da planilha, cálculos financeiros, consolidação, retentativas de rede, erros de autenticação, Google Identity Services, ativação do service worker, cache legado, configurações, ordenação e internacionalização.
+- Existem 86 testes em 17 arquivos, cobrindo os contratos em runtime, a atualização direta da planilha, cálculos financeiros, consolidação, retentativas de rede, erros de autenticação, persistência temporária do token, Google Identity Services, ativação do service worker, cache legado, configurações, ordenação e internacionalização.
 - Ainda faltam testes E2E da autenticação e dos principais fluxos de interface.
 - Não há comando de lint, teste de acessibilidade ou teste E2E.
 
