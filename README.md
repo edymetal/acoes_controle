@@ -42,6 +42,8 @@ Credencial Firebase no navegador ── Google Sheets API ── dados mantidos 
 
 O artefato do GitHub Pages não contém movimentações, posições ou valores financeiros. Ao autorizar a planilha, o navegador usa o modelo de token do Google Identity Services para solicitar o escopo `spreadsheets.readonly`, transforma o token em uma credencial Firebase e lê somente os intervalos documentados. O fluxo não usa o polling de janela do `signInWithPopup`. O token de acesso fica em memória e precisa ser renovado quando a sessão da página é recriada.
 
+Como o GitHub Pages não oferece configuração de cabeçalhos HTTP, o service worker do PWA acrescenta `Cross-Origin-Opener-Policy: same-origin-allow-popups` às respostas de navegação que controla. Na primeira visita, o aplicativo recarrega uma única vez quando o worker assume o controle; isso mantém a comunicação exigida pelo popup OAuth e elimina os avisos de acesso bloqueado a `window.closed`.
+
 A conta de serviço continua disponível apenas para diagnóstico local pelo comando `pnpm sync:data`. A credencial permanece em `auth/`, e os arquivos resultantes são gravados em `private-data/`; ambas as pastas são ignoradas pelo Git.
 
 ### Fonte de dados autenticada
@@ -134,7 +136,7 @@ Comandos úteis:
 ```bash
 pnpm test       # testes dos contratos, sincronização e motor financeiro
 pnpm build      # verificação TypeScript e build de produção
-pnpm check      # testes + build + verificação de privacidade do artefato
+pnpm check      # testes + build + verificações de privacidade e COOP
 ```
 
 ## Configuração no GitHub

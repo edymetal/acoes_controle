@@ -9,6 +9,8 @@ Escopo: código-fonte, dados publicados, automação de deploy, testes, build e 
 > Atualização de 28/07/2026: os quatro contratos agora são validados integralmente em runtime, inclusive após a leitura direta da planilha. Inconsistências isoladas nos campos complementares bruto/IR da renda fixa são removidas com aviso, sem bloquear os valores essenciais conciliados nem o restante da carteira. A suíte cobre contratos, sincronização e casos financeiros limítrofes.
 >
 > Atualização de 28/07/2026: a autorização da planilha passou a usar o modelo de token do Google Identity Services e autenticação Firebase por credencial. A mudança remove o polling de `window.closed` do antigo `signInWithPopup`, preserva o token somente em memória e mantém o escopo de leitura da planilha.
+>
+> Atualização de 29/07/2026: o service worker passou a acrescentar `Cross-Origin-Opener-Policy: same-origin-allow-popups` às navegações do aplicativo. O cabeçalho mantém a comunicação do popup do Google Identity Services no GitHub Pages e remove os avisos COOP emitidos pelo próprio cliente GIS.
 
 ## Resumo executivo
 
@@ -76,7 +78,7 @@ Recomendação: validar todo o payload em runtime, com schema próprio ou biblio
 
 ### Qualidade e testes
 
-- Existem 77 testes em 15 arquivos, cobrindo os contratos em runtime, a atualização direta da planilha, cálculos financeiros, consolidação, retentativas de rede, erros de autenticação, Google Identity Services, cache legado, configurações, ordenação e internacionalização.
+- Existem 79 testes em 16 arquivos, cobrindo os contratos em runtime, a atualização direta da planilha, cálculos financeiros, consolidação, retentativas de rede, erros de autenticação, Google Identity Services, ativação do service worker, cache legado, configurações, ordenação e internacionalização.
 - Ainda faltam testes E2E da autenticação e dos principais fluxos de interface.
 - Não há comando de lint, teste de acessibilidade ou teste E2E.
 
@@ -118,7 +120,7 @@ Esses itens não são a causa da exposição dos dados, mas aumentam a divulgaç
 ## Verificações executadas
 
 - `pnpm check`: aprovado.
-- Vitest: 15 arquivos e 77 testes aprovados.
+- Vitest: 16 arquivos e 79 testes aprovados.
 - TypeScript + Vite: build de produção aprovado.
 - PWA: service worker e manifesto gerados; 45 entradas em precache.
 - Git: branch `main` sincronizada com `origin/main` antes desta análise.
