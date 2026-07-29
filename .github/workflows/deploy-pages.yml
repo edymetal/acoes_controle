@@ -50,6 +50,9 @@ jobs:
       - name: Verificar privacidade do artefato
         run: pnpm verify:privacy
 
+      - name: Verificar COOP do artefato
+        run: pnpm verify:coop
+
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
 
