@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Landmark, X } from "lucide-react";
+import { CalendarDays, CircleDollarSign, Info, Landmark, ShieldCheck, TrendingUp, X } from "lucide-react";
 import { calculateFixedIncomeTermDays } from "../../lib/fixedIncome";
 import { formatBrl, formatDate, formatPercent, formatUsdFromBrl } from "../../lib/format";
 import type { FixedIncomeInvestment } from "../../types";
@@ -55,12 +55,23 @@ export function FixedIncomeAssetModal({
         aria-modal="true"
         aria-labelledby="fixed-income-asset-modal-title"
       >
-        <header className="asset-modal__header">
+        <header className="asset-modal__header fixed-income-asset-modal__header">
           <div>
             <span className="fixed-income-asset-modal__icon"><Landmark size={22} /></span>
             <span>
               <small>DETALHES DO ATIVO</small>
               <h2 id="fixed-income-asset-modal-title">{investment.name}</h2>
+              <span className="fixed-income-asset-modal__tags">
+                <span className="fixed-income-asset-modal__tag fixed-income-asset-modal__tag--type">{investment.type}</span>
+                <span className={`fixed-income-asset-modal__tag ${investment.fgcGuarantee ? "fixed-income-asset-modal__tag--fgc" : "fixed-income-asset-modal__tag--neutral"}`}>
+                  {investment.fgcGuarantee && <ShieldCheck size={12} />}
+                  {investment.fgcGuarantee ? "Protegido pelo FGC" : "Sem FGC"}
+                </span>
+                <span className="fixed-income-asset-modal__tag fixed-income-asset-modal__tag--yield privacy-value">
+                  <TrendingUp size={12} />
+                  {formatYield(investment.yield)}
+                </span>
+              </span>
             </span>
           </div>
           <button type="button" onClick={onClose} aria-label="Fechar detalhes do ativo">
@@ -69,8 +80,8 @@ export function FixedIncomeAssetModal({
         </header>
 
         <div className="fixed-income-asset-modal__sections">
-          <section>
-            <h3>Identificação e condições</h3>
+          <section className="fixed-income-asset-modal__section fixed-income-asset-modal__section--identity">
+            <h3><Info size={17} /> Identificação e condições</h3>
             <dl className="fixed-income-asset-modal__details">
               <div><dt>Instituição/ativo</dt><dd>{investment.name}</dd></div>
               <div><dt>Tipo</dt><dd>{investment.type}</dd></div>
@@ -81,8 +92,8 @@ export function FixedIncomeAssetModal({
             </dl>
           </section>
 
-          <section>
-            <h3>Datas e prazo</h3>
+          <section className="fixed-income-asset-modal__section fixed-income-asset-modal__section--dates">
+            <h3><CalendarDays size={17} /> Datas e prazo</h3>
             <dl className="fixed-income-asset-modal__details">
               <div><dt>Data da compra</dt><dd>{formatDate(investment.purchaseDate)}</dd></div>
               <div><dt>Vencimento</dt><dd>{formatDate(investment.maturityDate)}</dd></div>
@@ -92,8 +103,8 @@ export function FixedIncomeAssetModal({
             </dl>
           </section>
 
-          <section className="fixed-income-asset-modal__financial-section">
-            <h3>Valores projetados</h3>
+          <section className="fixed-income-asset-modal__section fixed-income-asset-modal__financial-section">
+            <h3><CircleDollarSign size={17} /> Valores projetados</h3>
             <dl className="fixed-income-asset-modal__details fixed-income-asset-modal__details--financial">
               <div><dt>Valor aplicado</dt><dd><FinancialValue amount={investment.investedAmount} usdRate={usdRate} /></dd></div>
               <div><dt>Valor bruto</dt><dd><FinancialValue amount={investment.grossAmount} usdRate={usdRate} /></dd></div>
@@ -105,8 +116,9 @@ export function FixedIncomeAssetModal({
           </section>
         </div>
 
-        <p className="asset-modal__note">
-          Os valores bruto, líquido, imposto e lucro são projeções para o vencimento conforme os dados informados na planilha.
+        <p className="asset-modal__note fixed-income-asset-modal__note">
+          <Info size={17} />
+          <span>Os valores bruto, líquido, imposto e lucro são projeções para o vencimento conforme os dados informados na planilha.</span>
         </p>
       </section>
     </div>

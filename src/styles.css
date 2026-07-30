@@ -536,20 +536,53 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .fgc-badge, .muted-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 999px; white-space: nowrap; font-size: 10px; font-weight: 800; }
 .fgc-badge { color: var(--green); background: rgba(55, 221, 162, .09); }
 .muted-badge { color: var(--muted); background: rgba(140, 165, 199, .08); }
-.fixed-income-asset-modal { width: min(960px, 100%); }
-.fixed-income-asset-modal__icon { flex: 0 0 auto; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; color: var(--green); background: rgba(55, 221, 162, .09); }
+.fixed-income-asset-modal { position: relative; width: min(960px, 100%); border-color: rgba(68, 164, 173, .38); background: radial-gradient(circle at 8% 0, rgba(55, 221, 162, .11), transparent 25rem), radial-gradient(circle at 92% 5%, rgba(124, 140, 255, .11), transparent 22rem), linear-gradient(145deg, #132840, #0a1727 72%); box-shadow: 0 30px 100px rgba(0, 0, 0, .56), 0 0 0 1px rgba(86, 216, 255, .035); scrollbar-width: thin; scrollbar-color: #3c7f87 #0a1727; }
+.fixed-income-asset-modal::-webkit-scrollbar { width: 10px; }
+.fixed-income-asset-modal::-webkit-scrollbar-track { border-radius: 999px; background: rgba(5, 14, 25, .72); }
+.fixed-income-asset-modal::-webkit-scrollbar-thumb { border: 2px solid #0a1727; border-radius: 999px; background: linear-gradient(180deg, #39bfa3, #426f91); }
+.fixed-income-asset-modal__header { position: relative; padding: 2px 2px 22px; border-bottom-color: rgba(86, 216, 255, .15); }
+.fixed-income-asset-modal__header small { color: var(--blue); }
+.fixed-income-asset-modal__header h2 { margin-top: 5px; color: #f5fbff; font-size: 27px; letter-spacing: -.02em; }
+.fixed-income-asset-modal__header > button { border-color: rgba(86, 216, 255, .18); background: rgba(13, 31, 50, .82); transition: .18s ease; }
+.fixed-income-asset-modal__header > button:hover { border-color: rgba(86, 216, 255, .48); color: #fff; background: rgba(86, 216, 255, .1); transform: rotate(3deg); }
+.fixed-income-asset-modal__icon { flex: 0 0 auto; width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid rgba(55, 221, 162, .22); border-radius: 14px; color: #74f1c5; background: linear-gradient(145deg, rgba(55, 221, 162, .18), rgba(86, 216, 255, .09)); box-shadow: 0 10px 30px rgba(55, 221, 162, .1); }
+.fixed-income-asset-modal__tags { display: flex; flex-flow: row wrap; gap: 6px; margin-top: 10px; }
+.fixed-income-asset-modal__tag { display: inline-flex; align-items: center; gap: 5px; width: fit-content; padding: 4px 8px; border: 1px solid; border-radius: 999px; font-size: 10px; font-weight: 850; letter-spacing: .025em; }
+.fixed-income-asset-modal__tag--type { border-color: rgba(86, 216, 255, .25); color: #aeeeff; background: rgba(86, 216, 255, .09); }
+.fixed-income-asset-modal__tag--fgc { border-color: rgba(55, 221, 162, .25); color: #96f0ce; background: rgba(55, 221, 162, .09); }
+.fixed-income-asset-modal__tag--yield { border-color: rgba(124, 140, 255, .27); color: #cbd1ff; background: rgba(124, 140, 255, .1); }
+.fixed-income-asset-modal__tag--neutral { border-color: rgba(141, 160, 185, .22); color: var(--muted); background: rgba(141, 160, 185, .07); }
 .fixed-income-asset-modal__sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
-.fixed-income-asset-modal__sections > section { min-width: 0; padding: 17px; border: 1px solid var(--border-soft); border-radius: 13px; background: rgba(7, 16, 29, .4); }
-.fixed-income-asset-modal__sections h3 { margin: 0 0 13px; color: #dffaf0; font-size: 15px; }
+.fixed-income-asset-modal__sections > section { min-width: 0; padding: 18px; border: 1px solid var(--border-soft); border-radius: 15px; background: rgba(6, 16, 29, .58); box-shadow: inset 0 1px rgba(255, 255, 255, .018); }
+.fixed-income-asset-modal__section--identity { border-color: rgba(86, 216, 255, .14) !important; background: linear-gradient(145deg, rgba(17, 40, 62, .72), rgba(7, 19, 33, .7)) !important; }
+.fixed-income-asset-modal__section--dates { border-color: rgba(124, 140, 255, .16) !important; background: linear-gradient(145deg, rgba(31, 35, 67, .48), rgba(7, 19, 33, .72)) !important; }
+.fixed-income-asset-modal__financial-section { border-color: rgba(55, 221, 162, .16) !important; background: linear-gradient(145deg, rgba(13, 48, 48, .32), rgba(7, 19, 33, .74)) !important; }
+.fixed-income-asset-modal__sections h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; color: #e9f8ff; font-size: 15px; }
+.fixed-income-asset-modal__section--identity h3 svg { color: var(--blue); }
+.fixed-income-asset-modal__section--dates h3 svg { color: #9ba8ff; }
+.fixed-income-asset-modal__financial-section h3 svg { color: var(--green); }
 .fixed-income-asset-modal__financial-section { grid-column: 1 / -1; }
 .fixed-income-asset-modal__details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 0; }
 .fixed-income-asset-modal__details--financial { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.fixed-income-asset-modal__details > div { min-width: 0; padding: 11px 12px; border-radius: 9px; background: rgba(17, 34, 54, .62); }
+.fixed-income-asset-modal__details > div { position: relative; min-width: 0; overflow: hidden; padding: 12px 13px; border: 1px solid rgba(128, 158, 195, .07); border-radius: 11px; background: linear-gradient(145deg, rgba(20, 42, 65, .76), rgba(14, 31, 51, .82)); transition: border-color .18s ease, transform .18s ease; }
+.fixed-income-asset-modal__details > div:hover { border-color: rgba(86, 216, 255, .18); transform: translateY(-1px); }
+.fixed-income-asset-modal__section--identity .fixed-income-asset-modal__details > div:nth-child(3), .fixed-income-asset-modal__section--identity .fixed-income-asset-modal__details > div:nth-child(5) { border-left: 2px solid rgba(255, 184, 107, .5); }
+.fixed-income-asset-modal__section--dates .fixed-income-asset-modal__details > div { border-left: 2px solid rgba(124, 140, 255, .38); }
 .fixed-income-asset-modal__details dt { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .055em; text-transform: uppercase; }
 .fixed-income-asset-modal__details dd { min-width: 0; margin: 6px 0 0; overflow-wrap: anywhere; color: var(--text); font-size: 13px; font-weight: 750; line-height: 1.4; }
+.fixed-income-asset-modal__details--financial > div:nth-child(1) { border-top: 2px solid rgba(86, 216, 255, .48); }
+.fixed-income-asset-modal__details--financial > div:nth-child(2) { border-top: 2px solid rgba(124, 140, 255, .5); }
+.fixed-income-asset-modal__details--financial > div:nth-child(3), .fixed-income-asset-modal__details--financial > div:nth-child(4) { border-top: 2px solid rgba(255, 184, 107, .55); }
+.fixed-income-asset-modal__details--financial > div:nth-child(5) { border-top: 2px solid rgba(86, 216, 255, .58); }
+.fixed-income-asset-modal__details--financial > div:nth-child(6) { border-top: 2px solid rgba(55, 221, 162, .62); background: linear-gradient(145deg, rgba(25, 66, 61, .58), rgba(13, 36, 47, .86)); }
+.fixed-income-asset-modal__details--financial > div:nth-child(3) .fixed-income-asset-modal__money strong, .fixed-income-asset-modal__details--financial > div:nth-child(4) dd { color: #ffd49c; }
+.fixed-income-asset-modal__details--financial > div:nth-child(5) .fixed-income-asset-modal__money strong { color: #bcefff; }
+.fixed-income-asset-modal__details--financial > div:nth-child(6) .fixed-income-asset-modal__money strong { color: #8af0c9; }
 .fixed-income-asset-modal__money { display: flex; flex-direction: column; gap: 3px; }
-.fixed-income-asset-modal__money strong { font-size: 15px; }
+.fixed-income-asset-modal__money strong { font-size: 16px; letter-spacing: -.01em; }
 .fixed-income-asset-modal__money small { color: var(--muted); font-size: 10px; font-weight: 500; }
+.fixed-income-asset-modal__note { display: flex; align-items: flex-start; gap: 9px; border: 1px solid rgba(86, 216, 255, .1); color: #9db3cb; background: linear-gradient(90deg, rgba(86, 216, 255, .065), rgba(124, 140, 255, .04)); }
+.fixed-income-asset-modal__note svg { flex: 0 0 auto; margin-top: 1px; color: var(--blue); }
 .maturity-ladder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
 .maturity-month { overflow: hidden; border: 1px solid var(--border-soft); border-radius: 13px; background: rgba(7, 16, 29, .35); }
 .maturity-month > header { display: grid; grid-template-columns: 45px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 17px; border-bottom: 1px solid var(--border-soft); }
