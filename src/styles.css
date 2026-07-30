@@ -499,14 +499,16 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .fixed-income-table { table-layout: fixed; }
 .fixed-income-table th, .fixed-income-table td { overflow: hidden; padding-inline: 8px; text-overflow: ellipsis; }
 .fixed-income-table th { line-height: 1.2; white-space: normal; }
-.fixed-income-table th:nth-child(1), .fixed-income-table td:nth-child(1) { width: 26%; }
-.fixed-income-table th:nth-child(2), .fixed-income-table td:nth-child(2) { width: 9%; }
+.fixed-income-table .sortable-header { min-width: 0; }
+.fixed-income-table .sortable-header > span { min-width: 0; overflow-wrap: anywhere; }
+.fixed-income-table th:nth-child(1), .fixed-income-table td:nth-child(1) { width: 23%; }
+.fixed-income-table th:nth-child(2), .fixed-income-table td:nth-child(2) { width: 11%; }
 .fixed-income-table th:nth-child(3), .fixed-income-table td:nth-child(3) { width: 10%; }
 .fixed-income-table th:nth-child(4), .fixed-income-table td:nth-child(4) { width: 12%; }
 .fixed-income-table th:nth-child(5), .fixed-income-table td:nth-child(5) { width: 12%; }
 .fixed-income-table th:nth-child(6), .fixed-income-table td:nth-child(6) { width: 13%; }
-.fixed-income-table th:nth-child(7), .fixed-income-table td:nth-child(7) { width: 11%; }
-.fixed-income-table th:nth-child(8), .fixed-income-table td:nth-child(8) { width: 7%; }
+.fixed-income-table th:nth-child(7), .fixed-income-table td:nth-child(7) { width: 9%; }
+.fixed-income-table th:nth-child(8), .fixed-income-table td:nth-child(8) { width: 10%; }
 .fixed-income-table .asset-cell, .fixed-income-table .asset-cell > span:last-child { min-width: 0; }
 .fixed-income-table .asset-cell small { max-width: 100%; }
 .dual-value { display: flex; flex-direction: column; gap: 3px; white-space: nowrap; }
