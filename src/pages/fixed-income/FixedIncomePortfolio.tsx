@@ -4,6 +4,7 @@ import { SortableHeader, useSortableTable, type SortValue } from "../../componen
 import { EmptyState, MetricCard, Section, Value } from "../../components/Ui";
 import { formatBrl, formatDate, formatPercent, formatUsdFromBrl } from "../../lib/format";
 import type { FixedIncomeInvestment, FixedIncomeModel } from "../../types";
+import { FixedIncomeAssetModal } from "./FixedIncomeAssetModal";
 
 const formatYield = (value: number | string) => typeof value === "number" ? formatPercent(value, 2) : value || "Não informado";
 
@@ -28,6 +29,8 @@ export function FixedIncomePortfolio({ model, usdRate }: { model: FixedIncomeMod
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("maturity");
   const [year, setYear] = useState("all");
+  const [selectedInvestmentId, setSelectedInvestmentId] = useState<string | null>(null);
+  const selectedInvestment = model.investments.find(({ id }) => id === selectedInvestmentId) ?? null;
   const investments = useMemo(() => {
     const query = search.trim().toLocaleLowerCase("pt-BR");
     return model.investments.filter((item) => (year === "all" || item.maturityDate.startsWith(year)) && (!query || `${item.name} ${item.type}`.toLocaleLowerCase("pt-BR").includes(query))).sort((a, b) => sort === "profit" ? b.profit - a.profit : sort === "amount" ? b.investedAmount - a.investedAmount : a.maturityDate.localeCompare(b.maturityDate));
@@ -56,7 +59,8 @@ export function FixedIncomePortfolio({ model, usdRate }: { model: FixedIncomeMod
         <SortableHeader sortKey="netAmount" sortConfig={sortConfig} onSort={requestSort}>Valor líquido</SortableHeader>
         <SortableHeader sortKey="profit" sortConfig={sortConfig} onSort={requestSort}>Lucro</SortableHeader>
         <SortableHeader sortKey="fgcGuarantee" sortConfig={sortConfig} onSort={requestSort}>Proteção</SortableHeader>
-      </tr></thead><tbody>{sortedInvestments.map((item) => <tr key={item.id}><td><div className="asset-cell"><span className="ticker-avatar ticker-avatar--fixed-income">{item.type.slice(0, 2)}</span><span><strong>{item.name}</strong><small>{item.type} · risco {item.risk ?? "—"}</small></span></div></td><td><strong>{formatYield(item.yield)}</strong></td><td><strong>{formatDate(item.purchaseDate)}</strong></td><td><span className="date-emphasis"><CalendarClock size={14} />{formatDate(item.maturityDate)}</span></td><td><span className="dual-value"><strong>{formatBrl(item.investedAmount)}</strong><small className="currency-conversion">{formatUsdFromBrl(item.investedAmount, usdRate)}</small></span></td><td><span className="dual-value"><strong>{formatBrl(item.netAmount)}</strong><small className="currency-conversion">{formatUsdFromBrl(item.netAmount, usdRate)}</small></span></td><td><Value value={item.profit}><span className="dual-value"><strong>{formatBrl(item.profit)}</strong><small className="currency-conversion">{formatUsdFromBrl(item.profit, usdRate)}</small></span></Value></td><td>{item.fgcGuarantee ? <span className="fgc-badge"><ShieldCheck size={14} /> FGC</span> : <span className="muted-badge">Sem FGC</span>}</td></tr>)}</tbody></table></div> : <EmptyState title="Nenhum ativo encontrado" description="Ajuste a busca para visualizar outras aplicações." />}
+      </tr></thead><tbody>{sortedInvestments.map((item) => <tr key={item.id}><td><button className="asset-cell portfolio-asset-link" type="button" aria-haspopup="dialog" aria-label={`Abrir detalhes de ${item.name}`} onClick={() => setSelectedInvestmentId(item.id)}><span className="ticker-avatar ticker-avatar--fixed-income">{item.type.slice(0, 2)}</span><span><strong>{item.name}</strong><small>{item.type} · risco {item.risk ?? "—"}</small></span></button></td><td><strong>{formatYield(item.yield)}</strong></td><td><strong>{formatDate(item.purchaseDate)}</strong></td><td><span className="date-emphasis"><CalendarClock size={14} />{formatDate(item.maturityDate)}</span></td><td><span className="dual-value"><strong>{formatBrl(item.investedAmount)}</strong><small className="currency-conversion">{formatUsdFromBrl(item.investedAmount, usdRate)}</small></span></td><td><span className="dual-value"><strong>{formatBrl(item.netAmount)}</strong><small className="currency-conversion">{formatUsdFromBrl(item.netAmount, usdRate)}</small></span></td><td><Value value={item.profit}><span className="dual-value"><strong>{formatBrl(item.profit)}</strong><small className="currency-conversion">{formatUsdFromBrl(item.profit, usdRate)}</small></span></Value></td><td>{item.fgcGuarantee ? <span className="fgc-badge"><ShieldCheck size={14} /> FGC</span> : <span className="muted-badge">Sem FGC</span>}</td></tr>)}</tbody></table></div> : <EmptyState title="Nenhum ativo encontrado" description="Ajuste a busca para visualizar outras aplicações." />}
     </Section>
+    {selectedInvestment && <FixedIncomeAssetModal investment={selectedInvestment} usdRate={usdRate} onClose={() => setSelectedInvestmentId(null)} />}
   </div>;
 }

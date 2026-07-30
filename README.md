@@ -20,7 +20,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Interface responsiva para desktop, tablet e celular.
 - Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
 - Área independente de Cripto em dólares para Bitcoin, Ethereum e BNB, com visão geral, carteira e movimentações.
-- Área independente de Renda Fixa, com valores em reais, total projetado de imposto de renda, conversão secundária em dólares, carteira detalhada e escada de vencimentos para os 12 meses.
+- Área independente de Renda Fixa, com valores em reais, total projetado de imposto de renda, conversão secundária em dólares, carteira com detalhes completos de cada ativo e escada de vencimentos para os 12 meses.
 - Carregamento privado direto da planilha após autorização Google de somente leitura.
 - Sincronização imediata pelo botão de atualizar, sem publicar uma cópia dos dados no GitHub Pages.
 - Indicadores explícitos de avaliação parcial quando uma posição está sem cotação, sem converter o custo da posição em prejuízo fictício.

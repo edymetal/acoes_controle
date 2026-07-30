@@ -516,6 +516,20 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .fgc-badge, .muted-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 999px; white-space: nowrap; font-size: 10px; font-weight: 800; }
 .fgc-badge { color: var(--green); background: rgba(55, 221, 162, .09); }
 .muted-badge { color: var(--muted); background: rgba(140, 165, 199, .08); }
+.fixed-income-asset-modal { width: min(960px, 100%); }
+.fixed-income-asset-modal__icon { flex: 0 0 auto; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; color: var(--green); background: rgba(55, 221, 162, .09); }
+.fixed-income-asset-modal__sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.fixed-income-asset-modal__sections > section { min-width: 0; padding: 17px; border: 1px solid var(--border-soft); border-radius: 13px; background: rgba(7, 16, 29, .4); }
+.fixed-income-asset-modal__sections h3 { margin: 0 0 13px; color: #dffaf0; font-size: 15px; }
+.fixed-income-asset-modal__financial-section { grid-column: 1 / -1; }
+.fixed-income-asset-modal__details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 0; }
+.fixed-income-asset-modal__details--financial { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fixed-income-asset-modal__details > div { min-width: 0; padding: 11px 12px; border-radius: 9px; background: rgba(17, 34, 54, .62); }
+.fixed-income-asset-modal__details dt { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .055em; text-transform: uppercase; }
+.fixed-income-asset-modal__details dd { min-width: 0; margin: 6px 0 0; overflow-wrap: anywhere; color: var(--text); font-size: 13px; font-weight: 750; line-height: 1.4; }
+.fixed-income-asset-modal__money { display: flex; flex-direction: column; gap: 3px; }
+.fixed-income-asset-modal__money strong { font-size: 15px; }
+.fixed-income-asset-modal__money small { color: var(--muted); font-size: 10px; font-weight: 500; }
 .maturity-ladder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
 .maturity-month { overflow: hidden; border: 1px solid var(--border-soft); border-radius: 13px; background: rgba(7, 16, 29, .35); }
 .maturity-month > header { display: grid; grid-template-columns: 45px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 17px; border-bottom: 1px solid var(--border-soft); }
@@ -557,4 +571,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .fixed-income-section-actions { width: 100%; align-items: stretch; flex-direction: column; }
   .fixed-income-year-selector { width: 100%; }
   .fixed-income-year-selector button { flex: 1; }
+  .fixed-income-asset-modal__sections { grid-template-columns: 1fr; }
+  .fixed-income-asset-modal__financial-section { grid-column: auto; }
+  .fixed-income-asset-modal__details, .fixed-income-asset-modal__details--financial { grid-template-columns: 1fr; }
 }
