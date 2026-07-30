@@ -14,10 +14,12 @@ import {
   Area,
   CartesianGrid,
   ComposedChart,
+  DefaultTooltipContent,
   Line,
   LineChart,
   ResponsiveContainer,
   Tooltip,
+  type TooltipContentProps,
   XAxis,
   YAxis,
 } from "recharts";
@@ -29,6 +31,10 @@ import {
   type EvolutionInputs,
   type EvolutionPeriod,
 } from "../lib/evolution";
+import {
+  filterEvolutionTooltipEntries,
+  type EvolutionSeriesKey,
+} from "../lib/evolutionTooltip";
 import { formatCurrency, formatDate, formatPercent } from "../lib/format";
 import type { EvolutionCurrency, EvolutionHistoryData } from "../types";
 
@@ -54,6 +60,36 @@ const CLASS_COLORS = {
   fixedIncome: "#37dda2",
 };
 const BENCHMARK_COLORS = ["#f8799b", "#b584ff", "#8ca5c7", "#ffb86b"];
+const EVOLUTION_TOOLTIP_STYLE = {
+  background: "#101d30",
+  border: "1px solid #273851",
+  borderRadius: 12,
+};
+
+interface EvolutionTooltipProps extends TooltipContentProps {
+  hoveredSeries: EvolutionSeriesKey | null;
+  formatValue: (value: number) => string;
+}
+
+function EvolutionTooltip({
+  active,
+  payload,
+  label,
+  hoveredSeries,
+  formatValue,
+}: EvolutionTooltipProps) {
+  if (!active || payload.length === 0) return null;
+  const visibleEntries = filterEvolutionTooltipEntries(payload, hoveredSeries);
+  if (visibleEntries.length === 0) return null;
+  return (
+    <DefaultTooltipContent
+      contentStyle={EVOLUTION_TOOLTIP_STYLE}
+      formatter={(value, name) => [formatValue(Number(value)), String(name)]}
+      label={`Data: ${label}`}
+      payload={visibleEntries}
+    />
+  );
+}
 
 function EvolutionLoading() {
   return <div className="evolution-state"><LoaderCircle className="spin" size={28} /><strong>Carregando histórico privado…</strong><span>A carteira atual continua disponível durante a leitura.</span></div>;
@@ -83,6 +119,7 @@ export function Evolution({
 }: EvolutionProps) {
   const [period, setPeriod] = useState<EvolutionPeriod>("max");
   const [currency, setCurrency] = useState<EvolutionCurrency>("USD");
+  const [hoveredSeries, setHoveredSeries] = useState<EvolutionSeriesKey | null>(null);
   const points = useMemo(() => history ? calculateEvolution({
     history,
     stocks,
@@ -197,18 +234,18 @@ export function Evolution({
 
       <Section title="Evolução do patrimônio" subtitle={`Valores históricos consolidados em ${currency}`} className="evolution-chart-panel">
         {chartData.length > 0 ? (
-          <div className="evolution-chart">
+          <div className="evolution-chart" onMouseLeave={() => setHoveredSeries(null)}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 12, right: 10, left: 4, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#24334a" vertical={false} />
                 <XAxis dataKey="label" tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} minTickGap={30} />
                 <YAxis tickFormatter={(value) => formatValue(Number(value), true)} tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} width={75} />
-                <Tooltip formatter={(value, name) => [formatValue(Number(value)), String(name)]} labelFormatter={(label) => `Data: ${label}`} contentStyle={{ background: "#101d30", border: "1px solid #273851", borderRadius: 12 }} />
-                <Area type="monotone" dataKey="stocks" name="Ações" stackId="classes" stroke={CLASS_COLORS.stocks} fill={CLASS_COLORS.stocks} fillOpacity={0.28} />
-                <Area type="monotone" dataKey="fiis" name="FIIs" stackId="classes" stroke={CLASS_COLORS.fiis} fill={CLASS_COLORS.fiis} fillOpacity={0.28} />
-                <Area type="monotone" dataKey="crypto" name="Cripto" stackId="classes" stroke={CLASS_COLORS.crypto} fill={CLASS_COLORS.crypto} fillOpacity={0.28} />
-                <Area type="monotone" dataKey="fixedIncome" name="Renda fixa" stackId="classes" stroke={CLASS_COLORS.fixedIncome} fill={CLASS_COLORS.fixedIncome} fillOpacity={0.28} />
-                <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+                <Tooltip content={(props) => <EvolutionTooltip {...props} hoveredSeries={hoveredSeries} formatValue={formatValue} />} />
+                <Area type="monotone" dataKey="stocks" name="Ações" stackId="classes" stroke={CLASS_COLORS.stocks} fill={CLASS_COLORS.stocks} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("stocks")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("stocks")} />
+                <Area type="monotone" dataKey="fiis" name="FIIs" stackId="classes" stroke={CLASS_COLORS.fiis} fill={CLASS_COLORS.fiis} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("fiis")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("fiis")} />
+                <Area type="monotone" dataKey="crypto" name="Cripto" stackId="classes" stroke={CLASS_COLORS.crypto} fill={CLASS_COLORS.crypto} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("crypto")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("crypto")} />
+                <Area type="monotone" dataKey="fixedIncome" name="Renda fixa" stackId="classes" stroke={CLASS_COLORS.fixedIncome} fill={CLASS_COLORS.fixedIncome} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("fixedIncome")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("fixedIncome")} />
+                <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
