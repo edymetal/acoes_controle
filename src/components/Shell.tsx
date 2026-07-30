@@ -20,12 +20,13 @@ import { formatDateTime } from "../lib/format";
 import { translate, type AppLanguage, type TranslationKey } from "../lib/i18n";
 import packageJson from "../../package.json";
 
-export type PageId = "overview" | "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
+export type PageId = "overview" | "evolution" | "dashboard" | "portfolio" | "history" | "strategy" | "settings" | "fii-dashboard" | "fii-portfolio" | "fii-history" | "crypto-dashboard" | "crypto-portfolio" | "crypto-history" | "fixed-income-dashboard" | "fixed-income-portfolio" | "fixed-income-ladder";
 
-type Topic = "overview" | "stocks" | "fiis" | "crypto" | "fixed-income" | "settings";
+type Topic = "overview" | "evolution" | "stocks" | "fiis" | "crypto" | "fixed-income" | "settings";
 interface PageDefinition { id: PageId; labelKey: TranslationKey; descriptionKey: TranslationKey; icon: ReactNode; topic: Topic }
 
 const overviewPage: PageDefinition = { id: "overview", labelKey: "nav.overview", descriptionKey: "nav.overview.description", icon: <LayoutDashboard size={19} />, topic: "overview" };
+const evolutionPage: PageDefinition = { id: "evolution", labelKey: "nav.evolution", descriptionKey: "nav.evolution.description", icon: <Activity size={19} />, topic: "evolution" };
 
 const stockPages: PageDefinition[] = [
   { id: "dashboard", labelKey: "page.dashboard", descriptionKey: "page.dashboard.description", icon: <LayoutDashboard size={19} />, topic: "stocks" },
@@ -53,7 +54,7 @@ const fixedIncomePages: PageDefinition[] = [
 ];
 
 const settingsPage: PageDefinition = { id: "settings", labelKey: "nav.settings", descriptionKey: "nav.settings.description", icon: <Settings2 size={19} />, topic: "settings" };
-const pages = [overviewPage, ...stockPages, ...fiiPages, ...cryptoPages, ...fixedIncomePages, settingsPage];
+const pages = [overviewPage, evolutionPage, ...stockPages, ...fiiPages, ...cryptoPages, ...fixedIncomePages, settingsPage];
 
 interface ShellProps {
   page: PageId;
@@ -90,14 +91,14 @@ function supportsDeviceAuthentication() {
 export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMessage, onRefresh, language, children }: ShellProps) {
   const current = pages.find((item) => item.id === page) ?? pages[0];
   const currentTopic = current.topic;
-  const [openTopic, setOpenTopic] = useState<Topic | null>(currentTopic === "overview" || currentTopic === "settings" ? null : currentTopic);
+  const [openTopic, setOpenTopic] = useState<Topic | null>(currentTopic === "overview" || currentTopic === "evolution" || currentTopic === "settings" ? null : currentTopic);
   const [privacyCredential, setPrivacyCredential] = useState(() => localStorage.getItem(PRIVACY_CREDENTIAL_KEY));
   const [isPrivacyLocked, setIsPrivacyLocked] = useState(() => Boolean(localStorage.getItem(PRIVACY_CREDENTIAL_KEY)));
   const [privacyMessage, setPrivacyMessage] = useState<string | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
-    if (currentTopic === "overview" || currentTopic === "settings") setOpenTopic(null);
+    if (currentTopic === "overview" || currentTopic === "evolution" || currentTopic === "settings") setOpenTopic(null);
     else setOpenTopic(currentTopic);
   }, [currentTopic]);
 
@@ -218,6 +219,14 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
           >
             {overviewPage.icon}<span>{translate(language, overviewPage.labelKey)}</span>
           </button>
+          <button
+            type="button"
+            className={`main-nav__evolution ${page === "evolution" ? "active" : ""}`}
+            aria-current={page === "evolution" ? "page" : undefined}
+            onClick={() => onPageChange("evolution")}
+          >
+            {evolutionPage.icon}<span>{translate(language, evolutionPage.labelKey)}</span>
+          </button>
           {renderTopic("stocks", "nav.stocks", stockPages)}
           {renderTopic("fiis", "nav.fiis", fiiPages)}
           {renderTopic("crypto", "nav.crypto", cryptoPages)}
@@ -236,7 +245,7 @@ export function Shell({ page, onPageChange, updatedAt, isRefreshing, refreshMess
       <div className="workspace">
         <header className="topbar">
           <div className="topbar__title">
-            <span className="eyebrow"><Activity size={14} /> {translate(language, current.topic === "overview" ? "eyebrow.all" : current.topic === "fiis" ? "eyebrow.fiis" : current.topic === "crypto" ? "eyebrow.crypto" : current.topic === "fixed-income" ? "eyebrow.fixedIncome" : current.topic === "settings" ? "eyebrow.settings" : "eyebrow.stocks")}</span>
+            <span className="eyebrow"><Activity size={14} /> {translate(language, current.topic === "overview" ? "eyebrow.all" : current.topic === "evolution" ? "eyebrow.evolution" : current.topic === "fiis" ? "eyebrow.fiis" : current.topic === "crypto" ? "eyebrow.crypto" : current.topic === "fixed-income" ? "eyebrow.fixedIncome" : current.topic === "settings" ? "eyebrow.settings" : "eyebrow.stocks")}</span>
             <h1>{translate(language, current.labelKey)}</h1>
             <p>{translate(language, current.descriptionKey)}</p>
           </div>

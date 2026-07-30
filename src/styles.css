@@ -53,7 +53,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .main-nav button { font-size: 15px; }
 .main-nav button:hover { color: var(--text); background: rgba(116, 151, 196, .07); }
 .main-nav button.active { color: #dff7ff; border-color: rgba(86, 216, 255, .16); background: linear-gradient(90deg, rgba(86, 216, 255, .13), rgba(89, 114, 207, .06)); box-shadow: inset 3px 0 var(--blue); }
-.main-nav .main-nav__overview { margin-bottom: 9px; border-bottom-color: var(--border-soft); border-radius: 11px 11px 0 0; }
+.main-nav .main-nav__overview { border-radius: 11px 11px 0 0; }
+.main-nav .main-nav__evolution { margin-bottom: 9px; border-bottom-color: var(--border-soft); border-radius: 0 0 11px 11px; }
 .main-nav .main-nav__settings { margin-top: 10px; border-top-color: var(--border-soft); border-radius: 0 0 11px 11px; }
 
 .workspace { min-width: 0; }
@@ -627,4 +628,42 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .fixed-income-asset-modal__sections { grid-template-columns: 1fr; }
   .fixed-income-asset-modal__financial-section { grid-column: auto; }
   .fixed-income-asset-modal__details, .fixed-income-asset-modal__details--financial { grid-template-columns: 1fr; }
+}
+
+/* Evolução patrimonial */
+.evolution-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; }
+.evolution-filter { display: flex; align-items: center; gap: 5px; padding: 4px; border: 1px solid var(--border-soft); border-radius: 11px; background: rgba(7, 16, 29, .5); }
+.evolution-filter button { min-height: 34px; padding: 0 12px; border: 0; border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.evolution-filter button:hover { color: var(--text); background: rgba(116, 151, 196, .08); }
+.evolution-filter button.active { color: #e5faff; background: rgba(86, 216, 255, .14); box-shadow: inset 0 0 0 1px rgba(86, 216, 255, .16); }
+.evolution-coverage-notice { margin: 0; display: flex; align-items: center; gap: 9px; }
+.evolution-coverage-notice svg { flex: 0 0 auto; }
+.evolution-chart-panel { overflow: hidden; }
+.evolution-chart { width: 100%; height: 390px; min-width: 0; }
+.evolution-chart--benchmark { height: 300px; }
+.evolution-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--border-soft); color: var(--muted); font-size: 12px; }
+.evolution-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.evolution-legend i { width: 8px; height: 8px; border-radius: 50%; }
+.evolution-benchmark-empty { min-height: 170px; display: flex; align-items: center; justify-content: center; gap: 14px; border: 1px dashed var(--border); border-radius: 13px; color: var(--muted); background: rgba(7, 16, 29, .26); }
+.evolution-benchmark-empty svg { color: var(--violet); }
+.evolution-benchmark-empty div { display: flex; flex-direction: column; gap: 3px; }
+.evolution-benchmark-empty strong { color: var(--text); font-size: 14px; }
+.evolution-benchmark-empty span { max-width: 520px; font-size: 12px; }
+.evolution-disclaimer { display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; border: 1px solid rgba(245, 199, 107, .18); border-radius: 12px; color: #d9bb7c; background: rgba(245, 199, 107, .055); }
+.evolution-disclaimer svg { flex: 0 0 auto; margin-top: 2px; }
+.evolution-disclaimer p { margin: 0; font-size: 12px; line-height: 1.5; }
+.evolution-state { min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 30px; border: 1px solid var(--border-soft); border-radius: 16px; color: var(--muted); text-align: center; background: linear-gradient(155deg, rgba(15, 29, 47, .96), rgba(11, 23, 39, .96)); }
+.evolution-state strong { color: var(--text); font-size: 18px; }
+.evolution-state span { max-width: 520px; font-size: 13px; }
+.evolution-state--error > svg { color: var(--amber); }
+.evolution-state button { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; min-height: 39px; padding: 0 14px; border: 1px solid rgba(86, 216, 255, .3); border-radius: 10px; color: #dff8ff; background: rgba(86, 216, 255, .1); cursor: pointer; font-weight: 800; }
+.content--protected .evolution-chart, .content--protected .evolution-legend, .content--protected .evolution-disclaimer { filter: blur(8px); user-select: none; }
+
+@media (max-width: 680px) {
+  .evolution-toolbar { align-items: stretch; flex-direction: column; }
+  .evolution-filter { overflow-x: auto; }
+  .evolution-filter button { flex: 1 0 auto; }
+  .evolution-chart { height: 320px; margin-left: -8px; width: calc(100% + 8px); }
+  .evolution-chart--benchmark { height: 260px; }
+  .evolution-benchmark-empty { align-items: flex-start; justify-content: flex-start; padding: 18px; }
 }

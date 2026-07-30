@@ -7,6 +7,7 @@ const FORBIDDEN_DATA_FILES = new Set([
   "fiis.json",
   "crypto.json",
   "fixed-income.json",
+  "evolution.json",
 ]);
 
 async function listFiles(directory) {

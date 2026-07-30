@@ -99,6 +99,51 @@ export interface CryptoData {
   };
 }
 
+export type EvolutionRecordKind = "quote" | "fx" | "benchmark";
+export type EvolutionAssetClass = "stocks" | "fiis" | "crypto";
+export type EvolutionCurrency = "USD" | "BRL";
+export type EvolutionRecordStatus = "valid" | "partial";
+
+export interface EvolutionHistoryRecord {
+  id: string;
+  date: string;
+  capturedAt: string;
+  kind: EvolutionRecordKind;
+  assetClass: EvolutionAssetClass | null;
+  symbol: string;
+  currency: EvolutionCurrency;
+  value: number;
+  status: EvolutionRecordStatus;
+}
+
+export interface EvolutionHistoryData {
+  schemaVersion: number;
+  generatedAt: string;
+  source: {
+    spreadsheetId: string;
+    range: string;
+  };
+  records: EvolutionHistoryRecord[];
+  integrity: {
+    recordRows: number;
+    warnings: string[];
+  };
+}
+
+export interface EvolutionPoint {
+  date: string;
+  stocksUsd: number;
+  fiisBrl: number;
+  cryptoUsd: number;
+  fixedIncomeBrl: number;
+  brlPerUsd: number | null;
+  totalUsd: number;
+  totalBrl: number;
+  complete: boolean;
+  isLive: boolean;
+  missing: string[];
+}
+
 export interface FixedIncomeInvestment {
   id: string;
   risk: number | null;

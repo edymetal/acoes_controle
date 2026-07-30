@@ -21,6 +21,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
 - Área independente de Cripto em dólares para Bitcoin, Ethereum e BNB, com visão geral, carteira e movimentações.
 - Área independente de Renda Fixa, com valores em reais, total projetado de imposto de renda, prazo total em dias, conversão secundária em dólares, carteira com detalhes completos de cada ativo e escada de vencimentos para os 12 meses.
+- Evolução patrimonial consolidada em USD ou BRL, com períodos configuráveis, composição histórica por classe, cobertura dos dados e suporte a benchmarks normalizados.
 - Carregamento privado direto da planilha após autorização Google de somente leitura.
 - Sincronização imediata pelo botão de atualizar, sem publicar uma cópia dos dados no GitHub Pages.
 - Indicadores explícitos de avaliação parcial quando uma posição está sem cotação, sem converter o custo da posição em prejuízo fictício.
@@ -69,6 +70,7 @@ Os JSONs foram removidos da branch atual e do artefato publicado. O aplicativo t
 | Cotações atuais de Bitcoin, Ethereum e BNB | `Cripto Base` | `D2:E13` |
 | Ativos de renda fixa, vencimentos e resultados | `Fixa Hist` | `B36:Q1000` |
 | Cotação do dólar para conversão da renda fixa | `Dólar` | `G5` |
+| Cotações, câmbio e benchmarks capturados diariamente | `Evolução Hist` | `A2:H100000` |
 
 Planilha: `1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0`
 
@@ -101,6 +103,25 @@ Quando há compra e venda do mesmo ativo no mesmo dia, a data é suficiente para
 - Leituras da API do Google Sheets usam limite de tempo e até três tentativas para erros transitórios (`408`, `429` e `5xx`), com espera exponencial e aleatória entre as tentativas.
 - Antes dos cálculos, os quatro contratos são validados em runtime tanto no carregamento via backend quanto na leitura direta da planilha. A validação rejeita datas e horários impossíveis, números fora do domínio, IDs/tickers duplicados, contagens divergentes e relações financeiras essenciais incoerentes.
 - Na renda fixa, uma inconsistência isolada entre os campos complementares bruto/IR e o valor líquido não bloqueia toda a carteira: esses campos são ignorados no registro afetado, o valor líquido conciliado com principal e lucro é preservado e um aviso claro oferece detalhes sobre a linha, as células e a correção necessária.
+
+## Evolução patrimonial
+
+O módulo de evolução é opcional e isolado das quatro bases atuais. Ele só lê o histórico quando a página **Evolução** é aberta; uma aba ausente ou inválida não interfere no restante do aplicativo.
+
+As posições de cada data são reconstruídas pelo mesmo motor financeiro usado nas telas atuais. A aba histórica guarda somente cotações, câmbio e benchmarks, evitando duplicar totais ou regras financeiras na planilha. O ponto mais recente é calculado em memória com os dados atuais. A renda fixa entra pelo principal que estava ativo em cada data, sem incluir lucros futuros.
+
+Para iniciar a captura:
+
+1. Abra a planilha privada em **Extensões → Apps Script**.
+2. Copie o conteúdo de `scripts/evolution-snapshot.gs` para o projeto vinculado à planilha.
+3. Execute `setupEvolutionHistory` uma vez e autorize o script.
+4. Confirme que a aba `Evolução Hist` recebeu a primeira captura.
+
+O acionador roda diariamente por volta de 23h30 no fuso `America/Sao_Paulo`. Uma nova execução no mesmo dia substitui a captura anterior, sem duplicá-la.
+
+Benchmarks são opcionais. Para registrá-los, crie a aba `Evolução Benchmarks` com as colunas `Código`, `Moeda` e `Valor` a partir da linha 2. Cada código válido será capturado diariamente e normalizado em 100 pela interface.
+
+A variação exibida nesta primeira etapa é patrimonial e inclui o efeito de compras e vendas. Ela não é apresentada como TWR ou XIRR. O histórico permanece apenas na planilha privada, não é publicado, persistido pelo aplicativo ou armazenado no cache do PWA.
 
 ## Estratégia anual
 

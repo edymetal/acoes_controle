@@ -1,6 +1,8 @@
 import type {
   Asset,
   CryptoData,
+  EvolutionHistoryData,
+  EvolutionHistoryRecord,
   FiiData,
   FixedIncomeData,
   FixedIncomeInvestment,
@@ -250,4 +252,51 @@ export function parseFixedIncomeData(value: unknown): FixedIncomeData {
       ],
     },
   };
+}
+
+function isEvolutionHistoryRecord(value: unknown) {
+  if (!isRecord(value)) return false;
+  return isString(value.id)
+    && isIsoDate(value.date)
+    && isIsoDateTime(value.capturedAt)
+    && (value.kind === "quote" || value.kind === "fx" || value.kind === "benchmark")
+    && (value.assetClass === null || value.assetClass === "stocks" || value.assetClass === "fiis" || value.assetClass === "crypto")
+    && isNormalizedTicker(value.symbol)
+    && (value.currency === "USD" || value.currency === "BRL")
+    && isPositiveNumber(value.value)
+    && (value.status === "valid" || value.status === "partial");
+}
+
+function evolutionConsistencyIssue(records: EvolutionHistoryRecord[]) {
+  if (!hasUniqueValues(records.map((record) => record.id))) return "há identificadores de histórico duplicados";
+  for (const record of records) {
+    if (record.kind === "quote" && record.assetClass === null) {
+      return `a cotação ${record.id} não informa a classe do ativo`;
+    }
+    if (record.kind === "fx" && (record.symbol !== "USD-BRL" || record.currency !== "BRL")) {
+      return `o câmbio ${record.id} não representa USD-BRL em reais`;
+    }
+  }
+  return null;
+}
+
+export function parseEvolutionHistoryData(value: unknown): EvolutionHistoryData {
+  if (!isRecord(value) || value.schemaVersion !== 1 || !isIsoDateTime(value.generatedAt)) {
+    invalidData("A base de evolução");
+  }
+  if (!isRecord(value.source) || !isString(value.source.spreadsheetId) || !isString(value.source.range)) {
+    invalidData("A base de evolução");
+  }
+  if (!Array.isArray(value.records) || !value.records.every(isEvolutionHistoryRecord)) {
+    invalidData("A base de evolução");
+  }
+  if (!isRecord(value.integrity) || !isCount(value.integrity.recordRows) || !isStringArray(value.integrity.warnings)) {
+    invalidData("A base de evolução");
+  }
+  const records = value.records as EvolutionHistoryRecord[];
+  if (value.integrity.recordRows !== records.length) {
+    invalidData("A base de evolução", "a contagem de registros não corresponde ao histórico");
+  }
+  invalidDataIfPresent("A base de evolução", evolutionConsistencyIssue(records));
+  return value as unknown as EvolutionHistoryData;
 }

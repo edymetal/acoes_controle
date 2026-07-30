@@ -16,10 +16,12 @@ import {
 } from "./lib/sheetSync";
 import { clearGoogleSheetsAccessToken, getGoogleSheetsAccessToken, hasGoogleSheetsAccessToken } from "./firebase";
 import { describeGoogleAuthorizationError } from "./lib/googleAuthError";
-import type { CryptoData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
+import { loadEvolutionHistory } from "./lib/evolutionSync";
+import type { CryptoData, EvolutionHistoryData, FiiData, FixedIncomeData, PortfolioData, StrategySettings } from "./types";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then((module) => ({ default: module.Dashboard })));
 const Overview = lazy(() => import("./pages/Overview").then((module) => ({ default: module.Overview })));
+const Evolution = lazy(() => import("./pages/Evolution").then((module) => ({ default: module.Evolution })));
 const Portfolio = lazy(() => import("./pages/Portfolio").then((module) => ({ default: module.Portfolio })));
 const History = lazy(() => import("./pages/History").then((module) => ({ default: module.History })));
 const Strategy = lazy(() => import("./pages/Strategy").then((module) => ({ default: module.Strategy })));
@@ -34,7 +36,7 @@ const FixedIncomeDashboard = lazy(() => import("./pages/fixed-income/FixedIncome
 const FixedIncomePortfolio = lazy(() => import("./pages/fixed-income/FixedIncomePortfolio").then((module) => ({ default: module.FixedIncomePortfolio })));
 const FixedIncomeLadder = lazy(() => import("./pages/fixed-income/FixedIncomeLadder").then((module) => ({ default: module.FixedIncomeLadder })));
 
-const validPages: PageId[] = ["overview", "dashboard", "portfolio", "history", "strategy", "settings", "fii-dashboard", "fii-portfolio", "fii-history", "crypto-dashboard", "crypto-portfolio", "crypto-history", "fixed-income-dashboard", "fixed-income-portfolio", "fixed-income-ladder"];
+const validPages: PageId[] = ["overview", "evolution", "dashboard", "portfolio", "history", "strategy", "settings", "fii-dashboard", "fii-portfolio", "fii-history", "crypto-dashboard", "crypto-portfolio", "crypto-history", "fixed-income-dashboard", "fixed-income-portfolio", "fixed-income-ladder"];
 type RefreshMessage = { kind: "success" | "warning" | "error"; text: string };
 
 async function fetchPortfolio(cacheBust = false, signal?: AbortSignal) {
@@ -67,6 +69,10 @@ export default function App() {
   const [cryptoError, setCryptoError] = useState<string | null>(null);
   const [fixedIncomeData, setFixedIncomeData] = useState<FixedIncomeData | null>(null);
   const [fixedIncomeError, setFixedIncomeError] = useState<string | null>(null);
+  const [evolutionData, setEvolutionData] = useState<EvolutionHistoryData | null>(null);
+  const [evolutionError, setEvolutionError] = useState<string | null>(null);
+  const [isEvolutionLoading, setIsEvolutionLoading] = useState(false);
+  const [evolutionReload, setEvolutionReload] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [needsSheetAuthorization, setNeedsSheetAuthorization] = useState(false);
   const [sheetAuthorizationError, setSheetAuthorizationError] = useState<string | null>(null);
@@ -83,6 +89,25 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
+
+  useEffect(() => {
+    if (page !== "evolution") return;
+    const controller = new AbortController();
+    setIsEvolutionLoading(true);
+    setEvolutionError(null);
+    loadEvolutionHistory(controller.signal)
+      .then((history) => {
+        setEvolutionData(history);
+      })
+      .catch((reason: unknown) => {
+        if (reason instanceof DOMException && reason.name === "AbortError") return;
+        setEvolutionError(reason instanceof Error ? reason.message : "Não foi possível carregar o histórico.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsEvolutionLoading(false);
+      });
+    return () => controller.abort();
+  }, [page, data?.generatedAt, evolutionReload]);
 
   const applySpreadsheetData = (synchronized: SpreadsheetSyncResult) => {
     setData(synchronized.portfolio);
@@ -285,6 +310,7 @@ export default function App() {
     <Shell page={page} onPageChange={navigate} updatedAt={page.startsWith("fii-") ? fiiData?.generatedAt ?? data.generatedAt : page.startsWith("crypto-") ? cryptoData?.generatedAt ?? data.generatedAt : page.startsWith("fixed-income-") ? fixedIncomeData?.generatedAt ?? data.generatedAt : data.generatedAt} isRefreshing={isRefreshing} refreshMessage={refreshMessage} onRefresh={refreshData} language={language}>
       <Suspense fallback={<div className="page-loader"><LoaderCircle size={24} /> Carregando painel…</div>}>
         {page === "overview" && <Overview stockModel={model} fiiModel={fiiModel} cryptoModel={cryptoModel} fixedIncomeModel={fixedIncomeModel} brlPerUsd={fiiData?.exchangeRate.brlPerUsd ?? fixedIncomeData?.exchangeRate.brlPerUsd ?? null} errors={{ fiis: fiiError, crypto: cryptoError, fixedIncome: fixedIncomeError }} onNavigate={navigate} />}
+        {page === "evolution" && <Evolution history={evolutionData} stocks={data} fiis={fiiData} crypto={cryptoData} fixedIncome={fixedIncomeData} brlPerUsd={fiiData?.exchangeRate.brlPerUsd ?? fixedIncomeData?.exchangeRate.brlPerUsd ?? null} isLoading={isEvolutionLoading} error={evolutionError} onRetry={() => setEvolutionReload((value) => value + 1)} />}
         {page === "dashboard" && <Dashboard data={data} model={model} settings={settings} onNavigate={navigate} />}
         {page === "portfolio" && <Portfolio model={model} />}
         {page === "history" && <History model={model} />}
