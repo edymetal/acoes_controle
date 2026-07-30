@@ -5,7 +5,6 @@ import {
   CalendarDays,
   CircleDollarSign,
   Database,
-  LineChart as LineChartIcon,
   LoaderCircle,
   RefreshCw,
   TrendingUp,
@@ -16,7 +15,6 @@ import {
   ComposedChart,
   DefaultTooltipContent,
   Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   type TooltipContentProps,
@@ -25,7 +23,6 @@ import {
 } from "recharts";
 import { EmptyState, MetricCard, Section } from "../components/Ui";
 import {
-  benchmarkSeries,
   calculateEvolution,
   filterEvolutionPeriod,
   type EvolutionInputs,
@@ -66,7 +63,6 @@ const EVOLUTION_SERIES: Array<{ key: EvolutionSeriesKey; name: string }> = [
   { key: "crypto", name: "Cripto" },
   { key: "fixedIncome", name: "Renda fixa" },
 ];
-const BENCHMARK_COLORS = ["#f8799b", "#b584ff", "#8ca5c7", "#ffb86b"];
 const EVOLUTION_TOOLTIP_STYLE = {
   background: "#101d30",
   border: "1px solid #273851",
@@ -156,27 +152,6 @@ export function Evolution({
       reconstructed: point.reconstructed,
     };
   }), [visiblePoints, currency]);
-  const benchmarks = useMemo(
-    () => history ? benchmarkSeries(history, visiblePoints.map((point) => point.date)) : [],
-    [history, visiblePoints],
-  );
-  const benchmarkData = useMemo(() => {
-    if (chartData.length === 0) return [];
-    const totalBase = chartData[0].total;
-    const byDate = new Map(chartData.map((item) => [item.date, {
-      date: item.date,
-      label: item.label,
-      carteira: totalBase > 0 ? item.total / totalBase * 100 : 0,
-    } as Record<string, string | number>]));
-    for (const benchmark of benchmarks) {
-      for (const point of benchmark.points) {
-        const item = byDate.get(point.date);
-        if (item) item[benchmark.symbol] = point.value;
-      }
-    }
-    return [...byDate.values()];
-  }, [benchmarks, chartData]);
-
   if (isLoading && !history) return <EvolutionLoading />;
   if (error && !history) return <EvolutionError message={error} onRetry={onRetry} />;
   if (!history) return <EvolutionError message="A leitura do histórico ainda não foi iniciada." onRetry={onRetry} />;
@@ -190,6 +165,16 @@ export function Evolution({
   const formatValue = (value: number, compact = false) => formatCurrency(value, compact, currency);
   const hasStoredHistory = history.records.some((record) => record.kind !== "benchmark");
   const reconstructedCount = visiblePoints.filter((point) => point.reconstructed).length;
+  const allocationTotal = last
+    ? EVOLUTION_SERIES.reduce((total, series) => total + Math.max(0, last[series.key]), 0)
+    : 0;
+  const allocation = last
+    ? EVOLUTION_SERIES.map((series) => ({
+        ...series,
+        value: Math.max(0, last[series.key]),
+        share: allocationTotal > 0 ? Math.max(0, last[series.key]) / allocationTotal : 0,
+      }))
+    : [];
 
   return (
     <div className="page-stack evolution-page">
@@ -270,26 +255,23 @@ export function Evolution({
         </div>
       </Section>
 
-      <Section title="Comparação de variação" subtitle="Séries patrimoniais normalizadas em 100 no início do período" className="evolution-chart-panel">
-        {benchmarks.length > 0 && benchmarkData.length > 0 ? (
-          <div className="evolution-chart evolution-chart--benchmark">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={benchmarkData} margin={{ top: 12, right: 10, left: 4, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#24334a" vertical={false} />
-                <XAxis dataKey="label" tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} minTickGap={30} />
-                <YAxis tickFormatter={(value) => String(Math.round(Number(value)))} tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} width={48} />
-                <Tooltip formatter={(value, name) => [`${Number(value).toFixed(1)} pontos`, String(name)]} contentStyle={{ background: "#101d30", border: "1px solid #273851", borderRadius: 12 }} />
-                <Line type="monotone" dataKey="carteira" name="Carteira" stroke="#56d8ff" strokeWidth={2.5} dot={false} />
-                {benchmarks.map((benchmark, index) => <Line key={benchmark.symbol} type="monotone" dataKey={benchmark.symbol} name={benchmark.symbol} stroke={BENCHMARK_COLORS[index % BENCHMARK_COLORS.length]} strokeWidth={2} dot={false} connectNulls />)}
-              </LineChart>
-            </ResponsiveContainer>
+      <Section title="Composição do patrimônio" subtitle={last ? `Distribuição por classe em ${last.label}` : "Distribuição por classe no ponto mais recente"} className="evolution-allocation-panel">
+        {allocation.length > 0 ? (
+          <div className="evolution-allocation" role="list" aria-label="Composição patrimonial por classe">
+            {allocation.map((item) => (
+              <article className="evolution-allocation-item" role="listitem" key={item.key}>
+                <div className="evolution-allocation-head">
+                  <span><i style={{ background: CLASS_COLORS[item.key] }} />{item.name}</span>
+                  <strong>{formatValue(item.value)}</strong>
+                </div>
+                <div className="evolution-allocation-track" aria-hidden="true">
+                  <i style={{ background: CLASS_COLORS[item.key], width: `${Math.min(item.share * 100, 100)}%` }} />
+                </div>
+                <span className="evolution-allocation-share">{formatPercent(item.share, 1)} do patrimônio</span>
+              </article>
+            ))}
           </div>
-        ) : (
-          <div className="evolution-benchmark-empty">
-            <LineChartIcon size={27} />
-            <div><strong>Benchmarks preparados, aguardando dados</strong><span>Quando o coletor receber séries de referência, elas aparecerão aqui sem alterar o patrimônio.</span></div>
-          </div>
-        )}
+        ) : <EmptyState title="Composição indisponível" description="O detalhamento aparecerá assim que houver um ponto patrimonial válido." />}
       </Section>
 
       <div className="evolution-disclaimer">

@@ -640,15 +640,18 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .evolution-coverage-notice svg { flex: 0 0 auto; }
 .evolution-chart-panel { overflow: hidden; }
 .evolution-chart { width: 100%; height: 390px; min-width: 0; }
-.evolution-chart--benchmark { height: 300px; }
 .evolution-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--border-soft); color: var(--muted); font-size: 12px; }
 .evolution-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .evolution-legend i { width: 8px; height: 8px; border-radius: 50%; }
-.evolution-benchmark-empty { min-height: 170px; display: flex; align-items: center; justify-content: center; gap: 14px; border: 1px dashed var(--border); border-radius: 13px; color: var(--muted); background: rgba(7, 16, 29, .26); }
-.evolution-benchmark-empty svg { color: var(--violet); }
-.evolution-benchmark-empty div { display: flex; flex-direction: column; gap: 3px; }
-.evolution-benchmark-empty strong { color: var(--text); font-size: 14px; }
-.evolution-benchmark-empty span { max-width: 520px; font-size: 12px; }
+.evolution-allocation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.evolution-allocation-item { min-width: 0; padding: 16px; border: 1px solid var(--border-soft); border-radius: 13px; background: rgba(7, 16, 29, .26); }
+.evolution-allocation-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.evolution-allocation-head span { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; font-weight: 700; }
+.evolution-allocation-head span i { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.evolution-allocation-head strong { min-width: 0; color: var(--text); font-size: 16px; text-align: right; }
+.evolution-allocation-track { height: 7px; margin: 14px 0 9px; overflow: hidden; border-radius: 999px; background: rgba(132, 149, 173, .12); }
+.evolution-allocation-track i { display: block; height: 100%; min-width: 0; border-radius: inherit; }
+.evolution-allocation-share { color: var(--muted); font-size: 12px; }
 .evolution-disclaimer { display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; border: 1px solid rgba(245, 199, 107, .18); border-radius: 12px; color: #d9bb7c; background: rgba(245, 199, 107, .055); }
 .evolution-disclaimer svg { flex: 0 0 auto; margin-top: 2px; }
 .evolution-disclaimer p { margin: 0; font-size: 12px; line-height: 1.5; }
@@ -657,7 +660,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .evolution-state span { max-width: 520px; font-size: 13px; }
 .evolution-state--error > svg { color: var(--amber); }
 .evolution-state button { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; min-height: 39px; padding: 0 14px; border: 1px solid rgba(86, 216, 255, .3); border-radius: 10px; color: #dff8ff; background: rgba(86, 216, 255, .1); cursor: pointer; font-weight: 800; }
-.content--protected .evolution-chart, .content--protected .evolution-legend, .content--protected .evolution-disclaimer { filter: blur(8px); user-select: none; }
+.content--protected .evolution-chart, .content--protected .evolution-legend, .content--protected .evolution-allocation, .content--protected .evolution-disclaimer { filter: blur(8px); user-select: none; }
 
 @media (max-width: 680px) {
   .evolution-toolbar { align-items: stretch; flex-direction: column; }
@@ -665,6 +668,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .evolution-filter::-webkit-scrollbar { display: none; }
   .evolution-filter button { flex: 1 0 auto; }
   .evolution-chart { height: 320px; margin-left: -8px; width: calc(100% + 8px); }
-  .evolution-chart--benchmark { height: 260px; }
-  .evolution-benchmark-empty { align-items: flex-start; justify-content: flex-start; padding: 18px; }
+  .evolution-allocation { grid-template-columns: 1fr; }
+  .evolution-allocation-head strong { font-size: 14px; }
 }
