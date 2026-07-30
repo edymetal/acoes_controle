@@ -71,8 +71,23 @@ describe("calculateEvolution", () => {
 
     const points = calculateEvolution({ history, stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 });
 
-    expect(points).toHaveLength(2);
+    expect(points).toHaveLength(3);
     expect(points[0]).toMatchObject({
+      date: "2026-01-01",
+      stocksUsd: 100,
+      fiisBrl: 200,
+      cryptoUsd: 5_000,
+      fixedIncomeBrl: 1_000,
+      totalUsd: 5_340,
+      complete: false,
+      isLive: false,
+      reconstructed: true,
+    });
+    expect(points[0].missing).toEqual(expect.arrayContaining([
+      "preços das movimentações",
+      "câmbio atual estimado",
+    ]));
+    expect(points[1]).toMatchObject({
       date: "2026-01-02",
       stocksUsd: 120,
       fiisBrl: 210,
@@ -81,27 +96,107 @@ describe("calculateEvolution", () => {
       totalUsd: 5_862,
       complete: true,
       isLive: false,
+      reconstructed: false,
     });
-    expect(points[1]).toMatchObject({
+    expect(points[2]).toMatchObject({
       date: "2026-01-03",
       totalUsd: 6_394,
       totalBrl: 31_970,
       complete: true,
       isLive: true,
+      reconstructed: false,
     });
   });
 
-  it("marca o ponto como parcial quando o câmbio histórico está ausente", () => {
+  it("usa o câmbio atual como estimativa quando o câmbio histórico está ausente", () => {
     const history = buildEvolutionHistoryData([
       ["2026-01-02", "2026-01-02T23:00:00.000Z", "quote", "stocks", "AAA", "USD", 12, "valid"],
       ["2026-01-02", "2026-01-02T23:00:00.000Z", "quote", "fiis", "FII11", "BRL", 105, "valid"],
       ["2026-01-02", "2026-01-02T23:00:00.000Z", "quote", "crypto", "BTC", "USD", 55_000, "valid"],
     ], "2026-01-03T12:00:00.000Z");
 
-    const point = calculateEvolution({ history, stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 })[0];
+    const point = calculateEvolution({ history, stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 })
+      .find((item) => item.date === "2026-01-02")!;
     expect(point.complete).toBe(false);
-    expect(point.missing).toContain("câmbio");
-    expect(point.totalUsd).toBe(5_620);
+    expect(point.missing).toContain("câmbio atual estimado");
+    expect(point.totalUsd).toBe(5_862);
+  });
+
+  it("cria a série inicial somente com as movimentações já existentes", () => {
+    const history = buildEvolutionHistoryData([], "2026-01-03T12:00:00.000Z");
+
+    const points = calculateEvolution({ history, stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 });
+
+    expect(points.map((point) => point.date)).toEqual(["2026-01-01", "2026-01-03"]);
+    expect(points[0]).toMatchObject({
+      totalUsd: 5_340,
+      reconstructed: true,
+      isLive: false,
+    });
+    expect(points[1]).toMatchObject({
+      totalUsd: 6_394,
+      reconstructed: false,
+      isLive: true,
+    });
+  });
+
+  it("prefere o fechamento capturado ao preço da movimentação na mesma data", () => {
+    const history = buildEvolutionHistoryData([
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "quote", "stocks", "AAA", "USD", 12, "valid"],
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "quote", "fiis", "FII11", "BRL", 105, "valid"],
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "quote", "crypto", "BTC", "USD", 55_000, "valid"],
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "fx", "", "USD-BRL", "BRL", 5, "valid"],
+    ], "2026-01-03T12:00:00.000Z");
+
+    const point = calculateEvolution({ history, stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 })[0];
+
+    expect(point).toMatchObject({
+      date: "2026-01-01",
+      stocksUsd: 120,
+      fiisBrl: 210,
+      cryptoUsd: 5_500,
+      totalUsd: 5_862,
+      complete: true,
+      reconstructed: false,
+    });
+  });
+
+  it("prefere uma movimentação nova a um fechamento anterior reaproveitado", () => {
+    const stocksWithSecondPurchase: PortfolioData = {
+      ...stocks,
+      purchases: [
+        ...stocks.purchases,
+        {
+          id: "stock-buy-2",
+          type: "buy",
+          date: "2026-01-02",
+          ticker: "AAA",
+          quantity: 1,
+          unitPrice: 20,
+          total: 20,
+        },
+      ],
+      integrity: { ...stocks.integrity, purchaseRows: 2 },
+    };
+    const history = buildEvolutionHistoryData([
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "quote", "stocks", "AAA", "USD", 12, "valid"],
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "quote", "fiis", "FII11", "BRL", 105, "valid"],
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "quote", "crypto", "BTC", "USD", 55_000, "valid"],
+      ["2026-01-01", "2026-01-01T23:00:00.000Z", "fx", "", "USD-BRL", "BRL", 5, "valid"],
+    ], "2026-01-03T12:00:00.000Z");
+
+    const point = calculateEvolution({
+      history,
+      stocks: stocksWithSecondPurchase,
+      fiis,
+      crypto,
+      fixedIncome,
+      brlPerUsd: 5,
+    }).find((item) => item.date === "2026-01-02")!;
+
+    expect(point.stocksUsd).toBe(220);
+    expect(point.reconstructed).toBe(true);
+    expect(point.missing).toContain("preços das movimentações");
   });
 });
 

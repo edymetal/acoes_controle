@@ -108,7 +108,9 @@ Quando há compra e venda do mesmo ativo no mesmo dia, a data é suficiente para
 
 O módulo de evolução é opcional e isolado das quatro bases atuais. Ele só lê o histórico quando a página **Evolução** é aberta; uma aba ausente ou inválida não interfere no restante do aplicativo.
 
-As posições de cada data são reconstruídas pelo mesmo motor financeiro usado nas telas atuais. A aba histórica guarda somente cotações, câmbio e benchmarks, evitando duplicar totais ou regras financeiras na planilha. O ponto mais recente é calculado em memória com os dados atuais. A renda fixa entra pelo principal que estava ativo em cada data, sem incluir lucros futuros.
+As posições de cada data são reconstruídas pelo mesmo motor financeiro usado nas telas atuais. Mesmo antes da primeira captura diária, o sistema cria uma série inicial com as datas, quantidades e preços unitários já registrados em `Ações Hist`, `FII Hist`, `Cripto` e `Fixa Hist`. Esses pontos são identificados como reconstruídos porque reutilizam o último preço de movimentação disponível e o câmbio atual quando não existe câmbio histórico.
+
+A aba `Evolução Hist` complementa essa série inicial com fechamentos reais de cotações, câmbio e benchmarks, evitando duplicar totais ou regras financeiras na planilha. Quando há um fechamento para a mesma data, ele tem prioridade sobre o preço da movimentação. O ponto mais recente é calculado em memória com os dados atuais. A renda fixa entra pelo principal que estava ativo em cada data, sem incluir lucros futuros.
 
 Para iniciar a captura:
 

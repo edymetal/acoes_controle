@@ -8,6 +8,7 @@ import type {
   FixedIncomeData,
   PortfolioData,
   PortfolioModel,
+  Transaction,
 } from "../types";
 import { calculateConsolidation } from "./consolidation";
 import { calculateCryptoPortfolio } from "./cryptoPortfolio";
@@ -23,6 +24,7 @@ type HistoricalQuote = {
   value: number;
   date: string;
   status: EvolutionHistoryRecord["status"];
+  source: "snapshot" | "transaction";
 };
 
 export interface EvolutionInputs {
@@ -99,6 +101,7 @@ function getFxForDate(records: EvolutionHistoryRecord[]) {
 function updateQuoteHistory(
   records: EvolutionHistoryRecord[],
   quoteHistory: Record<EvolutionAssetClass, Map<string, HistoricalQuote>>,
+  source: HistoricalQuote["source"],
 ) {
   for (const record of records) {
     if (record.kind !== "quote" || record.assetClass === null) continue;
@@ -106,6 +109,7 @@ function updateQuoteHistory(
       value: record.value,
       date: record.date,
       status: record.status,
+      source,
     });
   }
 }
@@ -113,14 +117,60 @@ function updateQuoteHistory(
 function usableQuotes(
   data: MarketData | null,
   date: string,
-  quotes: Map<string, HistoricalQuote>,
+  snapshots: Map<string, HistoricalQuote>,
+  transactions: Map<string, HistoricalQuote>,
 ) {
-  const usable = new Map<string, HistoricalQuote>();
+  const usable = new Map(transactions);
   if (!data) return usable;
-  for (const [ticker, quote] of quotes) {
-    if (daysBetween(quote.date, date) <= MAX_QUOTE_AGE_DAYS) usable.set(ticker, quote);
+  for (const [ticker, quote] of snapshots) {
+    const transaction = usable.get(ticker);
+    if (daysBetween(quote.date, date) <= MAX_QUOTE_AGE_DAYS
+      && (!transaction || quote.date >= transaction.date)) {
+      usable.set(ticker, quote);
+    }
   }
   return usable;
+}
+
+function compareTransactions(left: Transaction, right: Transaction) {
+  const date = left.date.localeCompare(right.date);
+  if (date !== 0) return date;
+  const time = (left.time ?? "").localeCompare(right.time ?? "");
+  if (time !== 0) return time;
+  const sourceOrder = (left.sourceOrder ?? Number.MAX_SAFE_INTEGER)
+    - (right.sourceOrder ?? Number.MAX_SAFE_INTEGER);
+  if (sourceOrder !== 0) return sourceOrder;
+  if (left.type !== right.type) return left.type === "buy" ? -1 : 1;
+  return left.id.localeCompare(right.id);
+}
+
+function transactionQuoteRecords(
+  data: MarketData | null,
+  assetClass: EvolutionAssetClass,
+  currency: "USD" | "BRL",
+  liveDate: string,
+) {
+  const recordsByDate = new Map<string, EvolutionHistoryRecord[]>();
+  if (!data) return recordsByDate;
+  const transactions = [...data.purchases, ...data.sales]
+    .filter((transaction) => transaction.date <= liveDate)
+    .sort(compareTransactions);
+  for (const transaction of transactions) {
+    const records = recordsByDate.get(transaction.date) ?? [];
+    records.push({
+      id: `transaction:${assetClass}:${transaction.id}`,
+      date: transaction.date,
+      capturedAt: `${transaction.date}T${transaction.time ?? "23:59:59"}Z`,
+      kind: "quote",
+      assetClass,
+      symbol: transaction.ticker,
+      currency,
+      value: transaction.unitPrice,
+      status: "partial",
+    });
+    recordsByDate.set(transaction.date, records);
+  }
+  return recordsByDate;
 }
 
 function recordPoint(
@@ -131,6 +181,7 @@ function recordPoint(
   fixedIncomeBrl: number,
   fixedIncomeReady: boolean,
   brlPerUsd: number | null,
+  estimatedFx: boolean,
   records: EvolutionHistoryRecord[],
   usedQuotes: Map<string, HistoricalQuote>[],
 ): EvolutionPoint {
@@ -141,9 +192,18 @@ function recordPoint(
   if (!crypto || crypto.health.valuation !== "complete") missing.push("cripto");
   if (!fixedIncomeReady) missing.push("renda fixa");
   if (!rate) missing.push("câmbio");
+  if (rate && estimatedFx) missing.push("câmbio atual estimado");
   if (records.some((record) => record.status === "partial")) missing.push("captura parcial");
-  if (usedQuotes.some((quotes) => [...quotes.values()].some((quote) =>
-    quote.status === "partial" || quote.date !== date))) {
+  const portfolios = [stocks, fiis, crypto];
+  const relevantQuotes = usedQuotes.flatMap((quotes, index) =>
+    (portfolios[index]?.positions ?? []).flatMap((position) => {
+      const quote = quotes.get(position.ticker);
+      return quote ? [quote] : [];
+    }));
+  const reconstructed = relevantQuotes.some((quote) => quote.source === "transaction");
+  if (reconstructed) missing.push("preços das movimentações");
+  if (relevantQuotes.some((quote) =>
+    quote.source === "snapshot" && (quote.status === "partial" || quote.date !== date))) {
     missing.push("cotação reaproveitada");
   }
 
@@ -164,6 +224,7 @@ function recordPoint(
     totalBrl,
     complete: missing.length === 0,
     isLive: false,
+    reconstructed,
     missing: [...new Set(missing)],
   };
 }
@@ -188,11 +249,13 @@ function buildLivePoint(inputs: EvolutionInputs): EvolutionPoint {
     totalBrl: rate ? consolidation.currentValueUsd * rate : 0,
     complete: consolidation.complete,
     isLive: true,
+    reconstructed: false,
     missing: consolidation.complete ? [] : ["dados atuais incompletos"],
   };
 }
 
 export function calculateEvolution(inputs: EvolutionInputs): EvolutionPoint[] {
+  const liveDate = inputs.stocks.generatedAt.slice(0, 10);
   const recordsByDate = new Map<string, EvolutionHistoryRecord[]>();
   for (const record of inputs.history.records) {
     if (record.kind === "benchmark") continue;
@@ -201,18 +264,60 @@ export function calculateEvolution(inputs: EvolutionInputs): EvolutionPoint[] {
     recordsByDate.set(record.date, items);
   }
 
-  const quoteHistory: Record<EvolutionAssetClass, Map<string, HistoricalQuote>> = {
+  const transactionRecordsByClass = {
+    stocks: transactionQuoteRecords(inputs.stocks, "stocks", "USD", liveDate),
+    fiis: transactionQuoteRecords(inputs.fiis, "fiis", "BRL", liveDate),
+    crypto: transactionQuoteRecords(inputs.crypto, "crypto", "USD", liveDate),
+  } satisfies Record<EvolutionAssetClass, Map<string, EvolutionHistoryRecord[]>>;
+  const historicalDates = new Set(recordsByDate.keys());
+  for (const records of Object.values(transactionRecordsByClass)) {
+    for (const date of records.keys()) historicalDates.add(date);
+  }
+  for (const investment of inputs.fixedIncome?.investments ?? []) {
+    if (investment.purchaseDate <= liveDate) historicalDates.add(investment.purchaseDate);
+  }
+
+  const snapshotQuoteHistory: Record<EvolutionAssetClass, Map<string, HistoricalQuote>> = {
+    stocks: new Map(),
+    fiis: new Map(),
+    crypto: new Map(),
+  };
+  const transactionQuoteHistory: Record<EvolutionAssetClass, Map<string, HistoricalQuote>> = {
     stocks: new Map(),
     fiis: new Map(),
     crypto: new Map(),
   };
   const points: EvolutionPoint[] = [];
-  for (const date of [...recordsByDate.keys()].sort()) {
+  for (const date of [...historicalDates].filter((item) => item < liveDate).sort()) {
     const records = recordsByDate.get(date) ?? [];
-    updateQuoteHistory(records, quoteHistory);
-    const stockQuotes = usableQuotes(inputs.stocks, date, quoteHistory.stocks);
-    const fiiQuotes = usableQuotes(inputs.fiis, date, quoteHistory.fiis);
-    const cryptoQuotes = usableQuotes(inputs.crypto, date, quoteHistory.crypto);
+    for (const assetClass of ["stocks", "fiis", "crypto"] as const) {
+      updateQuoteHistory(
+        transactionRecordsByClass[assetClass].get(date) ?? [],
+        transactionQuoteHistory,
+        "transaction",
+      );
+    }
+    updateQuoteHistory(records, snapshotQuoteHistory, "snapshot");
+    const stockQuotes = usableQuotes(
+      inputs.stocks,
+      date,
+      snapshotQuoteHistory.stocks,
+      transactionQuoteHistory.stocks,
+    );
+    const fiiQuotes = usableQuotes(
+      inputs.fiis,
+      date,
+      snapshotQuoteHistory.fiis,
+      transactionQuoteHistory.fiis,
+    );
+    const cryptoQuotes = usableQuotes(
+      inputs.crypto,
+      date,
+      snapshotQuoteHistory.crypto,
+      transactionQuoteHistory.crypto,
+    );
+    const capturedFx = getFxForDate(records);
+    const fallbackFx = inputs.brlPerUsd !== null && inputs.brlPerUsd > 0 ? inputs.brlPerUsd : null;
     points.push(recordPoint(
       date,
       portfolioAt(inputs.stocks, date, stockQuotes),
@@ -220,7 +325,8 @@ export function calculateEvolution(inputs: EvolutionInputs): EvolutionPoint[] {
       inputs.crypto ? portfolioAt(inputs.crypto, date, cryptoQuotes) : null,
       activeFixedIncomePrincipal(inputs.fixedIncome, date),
       Boolean(inputs.fixedIncome),
-      getFxForDate(records),
+      capturedFx ?? fallbackFx,
+      capturedFx === null && fallbackFx !== null,
       records,
       [stockQuotes, fiiQuotes, cryptoQuotes],
     ));

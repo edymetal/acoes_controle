@@ -141,6 +141,7 @@ export interface EvolutionPoint {
   totalBrl: number;
   complete: boolean;
   isLive: boolean;
+  reconstructed: boolean;
   missing: string[];
 }
 

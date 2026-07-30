@@ -81,7 +81,7 @@ export function Evolution({
   error,
   onRetry,
 }: EvolutionProps) {
-  const [period, setPeriod] = useState<EvolutionPeriod>("1y");
+  const [period, setPeriod] = useState<EvolutionPeriod>("max");
   const [currency, setCurrency] = useState<EvolutionCurrency>("USD");
   const points = useMemo(() => history ? calculateEvolution({
     history,
@@ -109,6 +109,7 @@ export function Evolution({
       total: currency === "USD" ? point.totalUsd : point.totalBrl,
       complete: point.complete,
       isLive: point.isLive,
+      reconstructed: point.reconstructed,
     };
   }), [visiblePoints, currency]);
   const benchmarks = useMemo(
@@ -144,6 +145,7 @@ export function Evolution({
   const coverage = visiblePoints.length > 0 ? completeCount / visiblePoints.length : 0;
   const formatValue = (value: number, compact = false) => formatCurrency(value, compact, currency);
   const hasStoredHistory = history.records.some((record) => record.kind !== "benchmark");
+  const reconstructedCount = visiblePoints.filter((point) => point.reconstructed).length;
 
   return (
     <div className="page-stack evolution-page">
@@ -156,10 +158,21 @@ export function Evolution({
         </div>
       </section>
 
-      {!hasStoredHistory && (
+      {reconstructedCount > 0 && (
         <div className="refresh-message refresh-message--warning evolution-coverage-notice" role="status">
           <Database size={17} />
-          <span>O coletor ainda não registrou fechamentos. O ponto atual já está pronto e a série começará a crescer após a primeira captura diária.</span>
+          <span>
+            {hasStoredHistory
+              ? `A série combina os fechamentos disponíveis com ${reconstructedCount} ponto(s) reconstruído(s) das movimentações da planilha.`
+              : `Exibindo ${reconstructedCount} ponto(s) reconstruído(s) das movimentações já registradas nas planilhas históricas.`}
+            {" "}Preços entre operações e câmbio histórico são estimados até existirem fechamentos diários.
+          </span>
+        </div>
+      )}
+      {!hasStoredHistory && reconstructedCount === 0 && (
+        <div className="refresh-message refresh-message--warning evolution-coverage-notice" role="status">
+          <Database size={17} />
+          <span>Não há movimentações históricas válidas nem fechamentos diários. O ponto atual continuará disponível enquanto a série é iniciada.</span>
         </div>
       )}
       {error && history && (
