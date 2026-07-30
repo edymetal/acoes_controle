@@ -252,7 +252,10 @@ export function Evolution({
                   <Area key={`area-${series.key}`} type="monotone" dataKey={series.key} name={series.name} stroke="none" fill={CLASS_COLORS[series.key]} fillOpacity={0.1} activeDot={false} pointerEvents="none" />
                 ))}
                 {EVOLUTION_SERIES.map((series) => (
-                  <Line key={`series-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeWidth={2} dot={false} activeDot={shouldShowEvolutionMarker(hoveredSeries, series.key) ? { r: 5, fill: CLASS_COLORS[series.key], stroke: "#f7fbff", strokeWidth: 2 } : false} tooltipType="none" legendType="none" isAnimationActive={false} onMouseEnter={() => setHoveredSeries(series.key)} onMouseMove={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
+                  <Line key={`series-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeWidth={2} dot={false} activeDot={shouldShowEvolutionMarker(hoveredSeries, series.key) ? { r: 5, fill: CLASS_COLORS[series.key], stroke: "#f7fbff", strokeWidth: 2 } : false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="none" />
+                ))}
+                {EVOLUTION_SERIES.map((series) => (
+                  <Line key={`hit-area-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeOpacity={0} strokeWidth={18} dot={false} activeDot={false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="stroke" onMouseEnter={() => setHoveredSeries(series.key)} onMouseMove={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
                 ))}
                 <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={hoveredSeries === null ? { r: 5 } : false} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
               </ComposedChart>
