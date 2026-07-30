@@ -47,11 +47,13 @@ export function calculateFixedIncome(data: FixedIncomeData): FixedIncomeModel {
 function calculateMetrics(investments: FixedIncomeInvestment[], coveredMonths: number): FixedIncomeMetrics {
   const currentPrincipal = investments.reduce((sum, investment) => sum + investment.investedAmount, 0);
   const projectedGrossAmount = investments.reduce((sum, investment) => sum + (investment.grossAmount ?? investment.netAmount), 0);
+  const projectedTaxAmount = investments.reduce((sum, investment) => sum + (investment.taxAmount ?? 0), 0);
   const projectedNetAmount = investments.reduce((sum, investment) => sum + investment.netAmount, 0);
   const projectedProfit = investments.reduce((sum, investment) => sum + investment.profit, 0);
   return {
     currentPrincipal,
     projectedGrossAmount,
+    projectedTaxAmount,
     projectedNetAmount,
     projectedProfit,
     projectedReturnRate: currentPrincipal > 0 ? projectedProfit / currentPrincipal : 0,

@@ -19,6 +19,7 @@ describe("calculateFixedIncome", () => {
   it("consolida valores e retorno previstos", () => {
     const model = calculateFixedIncome(data);
     expect(model.metrics.currentPrincipal).toBe(3500);
+    expect(model.metrics.projectedTaxAmount).toBe(80);
     expect(model.metrics.projectedNetAmount).toBe(3950);
     expect(model.metrics.projectedProfit).toBe(450);
     expect(model.metrics.projectedReturnRate).toBeCloseTo(450 / 3500);
@@ -40,6 +41,7 @@ describe("calculateFixedIncome", () => {
     const expired = { ...data.investments[0], id: "expired", maturityDate: "2025-12-31", netAmount: 5000 };
     const model = calculateFixedIncome({ ...data, investments: [...data.investments, expired] });
     expect(model.metrics.assetCount).toBe(3);
+    expect(model.metrics.projectedTaxAmount).toBe(80);
     expect(model.metrics.projectedNetAmount).toBe(3950);
     expect(model.warnings).toContain("1 aplicação vencida foi excluída dos totais atuais.");
   });

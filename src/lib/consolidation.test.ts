@@ -39,6 +39,7 @@ const fixedIncome: FixedIncomeModel = {
   metrics: {
     currentPrincipal: 5_000,
     projectedGrossAmount: 6_200,
+    projectedTaxAmount: 200,
     projectedNetAmount: 6_000,
     projectedProfit: 1_000,
     projectedReturnRate: 0.2,

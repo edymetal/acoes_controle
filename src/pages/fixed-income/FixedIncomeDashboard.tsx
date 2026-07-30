@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, CalendarCheck2, CalendarX2, CircleDollarSign, Landmark, PiggyBank, TrendingUp } from "lucide-react";
+import { ArrowRight, CalendarCheck2, CalendarX2, CircleDollarSign, Landmark, PiggyBank, ReceiptText, TrendingUp } from "lucide-react";
 import type { PageId } from "../../components/Shell";
 import { MetricCard, Section, Value } from "../../components/Ui";
 import { formatBrl, formatDate, formatPercent, formatUsdFromBrl } from "../../lib/format";
@@ -11,15 +11,18 @@ export function FixedIncomeDashboard({ model, usdRate, onNavigate }: { model: Fi
   const { metrics, investments } = model;
   const [selectedYear, setSelectedYear] = useState(model.referenceYear);
   const activeYear = model.years.find(({ year }) => year === selectedYear) ?? model.years[0];
+  const hasIgnoredTaxAmount = model.warnings.some((warning) =>
+    warning.startsWith("Valores bruto e de imposto inconsistentes em fixed-income-"));
   return <div className="page-stack">
     <FixedIncomeWarningNotice warnings={model.warnings} />
     <section className="hero-card hero-card--fixed-income">
       <div><span className="eyebrow">VALOR LÍQUIDO PROJETADO NO VENCIMENTO</span><strong>{formatBrl(metrics.projectedNetAmount)}</strong><small className="hero-card__converted currency-conversion">{formatUsdFromBrl(metrics.projectedNetAmount, usdRate)}</small><p><Value value={metrics.projectedProfit}>{formatBrl(metrics.projectedProfit)} ({formatPercent(metrics.projectedReturnRate)})</Value><span> de lucro projetado</span></p></div>
       <div className="hero-card__summary"><span><small>Principal aplicado</small><strong>{formatBrl(metrics.currentPrincipal)}</strong></span><span><small>Ativos</small><strong>{metrics.assetCount}</strong></span><span><small>Meses em {activeYear.year}</small><strong>{activeYear.metrics.coveredMonths}/12</strong></span></div>
     </section>
-    <section className="metrics-grid">
+    <section className="metrics-grid metrics-grid--five">
       <MetricCard label="Principal aplicado" value={formatBrl(metrics.currentPrincipal)} secondaryValue={formatUsdFromBrl(metrics.currentPrincipal, usdRate)} icon={<PiggyBank size={19} />} helper={`${metrics.assetCount} aplicações · proxy atual`} accent="blue" />
       <MetricCard label="Bruto projetado" value={formatBrl(metrics.projectedGrossAmount)} secondaryValue={formatUsdFromBrl(metrics.projectedGrossAmount, usdRate)} icon={<CircleDollarSign size={19} />} helper="No vencimento, antes dos impostos" accent="violet" />
+      <MetricCard label="Total de imposto de renda" value={formatBrl(metrics.projectedTaxAmount)} secondaryValue={formatUsdFromBrl(metrics.projectedTaxAmount, usdRate)} icon={<ReceiptText size={19} />} helper={hasIgnoredTaxAmount ? "Total parcial · revise o aviso da planilha" : "IR projetado nos vencimentos"} accent="amber" />
       <MetricCard label="Lucro projetado" value={formatBrl(metrics.projectedProfit)} secondaryValue={formatUsdFromBrl(metrics.projectedProfit, usdRate)} icon={<TrendingUp size={19} />} helper={formatPercent(metrics.projectedReturnRate)} change={metrics.projectedProfit} accent="green" />
       <MetricCard label={`Meses sem ativo em ${activeYear.year}`} value={String(activeYear.metrics.missingMonths)} icon={<CalendarX2 size={19} />} helper="Meta: ao menos 1 por mês" accent="amber" />
     </section>

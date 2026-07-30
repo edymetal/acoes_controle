@@ -149,6 +149,7 @@ export interface FixedIncomeMonth {
 export interface FixedIncomeMetrics {
   currentPrincipal: number;
   projectedGrossAmount: number;
+  projectedTaxAmount: number;
   projectedNetAmount: number;
   projectedProfit: number;
   projectedReturnRate: number;
