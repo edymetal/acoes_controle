@@ -241,7 +241,7 @@ export function Evolution({
 
       <Section title="Evolução do patrimônio" subtitle={`Valores históricos consolidados em ${currency}`} className="evolution-chart-panel">
         {chartData.length > 0 ? (
-          <div className="evolution-chart" onMouseLeave={() => setHoveredSeries(null)}>
+          <div className="evolution-chart" onMouseMoveCapture={() => setHoveredSeries(null)} onMouseLeave={() => setHoveredSeries(null)}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 12, right: 10, left: 4, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#24334a" vertical={false} />
@@ -249,10 +249,10 @@ export function Evolution({
                 <YAxis tickFormatter={(value) => formatValue(Number(value), true)} tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} width={75} />
                 <Tooltip content={(props) => <EvolutionTooltip {...props} hoveredSeries={hoveredSeries} formatValue={formatValue} />} />
                 {EVOLUTION_SERIES.map((series) => (
-                  <Area key={series.key} type="monotone" dataKey={series.key} name={series.name} stackId="classes" stroke={CLASS_COLORS[series.key]} fill={CLASS_COLORS[series.key]} fillOpacity={0.28} activeDot={false} onMouseEnter={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
+                  <Area key={`area-${series.key}`} type="monotone" dataKey={series.key} name={series.name} stroke="none" fill={CLASS_COLORS[series.key]} fillOpacity={0.1} activeDot={false} pointerEvents="none" />
                 ))}
                 {EVOLUTION_SERIES.map((series) => (
-                  <Line key={`marker-${series.key}`} type="monotone" dataKey={series.key} stroke="transparent" strokeWidth={1} dot={false} activeDot={shouldShowEvolutionMarker(hoveredSeries, series.key) ? { r: 5, fill: CLASS_COLORS[series.key], stroke: "#f7fbff", strokeWidth: 2 } : false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="none" />
+                  <Line key={`series-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeWidth={2} dot={false} activeDot={shouldShowEvolutionMarker(hoveredSeries, series.key) ? { r: 5, fill: CLASS_COLORS[series.key], stroke: "#f7fbff", strokeWidth: 2 } : false} tooltipType="none" legendType="none" isAnimationActive={false} onMouseEnter={() => setHoveredSeries(series.key)} onMouseMove={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
                 ))}
                 <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={hoveredSeries === null ? { r: 5 } : false} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
               </ComposedChart>
