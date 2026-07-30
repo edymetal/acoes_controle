@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { FixedIncomeData } from "../types";
-import { calculateFixedIncome } from "./fixedIncome";
+import { calculateFixedIncome, calculateFixedIncomeTermDays } from "./fixedIncome";
 
 const data: FixedIncomeData = {
   schemaVersion: 1,
@@ -16,6 +16,11 @@ const data: FixedIncomeData = {
 };
 
 describe("calculateFixedIncome", () => {
+  it("calcula o total de dias corridos entre compra e vencimento", () => {
+    expect(calculateFixedIncomeTermDays("2024-01-01", "2025-01-01")).toBe(366);
+    expect(calculateFixedIncomeTermDays("2026-01-15", "2027-01-15")).toBe(365);
+  });
+
   it("consolida valores e retorno previstos", () => {
     const model = calculateFixedIncome(data);
     expect(model.metrics.currentPrincipal).toBe(3500);

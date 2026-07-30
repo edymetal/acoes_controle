@@ -86,7 +86,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .data-unavailable { color: var(--amber); font-size: 12px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .content { padding: 28px clamp(20px, 3.5vw, 52px) 52px; max-width: 1640px; margin-inline: auto; }
-.content--protected .metric-card__value, .content--protected .overview-hero > div:first-child > strong, .content--protected .overview-hero p .value--positive, .content--protected .overview-hero p .value--negative, .content--protected .overview-hero__stats strong, .content--protected .hero-card > div:first-child > strong, .content--protected .hero-card__converted, .content--protected .hero-card p .value--positive, .content--protected .hero-card p .value--negative, .content--protected .hero-card__summary strong, .content--protected .portfolio-table td:nth-child(3), .content--protected .portfolio-table td:nth-child(4), .content--protected .portfolio-table td:nth-child(5), .content--protected .portfolio-table td:nth-child(6), .content--protected .portfolio-table td:nth-child(8) strong, .content--protected .history-table td:nth-child(5), .content--protected .history-table td:nth-child(6), .content--protected .history-table td:nth-child(7), .content--protected .history-table td:nth-child(8), .content--protected .fixed-income-table td:nth-child(3) small, .content--protected .fixed-income-table td:nth-child(5), .content--protected .fixed-income-table td:nth-child(6), .content--protected .fixed-income-table td:nth-child(7), .content--protected .compact-table > div > span:last-child strong, .content--protected .fixed-income-upcoming > div > span:last-child strong, .content--protected .fixed-income-upcoming > div > span:last-child small, .content--protected .maturity-assets > div > span:last-child, .content--protected .maturity-month > footer strong, .content--protected .maturity-month > footer small, .content--protected .filter-summary strong, .content--protected .asset-modal article strong, .content--protected .asset-modal article em, .content--protected .strategy-card__price strong, .content--protected .strategy-action b, .content--protected .strategy-position strong, .content--protected .range-labels span { filter: blur(8px); user-select: none; }
+.content--protected .metric-card__value, .content--protected .overview-hero > div:first-child > strong, .content--protected .overview-hero p .value--positive, .content--protected .overview-hero p .value--negative, .content--protected .overview-hero__stats strong, .content--protected .hero-card > div:first-child > strong, .content--protected .hero-card__converted, .content--protected .hero-card p .value--positive, .content--protected .hero-card p .value--negative, .content--protected .hero-card__summary strong, .content--protected .portfolio-table td:nth-child(3), .content--protected .portfolio-table td:nth-child(4), .content--protected .portfolio-table td:nth-child(5), .content--protected .portfolio-table td:nth-child(6), .content--protected .portfolio-table td:nth-child(8) strong, .content--protected .history-table td:nth-child(5), .content--protected .history-table td:nth-child(6), .content--protected .history-table td:nth-child(7), .content--protected .history-table td:nth-child(8), .content--protected .fixed-income-table td:nth-child(3) small, .content--protected .fixed-income-table td:nth-child(6), .content--protected .fixed-income-table td:nth-child(7), .content--protected .fixed-income-table td:nth-child(8), .content--protected .compact-table > div > span:last-child strong, .content--protected .fixed-income-upcoming > div > span:last-child strong, .content--protected .fixed-income-upcoming > div > span:last-child small, .content--protected .maturity-assets > div > span:last-child, .content--protected .maturity-month > footer strong, .content--protected .maturity-month > footer small, .content--protected .filter-summary strong, .content--protected .asset-modal article strong, .content--protected .asset-modal article em, .content--protected .strategy-card__price strong, .content--protected .strategy-action b, .content--protected .strategy-position strong, .content--protected .range-labels span { filter: blur(8px); user-select: none; }
 .content--protected .overview-topic-card__value strong,
 .content--protected .overview-hero p .value--neutral,
 .content--protected .overview-topic-card__result .value--positive,
@@ -501,14 +501,15 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .fixed-income-table th { line-height: 1.2; white-space: normal; }
 .fixed-income-table .sortable-header { min-width: 0; }
 .fixed-income-table .sortable-header > span { min-width: 0; overflow-wrap: anywhere; }
-.fixed-income-table th:nth-child(1), .fixed-income-table td:nth-child(1) { width: 23%; }
-.fixed-income-table th:nth-child(2), .fixed-income-table td:nth-child(2) { width: 11%; }
-.fixed-income-table th:nth-child(3), .fixed-income-table td:nth-child(3) { width: 10%; }
-.fixed-income-table th:nth-child(4), .fixed-income-table td:nth-child(4) { width: 12%; }
-.fixed-income-table th:nth-child(5), .fixed-income-table td:nth-child(5) { width: 12%; }
-.fixed-income-table th:nth-child(6), .fixed-income-table td:nth-child(6) { width: 13%; }
-.fixed-income-table th:nth-child(7), .fixed-income-table td:nth-child(7) { width: 9%; }
-.fixed-income-table th:nth-child(8), .fixed-income-table td:nth-child(8) { width: 10%; }
+.fixed-income-table th:nth-child(1), .fixed-income-table td:nth-child(1) { width: 21%; }
+.fixed-income-table th:nth-child(2), .fixed-income-table td:nth-child(2) { width: 10%; }
+.fixed-income-table th:nth-child(3), .fixed-income-table td:nth-child(3) { width: 9%; }
+.fixed-income-table th:nth-child(4), .fixed-income-table td:nth-child(4) { width: 11%; }
+.fixed-income-table th:nth-child(5), .fixed-income-table td:nth-child(5) { width: 8%; }
+.fixed-income-table th:nth-child(6), .fixed-income-table td:nth-child(6) { width: 11%; }
+.fixed-income-table th:nth-child(7), .fixed-income-table td:nth-child(7) { width: 12%; }
+.fixed-income-table th:nth-child(8), .fixed-income-table td:nth-child(8) { width: 8%; }
+.fixed-income-table th:nth-child(9), .fixed-income-table td:nth-child(9) { width: 10%; }
 .fixed-income-table .asset-cell, .fixed-income-table .asset-cell > span:last-child { min-width: 0; }
 .fixed-income-table .asset-cell small { max-width: 100%; }
 .dual-value { display: flex; flex-direction: column; gap: 3px; white-space: nowrap; }

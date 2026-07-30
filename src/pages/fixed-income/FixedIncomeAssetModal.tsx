@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Landmark, X } from "lucide-react";
+import { calculateFixedIncomeTermDays } from "../../lib/fixedIncome";
 import { formatBrl, formatDate, formatPercent, formatUsdFromBrl } from "../../lib/format";
 import type { FixedIncomeInvestment } from "../../types";
 
@@ -87,6 +88,7 @@ export function FixedIncomeAssetModal({
               <div><dt>Vencimento</dt><dd>{formatDate(investment.maturityDate)}</dd></div>
               <div><dt>Fim da carência</dt><dd>{investment.lockupDate ? formatDate(investment.lockupDate) : "Não informado"}</dd></div>
               <div><dt>Prazo</dt><dd>{investment.periodMonths === null ? "Não informado" : `${investment.periodMonths} meses`}</dd></div>
+              <div><dt>Total de dias</dt><dd>{calculateFixedIncomeTermDays(investment.purchaseDate, investment.maturityDate)} dias</dd></div>
             </dl>
           </section>
 

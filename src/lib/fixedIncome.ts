@@ -5,6 +5,13 @@ const MONTHS = [
   ["Maio", "Mai"], ["Junho", "Jun"], ["Julho", "Jul"], ["Agosto", "Ago"],
   ["Setembro", "Set"], ["Outubro", "Out"], ["Novembro", "Nov"], ["Dezembro", "Dez"],
 ] as const;
+const MILLISECONDS_PER_DAY = 86_400_000;
+
+export function calculateFixedIncomeTermDays(purchaseDate: string, maturityDate: string) {
+  const purchaseTime = Date.parse(`${purchaseDate}T00:00:00Z`);
+  const maturityTime = Date.parse(`${maturityDate}T00:00:00Z`);
+  return Math.max(0, Math.round((maturityTime - purchaseTime) / MILLISECONDS_PER_DAY));
+}
 
 export function calculateFixedIncome(data: FixedIncomeData): FixedIncomeModel {
   const referenceDate = data.generatedAt.slice(0, 10);
