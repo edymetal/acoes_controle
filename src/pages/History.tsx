@@ -16,6 +16,14 @@ import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components
 import { formatCurrency, formatDate, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
 import type { PortfolioModel, ProcessedTransaction, TransactionType } from "../types";
 
+function StackedHeader({ label }: { label: string }) {
+  return (
+    <span className="stacked-table-header">
+      {label.split(" ").map((word) => <span key={word}>{word}</span>)}
+    </span>
+  );
+}
+
 const PAGE_SIZE = 15;
 
 interface HistoryRow extends ProcessedTransaction {
@@ -212,7 +220,7 @@ export function History({ model }: { model: PortfolioModel }) {
         </div>
 
         {visible.length ? (
-          <div className="table-wrap">
+          <div className="table-wrap table-wrap--stock-history">
             <table className={`history-table history-table--stocks ${grouped ? "history-table--grouped" : ""}`}>
               <thead><tr>
                 <SortableHeader sortKey="date" sortConfig={sortConfig} onSort={handleSort}>{grouped ? "Período" : "Data"}</SortableHeader>
@@ -220,10 +228,10 @@ export function History({ model }: { model: PortfolioModel }) {
                 <SortableHeader sortKey="ticker" sortConfig={sortConfig} onSort={handleSort}>Ativo</SortableHeader>
                 {grouped && <SortableHeader sortKey="operationCount" sortConfig={sortConfig} onSort={handleSort}>Operações</SortableHeader>}
                 <SortableHeader sortKey="quantity" sortConfig={sortConfig} onSort={handleSort}>Quantidade</SortableHeader>
-                <SortableHeader sortKey="unitPrice" sortConfig={sortConfig} onSort={handleSort}>{grouped ? "Preço médio" : "Preço unitário"}</SortableHeader>
-                <SortableHeader sortKey="total" sortConfig={sortConfig} onSort={handleSort}>Valor total</SortableHeader>
-                <SortableHeader sortKey="costBasis" sortConfig={sortConfig} onSort={handleSort}>Custo descontado</SortableHeader>
-                <SortableHeader sortKey="realizedProfit" sortConfig={sortConfig} onSort={handleSort}>Lucro realizado</SortableHeader>
+                <SortableHeader sortKey="unitPrice" sortConfig={sortConfig} onSort={handleSort}><StackedHeader label={grouped ? "Preço médio" : "Preço unitário"} /></SortableHeader>
+                <SortableHeader sortKey="total" sortConfig={sortConfig} onSort={handleSort}><StackedHeader label="Valor total" /></SortableHeader>
+                <SortableHeader sortKey="costBasis" sortConfig={sortConfig} onSort={handleSort}><StackedHeader label="Custo descontado" /></SortableHeader>
+                <SortableHeader sortKey="realizedProfit" sortConfig={sortConfig} onSort={handleSort}><StackedHeader label="Lucro realizado" /></SortableHeader>
               </tr></thead>
               <tbody>{visible.map((item) => (
                 <tr key={item.id}>
