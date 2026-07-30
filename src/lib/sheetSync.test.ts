@@ -54,6 +54,41 @@ describe("buildSpreadsheetData", () => {
     expect(result.fixedIncome.investments).toHaveLength(1);
   });
 
+  it("lê as cotações de Bitcoin, Ethereum e BNB em toda a faixa Cripto Base D2:E13", () => {
+    const valueRanges = Array.from(
+      { length: 11 },
+      (): { values: Array<Array<string | number | boolean | null>> } => ({ values: [] }),
+    );
+    valueRanges[6].values = [[5]];
+    valueRanges[8].values = [
+      ["BITCOIN", 60_000],
+      ["OUTRA MOEDA", 10],
+      [],
+      ["ETHEREUM", 3_000],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      ["BNB", 500],
+    ];
+    valueRanges[10].values = [[5]];
+
+    const result = buildSpreadsheetData(valueRanges, null, "2026-07-30T12:00:00.000Z");
+
+    expect(result.crypto.source.ranges).toEqual({
+      transactions: "'Cripto'!A1:L1000",
+      assets: "'Cripto Base'!D2:E13",
+    });
+    expect(result.crypto.assets).toEqual([
+      expect.objectContaining({ ticker: "BTC", name: "Bitcoin", currentPrice: 60_000 }),
+      expect.objectContaining({ ticker: "ETH", name: "Ethereum", currentPrice: 3_000 }),
+      expect.objectContaining({ ticker: "BNB", name: "BNB", currentPrice: 500 }),
+    ]);
+  });
+
   it("recusa uma resposta parcial da planilha", () => {
     expect(() => buildSpreadsheetData([], previousPortfolio)).toThrow("A resposta da planilha está incompleta.");
   });

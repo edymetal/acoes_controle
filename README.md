@@ -66,7 +66,7 @@ Os JSONs foram removidos da branch atual e do artefato publicado. O aplicativo t
 | Fundos e cotações atuais | `FII BASE` | `A16:G1000` |
 | Cotação do dólar para conversão dos FIIs | `Dólar` | `G5` |
 | Compras e vendas de cripto | `Cripto` | `A1:L1000` |
-| Cotações atuais de Bitcoin, Ethereum e BNB | `Cripto Base` | `D2:E5` |
+| Cotações atuais de Bitcoin, Ethereum e BNB | `Cripto Base` | `D2:E13` |
 | Ativos de renda fixa, vencimentos e resultados | `Fixa Hist` | `B36:Q1000` |
 | Cotação do dólar para conversão da renda fixa | `Dólar` | `G5` |
 

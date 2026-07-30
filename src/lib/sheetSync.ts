@@ -25,7 +25,7 @@ const FII_RANGES = {
 };
 const CRYPTO_RANGES = {
   transactions: "'Cripto'!A1:L1000",
-  assets: "'Cripto Base'!D2:E5",
+  assets: "'Cripto Base'!D2:E13",
 };
 const FIXED_INCOME_RANGES = {
   investments: "'Fixa Hist'!B36:Q1000",
