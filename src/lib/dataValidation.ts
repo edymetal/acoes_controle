@@ -186,11 +186,18 @@ function amountsMatch(left: number, right: number) {
   return Math.abs(left - right) <= Math.max(0.02, Math.max(Math.abs(left), Math.abs(right)) * 1e-9);
 }
 
-function hasInconsistentSupplementalAmounts(investment: FixedIncomeInvestment) {
-  if (investment.grossAmount === null) return investment.taxAmount !== null;
-  if (investment.grossAmount < investment.netAmount) return true;
-  return investment.taxAmount !== null
-    && !amountsMatch(investment.netAmount, investment.grossAmount - investment.taxAmount);
+function supplementalAmountIssue(investment: FixedIncomeInvestment) {
+  if (investment.grossAmount === null && investment.taxAmount !== null) {
+    return "há imposto preenchido sem valor bruto";
+  }
+  if (investment.grossAmount !== null && investment.grossAmount < investment.netAmount) {
+    return "o valor bruto é menor que o valor líquido";
+  }
+  if (investment.grossAmount !== null && investment.taxAmount !== null
+    && !amountsMatch(investment.netAmount, investment.grossAmount - investment.taxAmount)) {
+    return "o valor líquido não corresponde ao valor bruto menos o imposto";
+  }
+  return null;
 }
 
 function fixedIncomeConsistencyIssue(investments: FixedIncomeInvestment[]) {
@@ -218,8 +225,12 @@ export function parseFixedIncomeData(value: unknown): FixedIncomeData {
   }
   invalidDataIfPresent("A base de renda fixa", fixedIncomeConsistencyIssue(investments));
   const data = value as unknown as FixedIncomeData;
+  const supplementalIssues = investments.flatMap((investment) => {
+    const reason = supplementalAmountIssue(investment);
+    return reason ? [{ id: investment.id, reason }] : [];
+  });
   const inconsistentIds = new Set(
-    investments.filter(hasInconsistentSupplementalAmounts).map((investment) => investment.id),
+    supplementalIssues.map(({ id }) => id),
   );
   if (inconsistentIds.size === 0) return data;
   return {
@@ -234,8 +245,8 @@ export function parseFixedIncomeData(value: unknown): FixedIncomeData {
       ...data.integrity,
       warnings: [
         ...data.integrity.warnings,
-        ...[...inconsistentIds].map((id) =>
-          `Valores bruto e de imposto inconsistentes em ${id}; os campos complementares foram ignorados.`),
+        ...supplementalIssues.map(({ id, reason }) =>
+          `Valores bruto e de imposto inconsistentes em ${id}: ${reason}; os campos complementares foram ignorados.`),
       ],
     },
   };

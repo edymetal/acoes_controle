@@ -223,9 +223,21 @@ describe("validação dos dados privados", () => {
       taxRate: null,
     });
     expect(parsed.integrity.warnings).toContain(
-      "Valores bruto e de imposto inconsistentes em fixed-1; os campos complementares foram ignorados.",
+      "Valores bruto e de imposto inconsistentes em fixed-1: o valor bruto é menor que o valor líquido; os campos complementares foram ignorados.",
     );
     expect(inconsistent.investments[0].grossAmount).toBe(900);
+
+    const taxWithoutGross = structuredClone(fixedIncome);
+    taxWithoutGross.investments[0].grossAmount = null;
+    expect(parseFixedIncomeData(taxWithoutGross).integrity.warnings).toContain(
+      "Valores bruto e de imposto inconsistentes em fixed-1: há imposto preenchido sem valor bruto; os campos complementares foram ignorados.",
+    );
+
+    const mismatchedNetAmount = structuredClone(fixedIncome);
+    mismatchedNetAmount.investments[0].taxAmount = 20;
+    expect(parseFixedIncomeData(mismatchedNetAmount).integrity.warnings).toContain(
+      "Valores bruto e de imposto inconsistentes em fixed-1: o valor líquido não corresponde ao valor bruto menos o imposto; os campos complementares foram ignorados.",
+    );
   });
 
   it("rejeita identificadores e contagem divergentes em renda fixa", () => {

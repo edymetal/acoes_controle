@@ -4,6 +4,7 @@ import type { PageId } from "../../components/Shell";
 import { MetricCard, Section, Value } from "../../components/Ui";
 import { formatBrl, formatDate, formatPercent, formatUsdFromBrl } from "../../lib/format";
 import type { FixedIncomeModel } from "../../types";
+import { FixedIncomeWarningNotice } from "./FixedIncomeWarningNotice";
 import { FixedIncomeYearSelector } from "./FixedIncomeYearSelector";
 
 export function FixedIncomeDashboard({ model, usdRate, onNavigate }: { model: FixedIncomeModel; usdRate: number | null; onNavigate: (page: PageId) => void }) {
@@ -11,7 +12,7 @@ export function FixedIncomeDashboard({ model, usdRate, onNavigate }: { model: Fi
   const [selectedYear, setSelectedYear] = useState(model.referenceYear);
   const activeYear = model.years.find(({ year }) => year === selectedYear) ?? model.years[0];
   return <div className="page-stack">
-    {model.warnings.length > 0 && <div className="refresh-message refresh-message--warning" role="status">{model.warnings.length === 1 ? model.warnings[0] : `${model.warnings.length} avisos foram identificados na renda fixa.`}</div>}
+    <FixedIncomeWarningNotice warnings={model.warnings} />
     <section className="hero-card hero-card--fixed-income">
       <div><span className="eyebrow">VALOR LÍQUIDO PROJETADO NO VENCIMENTO</span><strong>{formatBrl(metrics.projectedNetAmount)}</strong><small className="hero-card__converted currency-conversion">{formatUsdFromBrl(metrics.projectedNetAmount, usdRate)}</small><p><Value value={metrics.projectedProfit}>{formatBrl(metrics.projectedProfit)} ({formatPercent(metrics.projectedReturnRate)})</Value><span> de lucro projetado</span></p></div>
       <div className="hero-card__summary"><span><small>Principal aplicado</small><strong>{formatBrl(metrics.currentPrincipal)}</strong></span><span><small>Ativos</small><strong>{metrics.assetCount}</strong></span><span><small>Meses em {activeYear.year}</small><strong>{activeYear.metrics.coveredMonths}/12</strong></span></div>
