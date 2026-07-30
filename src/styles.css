@@ -661,7 +661,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
 @media (max-width: 680px) {
   .evolution-toolbar { align-items: stretch; flex-direction: column; }
-  .evolution-filter { overflow-x: auto; }
+  .evolution-filter { overflow-x: auto; scrollbar-width: none; }
+  .evolution-filter::-webkit-scrollbar { display: none; }
   .evolution-filter button { flex: 1 0 auto; }
   .evolution-chart { height: 320px; margin-left: -8px; width: calc(100% + 8px); }
   .evolution-chart--benchmark { height: 260px; }
