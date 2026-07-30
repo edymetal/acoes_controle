@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { filterEvolutionTooltipEntries } from "./evolutionTooltip";
+import {
+  filterEvolutionTooltipEntries,
+  shouldShowEvolutionMarker,
+} from "./evolutionTooltip";
 
 const entries = [
   { dataKey: "stocks", name: "Ações", value: 100 },
@@ -18,5 +21,15 @@ describe("filterEvolutionTooltipEntries", () => {
     expect(filterEvolutionTooltipEntries(entries, "crypto")).toEqual([
       { dataKey: "crypto", name: "Cripto", value: 300 },
     ]);
+  });
+
+  it("mostra todos os marcadores individuais fora das faixas", () => {
+    expect(shouldShowEvolutionMarker(null, "stocks")).toBe(true);
+    expect(shouldShowEvolutionMarker(null, "fixedIncome")).toBe(true);
+  });
+
+  it("mostra somente o marcador da classe em hover", () => {
+    expect(shouldShowEvolutionMarker("fixedIncome", "fixedIncome")).toBe(true);
+    expect(shouldShowEvolutionMarker("fixedIncome", "crypto")).toBe(false);
   });
 });

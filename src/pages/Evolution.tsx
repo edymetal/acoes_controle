@@ -33,6 +33,7 @@ import {
 } from "../lib/evolution";
 import {
   filterEvolutionTooltipEntries,
+  shouldShowEvolutionMarker,
   type EvolutionSeriesKey,
 } from "../lib/evolutionTooltip";
 import { formatCurrency, formatDate, formatPercent } from "../lib/format";
@@ -53,12 +54,18 @@ const PERIODS: Array<{ value: EvolutionPeriod; label: string }> = [
   { value: "max", label: "Máximo" },
 ];
 
-const CLASS_COLORS = {
+const CLASS_COLORS: Record<EvolutionSeriesKey, string> = {
   stocks: "#56d8ff",
   fiis: "#7c8cff",
   crypto: "#f6b94a",
   fixedIncome: "#37dda2",
 };
+const EVOLUTION_SERIES: Array<{ key: EvolutionSeriesKey; name: string }> = [
+  { key: "stocks", name: "Ações" },
+  { key: "fiis", name: "FIIs" },
+  { key: "crypto", name: "Cripto" },
+  { key: "fixedIncome", name: "Renda fixa" },
+];
 const BENCHMARK_COLORS = ["#f8799b", "#b584ff", "#8ca5c7", "#ffb86b"];
 const EVOLUTION_TOOLTIP_STYLE = {
   background: "#101d30",
@@ -241,11 +248,13 @@ export function Evolution({
                 <XAxis dataKey="label" tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} minTickGap={30} />
                 <YAxis tickFormatter={(value) => formatValue(Number(value), true)} tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} width={75} />
                 <Tooltip content={(props) => <EvolutionTooltip {...props} hoveredSeries={hoveredSeries} formatValue={formatValue} />} />
-                <Area type="monotone" dataKey="stocks" name="Ações" stackId="classes" stroke={CLASS_COLORS.stocks} fill={CLASS_COLORS.stocks} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("stocks")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("stocks")} />
-                <Area type="monotone" dataKey="fiis" name="FIIs" stackId="classes" stroke={CLASS_COLORS.fiis} fill={CLASS_COLORS.fiis} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("fiis")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("fiis")} />
-                <Area type="monotone" dataKey="crypto" name="Cripto" stackId="classes" stroke={CLASS_COLORS.crypto} fill={CLASS_COLORS.crypto} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("crypto")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("crypto")} />
-                <Area type="monotone" dataKey="fixedIncome" name="Renda fixa" stackId="classes" stroke={CLASS_COLORS.fixedIncome} fill={CLASS_COLORS.fixedIncome} fillOpacity={0.28} onMouseEnter={() => setHoveredSeries("fixedIncome")} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries("fixedIncome")} />
-                <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
+                {EVOLUTION_SERIES.map((series) => (
+                  <Area key={series.key} type="monotone" dataKey={series.key} name={series.name} stackId="classes" stroke={CLASS_COLORS[series.key]} fill={CLASS_COLORS[series.key]} fillOpacity={0.28} activeDot={false} onMouseEnter={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
+                ))}
+                {EVOLUTION_SERIES.map((series) => (
+                  <Line key={`marker-${series.key}`} type="monotone" dataKey={series.key} stroke="transparent" strokeWidth={1} dot={false} activeDot={shouldShowEvolutionMarker(hoveredSeries, series.key) ? { r: 5, fill: CLASS_COLORS[series.key], stroke: "#f7fbff", strokeWidth: 2 } : false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="none" />
+                ))}
+                <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={hoveredSeries === null ? { r: 5 } : false} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>

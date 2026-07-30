@@ -11,3 +11,10 @@ export function filterEvolutionTooltipEntries<T extends EvolutionTooltipEntry>(
   if (hoveredSeries === null) return entries;
   return entries.filter((entry) => entry.dataKey === hoveredSeries);
 }
+
+export function shouldShowEvolutionMarker(
+  hoveredSeries: EvolutionSeriesKey | null,
+  series: EvolutionSeriesKey,
+) {
+  return hoveredSeries === null || hoveredSeries === series;
+}
