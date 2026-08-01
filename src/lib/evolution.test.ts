@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { CryptoData, FiiData, FixedIncomeData, PortfolioData } from "../types";
-import { calculateEvolution, filterEvolutionPeriod } from "./evolution";
+import {
+  buildEvolutionCalendar,
+  calculateEvolution,
+  filterEvolutionPeriod,
+  getEvolutionCalendarYears,
+} from "./evolution";
 import { buildEvolutionHistoryData } from "./evolutionHistory";
 
 const stocks: PortfolioData = {
@@ -208,5 +213,44 @@ describe("filterEvolutionPeriod", () => {
       { date: "2026-03-01" },
     ] as ReturnType<typeof calculateEvolution>;
     expect(filterEvolutionPeriod(points, "30d").map((point) => point.date)).toEqual(["2026-02-01", "2026-03-01"]);
+  });
+});
+
+describe("calendário patrimonial", () => {
+  it("consolida os aportes e o último patrimônio de cada mês na moeda escolhida", () => {
+    const history = buildEvolutionHistoryData([
+      ["2026-01-02", "2026-01-02T23:00:00.000Z", "quote", "stocks", "AAA", "USD", 12, "valid"],
+      ["2026-01-02", "2026-01-02T23:00:00.000Z", "quote", "fiis", "FII11", "BRL", 105, "valid"],
+      ["2026-01-02", "2026-01-02T23:00:00.000Z", "quote", "crypto", "BTC", "USD", 55_000, "valid"],
+      ["2026-01-02", "2026-01-02T23:00:00.000Z", "fx", "", "USD-BRL", "BRL", 5, "valid"],
+    ], "2026-01-03T12:00:00.000Z");
+    const inputs = { stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 };
+    const points = calculateEvolution({ history, ...inputs });
+
+    const usdCalendar = buildEvolutionCalendar(points, inputs, 2026, "USD");
+    const brlCalendar = buildEvolutionCalendar(points, inputs, 2026, "BRL");
+
+    expect(usdCalendar).toHaveLength(12);
+    expect(usdCalendar[0]).toMatchObject({
+      invested: 5_340,
+      investmentCount: 4,
+      patrimony: 6_394,
+      closingDate: "2026-01-03",
+      isCurrent: true,
+      isFuture: false,
+    });
+    expect(brlCalendar[0]).toMatchObject({ invested: 26_700, patrimony: 31_970 });
+    expect(usdCalendar[1]).toMatchObject({
+      invested: 0,
+      patrimony: null,
+      isFuture: true,
+    });
+  });
+
+  it("oferece todos os anos entre o primeiro registro e o período atual", () => {
+    const inputs = { stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 };
+    const points = [{ date: "2024-08-10" }, { date: "2026-01-03" }] as ReturnType<typeof calculateEvolution>;
+
+    expect(getEvolutionCalendarYears(points, inputs)).toEqual([2024, 2025, 2026]);
   });
 });

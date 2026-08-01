@@ -1,6 +1,7 @@
 import type {
   CryptoData,
   EvolutionAssetClass,
+  EvolutionCurrency,
   EvolutionHistoryData,
   EvolutionHistoryRecord,
   EvolutionPoint,
@@ -37,6 +38,132 @@ export interface EvolutionInputs {
 }
 
 export type EvolutionPeriod = "30d" | "6m" | "ytd" | "1y" | "max";
+
+export interface EvolutionCalendarMonth {
+  year: number;
+  month: number;
+  invested: number | null;
+  investmentCount: number;
+  patrimony: number | null;
+  closingDate: string | null;
+  complete: boolean;
+  reconstructed: boolean;
+  isCurrent: boolean;
+  isFuture: boolean;
+}
+
+type EvolutionCalendarInputs = Pick<
+  EvolutionInputs,
+  "stocks" | "fiis" | "crypto" | "fixedIncome" | "brlPerUsd"
+>;
+
+function contributionRecords(inputs: EvolutionCalendarInputs) {
+  return [
+    ...inputs.stocks.purchases.map((item) => ({
+      date: item.date,
+      value: item.total,
+      currency: "USD" as const,
+    })),
+    ...(inputs.fiis?.purchases ?? []).map((item) => ({
+      date: item.date,
+      value: item.total,
+      currency: "BRL" as const,
+    })),
+    ...(inputs.crypto?.purchases ?? []).map((item) => ({
+      date: item.date,
+      value: item.total,
+      currency: "USD" as const,
+    })),
+    ...(inputs.fixedIncome?.investments ?? []).map((item) => ({
+      date: item.purchaseDate,
+      value: item.investedAmount,
+      currency: "BRL" as const,
+    })),
+  ];
+}
+
+function rateAtDate(points: EvolutionPoint[], date: string, fallback: number | null) {
+  for (let index = points.length - 1; index >= 0; index -= 1) {
+    const point = points[index];
+    if (point.date <= date && point.brlPerUsd && point.brlPerUsd > 0) return point.brlPerUsd;
+  }
+  return fallback && fallback > 0 ? fallback : null;
+}
+
+function contributionInCurrency(
+  value: number,
+  nativeCurrency: EvolutionCurrency,
+  currency: EvolutionCurrency,
+  rate: number | null,
+) {
+  if (nativeCurrency === currency) return value;
+  if (!rate) return null;
+  return nativeCurrency === "USD" ? value * rate : value / rate;
+}
+
+export function getEvolutionCalendarYears(
+  points: EvolutionPoint[],
+  inputs: EvolutionCalendarInputs,
+) {
+  const referenceDate = points.at(-1)?.date ?? inputs.stocks.generatedAt.slice(0, 10);
+  const referenceYear = Number(referenceDate.slice(0, 4));
+  const years = [
+    ...points.map((point) => Number(point.date.slice(0, 4))),
+    ...contributionRecords(inputs).map((item) => Number(item.date.slice(0, 4))),
+  ].filter((year) => Number.isInteger(year) && year <= referenceYear);
+  const firstYear = years.length > 0 ? Math.min(...years) : referenceYear;
+  return Array.from({ length: referenceYear - firstYear + 1 }, (_, index) => firstYear + index);
+}
+
+export function buildEvolutionCalendar(
+  points: EvolutionPoint[],
+  inputs: EvolutionCalendarInputs,
+  year: number,
+  currency: EvolutionCurrency,
+): EvolutionCalendarMonth[] {
+  const referenceDate = points.at(-1)?.date ?? inputs.stocks.generatedAt.slice(0, 10);
+  const referenceMonth = referenceDate.slice(0, 7);
+  const contributions = contributionRecords(inputs);
+
+  return Array.from({ length: 12 }, (_, month) => {
+    const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+    const isFuture = monthKey > referenceMonth;
+    const monthContributions = contributions.filter((item) => item.date.startsWith(monthKey));
+    let invested = 0;
+    let conversionAvailable = true;
+    for (const contribution of monthContributions) {
+      const converted = contributionInCurrency(
+        contribution.value,
+        contribution.currency,
+        currency,
+        rateAtDate(points, contribution.date, inputs.brlPerUsd),
+      );
+      if (converted === null) {
+        conversionAvailable = false;
+      } else {
+        invested += converted;
+      }
+    }
+    const closingPoint = isFuture
+      ? null
+      : points.filter((point) => point.date.startsWith(monthKey)).at(-1) ?? null;
+
+    return {
+      year,
+      month,
+      invested: conversionAvailable ? invested : null,
+      investmentCount: monthContributions.length,
+      patrimony: closingPoint
+        ? currency === "USD" ? closingPoint.totalUsd : closingPoint.totalBrl
+        : null,
+      closingDate: closingPoint?.date ?? null,
+      complete: closingPoint?.complete ?? false,
+      reconstructed: closingPoint?.reconstructed ?? false,
+      isCurrent: monthKey === referenceMonth,
+      isFuture,
+    };
+  });
+}
 
 function daysBetween(left: string, right: string) {
   return Math.round((Date.parse(`${right}T00:00:00Z`) - Date.parse(`${left}T00:00:00Z`)) / MILLISECONDS_PER_DAY);

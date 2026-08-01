@@ -3,8 +3,12 @@ import {
   Activity,
   AlertTriangle,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   CircleDollarSign,
   Database,
+  HandCoins,
+  Landmark,
   LoaderCircle,
   RefreshCw,
   TrendingUp,
@@ -23,8 +27,10 @@ import {
 } from "recharts";
 import { EmptyState, MetricCard, Section } from "../components/Ui";
 import {
+  buildEvolutionCalendar,
   calculateEvolution,
   filterEvolutionPeriod,
+  getEvolutionCalendarYears,
   type EvolutionInputs,
   type EvolutionPeriod,
 } from "../lib/evolution";
@@ -49,6 +55,21 @@ const PERIODS: Array<{ value: EvolutionPeriod; label: string }> = [
   { value: "ytd", label: "No ano" },
   { value: "1y", label: "1 ano" },
   { value: "max", label: "Máximo" },
+];
+
+const MONTHS = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
 ];
 
 const CLASS_COLORS: Record<EvolutionSeriesKey, string> = {
@@ -122,6 +143,7 @@ export function Evolution({
 }: EvolutionProps) {
   const [period, setPeriod] = useState<EvolutionPeriod>("max");
   const [currency, setCurrency] = useState<EvolutionCurrency>("USD");
+  const [calendarYear, setCalendarYear] = useState<number | null>(null);
   const [hoveredSeries, setHoveredSeries] = useState<EvolutionSeriesKey | null>(null);
   const points = useMemo(() => history ? calculateEvolution({
     history,
@@ -132,6 +154,24 @@ export function Evolution({
     brlPerUsd,
   }) : [], [history, stocks, fiis, crypto, fixedIncome, brlPerUsd]);
   const visiblePoints = useMemo(() => filterEvolutionPeriod(points, period), [points, period]);
+  const calendarInputs = useMemo(() => ({
+    stocks,
+    fiis,
+    crypto,
+    fixedIncome,
+    brlPerUsd,
+  }), [stocks, fiis, crypto, fixedIncome, brlPerUsd]);
+  const calendarYears = useMemo(
+    () => getEvolutionCalendarYears(points, calendarInputs),
+    [points, calendarInputs],
+  );
+  const selectedCalendarYear = calendarYear !== null && calendarYears.includes(calendarYear)
+    ? calendarYear
+    : calendarYears.at(-1) ?? Number(stocks.generatedAt.slice(0, 4));
+  const calendarMonths = useMemo(
+    () => buildEvolutionCalendar(points, calendarInputs, selectedCalendarYear, currency),
+    [points, calendarInputs, selectedCalendarYear, currency],
+  );
   const chartData = useMemo(() => visiblePoints.map((point) => {
     const rate = point.brlPerUsd;
     const toDisplay = (value: number, nativeCurrency: EvolutionCurrency) => {
@@ -175,6 +215,17 @@ export function Evolution({
         share: allocationTotal > 0 ? Math.max(0, last[series.key]) / allocationTotal : 0,
       }))
     : [];
+  const calendarYearIndex = calendarYears.indexOf(selectedCalendarYear);
+  const calendarInvested = calendarMonths.reduce(
+    (total, month) => total + (month.isFuture ? 0 : month.invested ?? 0),
+    0,
+  );
+  const calendarInvestmentAvailable = calendarMonths
+    .filter((month) => !month.isFuture)
+    .every((month) => month.invested !== null);
+  const calendarLastMonth = calendarMonths.filter((month) => month.patrimony !== null).at(-1) ?? null;
+  const calendarLastPatrimony = calendarLastMonth?.patrimony ?? null;
+  const calendarDataMonths = calendarMonths.filter((month) => month.patrimony !== null).length;
 
   return (
     <div className="page-stack evolution-page">
@@ -223,6 +274,94 @@ export function Evolution({
         <MetricCard label="Cobertura completa" value={formatPercent(coverage, 0)} icon={<Activity size={19} />} helper={`${completeCount} de ${visiblePoints.length} pontos completos`} accent="violet" />
         <MetricCard label="Período disponível" value={visiblePoints.length > 1 ? `${visiblePoints.length} pontos` : "Iniciando"} icon={<CalendarDays size={19} />} helper={first && last ? `${first.label} — ${last.label}` : "Sem fechamentos anteriores"} accent="amber" />
       </div>
+
+      <Section
+        title="Calendário patrimonial"
+        subtitle={`Aportes e fechamento mensal em ${currency}`}
+        className="evolution-calendar-panel"
+        action={(
+          <div className="evolution-year-selector" role="group" aria-label="Ano do calendário patrimonial">
+            <button
+              type="button"
+              aria-label="Ver ano anterior"
+              disabled={calendarYearIndex <= 0}
+              onClick={() => setCalendarYear(calendarYears[calendarYearIndex - 1])}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <strong aria-live="polite">{selectedCalendarYear}</strong>
+            <button
+              type="button"
+              aria-label="Ver próximo ano"
+              disabled={calendarYearIndex < 0 || calendarYearIndex >= calendarYears.length - 1}
+              onClick={() => setCalendarYear(calendarYears[calendarYearIndex + 1])}
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
+      >
+        <div className="evolution-year-summary" aria-label={`Resumo de ${selectedCalendarYear}`}>
+          <span>
+            <HandCoins size={17} />
+            <small>Investido no ano</small>
+            <strong>{calendarInvestmentAvailable ? formatValue(calendarInvested) : "Indisponível"}</strong>
+          </span>
+          <span>
+            <Landmark size={17} />
+            <small>Último patrimônio</small>
+            <strong>{calendarLastPatrimony === null ? "Indisponível" : formatValue(calendarLastPatrimony)}</strong>
+          </span>
+          <span>
+            <CalendarDays size={17} />
+            <small>Meses com histórico</small>
+            <strong>{calendarDataMonths} de 12</strong>
+          </span>
+        </div>
+
+        <div className="evolution-calendar" role="list" aria-label={`Calendário patrimonial de ${selectedCalendarYear}`}>
+          {calendarMonths.map((month) => {
+            const monthStatus = month.isFuture
+              ? "Aguardando o mês"
+              : month.isCurrent
+                ? "Mês atual"
+                : month.closingDate
+                  ? month.complete ? "Fechamento disponível" : "Fechamento parcial"
+                  : "Sem fechamento";
+            const monthClassName = [
+              "evolution-month",
+              month.isCurrent ? "evolution-month--current" : "",
+              month.isFuture ? "evolution-month--future" : "",
+              !month.isFuture && month.patrimony === null ? "evolution-month--missing" : "",
+            ].filter(Boolean).join(" ");
+            return (
+              <article className={monthClassName} role="listitem" key={month.month}>
+                <header>
+                  <span className="evolution-month__number">{String(month.month + 1).padStart(2, "0")}</span>
+                  <span>
+                    <strong>{MONTHS[month.month]}</strong>
+                    <small>{monthStatus}</small>
+                  </span>
+                  <CalendarDays size={19} aria-hidden="true" />
+                </header>
+                <div className="evolution-month__values">
+                  <span className="evolution-month__value evolution-month__value--invested">
+                    <small><HandCoins size={15} />Investido no mês</small>
+                    <strong>{month.isFuture ? "—" : month.invested === null ? "Indisponível" : formatValue(month.invested)}</strong>
+                    <em>{month.isFuture ? "Ainda não iniciado" : `${month.investmentCount} ${month.investmentCount === 1 ? "aporte" : "aportes"}`}</em>
+                  </span>
+                  <span className="evolution-month__value evolution-month__value--patrimony">
+                    <small><Landmark size={15} />Patrimônio</small>
+                    <strong>{month.patrimony === null ? "—" : formatValue(month.patrimony)}</strong>
+                    <em>{month.closingDate ? `Em ${formatDate(month.closingDate)}` : month.isFuture ? "Aguardando fechamento" : "Histórico indisponível"}</em>
+                  </span>
+                </div>
+                {month.reconstructed && <footer>Valor reconstruído a partir das movimentações</footer>}
+              </article>
+            );
+          })}
+        </div>
+      </Section>
 
       <Section title="Evolução do patrimônio" subtitle={`Valores históricos consolidados em ${currency}`} className="evolution-chart-panel">
         {chartData.length > 0 ? (
