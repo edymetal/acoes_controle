@@ -275,6 +275,56 @@ export function Evolution({
         <MetricCard label="Período disponível" value={visiblePoints.length > 1 ? `${visiblePoints.length} pontos` : "Iniciando"} icon={<CalendarDays size={19} />} helper={first && last ? `${first.label} — ${last.label}` : "Sem fechamentos anteriores"} accent="amber" />
       </div>
 
+      <Section title="Evolução do patrimônio" subtitle={`Valores históricos consolidados em ${currency}`} className="evolution-chart-panel">
+        {chartData.length > 0 ? (
+          <div className="evolution-chart" onMouseMoveCapture={() => setHoveredSeries(null)} onMouseLeave={() => setHoveredSeries(null)}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 12, right: 10, left: 4, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#24334a" vertical={false} />
+                <XAxis dataKey="label" tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} minTickGap={30} />
+                <YAxis tickFormatter={(value) => formatValue(Number(value), true)} tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} width={75} />
+                <Tooltip content={(props) => <EvolutionTooltip {...props} hoveredSeries={hoveredSeries} formatValue={formatValue} />} />
+                {EVOLUTION_SERIES.map((series) => (
+                  <Area key={`area-${series.key}`} type="monotone" dataKey={series.key} name={series.name} stroke="none" fill={CLASS_COLORS[series.key]} fillOpacity={0.1} activeDot={false} pointerEvents="none" />
+                ))}
+                {EVOLUTION_SERIES.map((series) => (
+                  <Line key={`series-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeWidth={2} dot={false} activeDot={shouldShowEvolutionMarker(hoveredSeries, series.key) ? { r: 5, fill: CLASS_COLORS[series.key], stroke: "#f7fbff", strokeWidth: 2 } : false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="none" />
+                ))}
+                {EVOLUTION_SERIES.map((series) => (
+                  <Line key={`hit-area-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeOpacity={0} strokeWidth={18} dot={false} activeDot={false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="stroke" onMouseEnter={() => setHoveredSeries(series.key)} onMouseMove={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
+                ))}
+                <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={hoveredSeries === null ? { r: 5 } : false} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        ) : <EmptyState title="Nenhum ponto disponível" description="O primeiro ponto aparecerá assim que as bases atuais estiverem prontas." />}
+        <div className="evolution-legend" aria-label="Legenda das classes">
+          <span><i style={{ background: CLASS_COLORS.stocks }} />Ações</span>
+          <span><i style={{ background: CLASS_COLORS.fiis }} />FIIs</span>
+          <span><i style={{ background: CLASS_COLORS.crypto }} />Cripto</span>
+          <span><i style={{ background: CLASS_COLORS.fixedIncome }} />Renda fixa</span>
+        </div>
+      </Section>
+
+      <Section title="Composição do patrimônio" subtitle={last ? `Distribuição por classe em ${last.label}` : "Distribuição por classe no ponto mais recente"} className="evolution-allocation-panel">
+        {allocation.length > 0 ? (
+          <div className="evolution-allocation" role="list" aria-label="Composição patrimonial por classe">
+            {allocation.map((item) => (
+              <article className="evolution-allocation-item" role="listitem" key={item.key}>
+                <div className="evolution-allocation-head">
+                  <span><i style={{ background: CLASS_COLORS[item.key] }} />{item.name}</span>
+                  <strong>{formatValue(item.value)}</strong>
+                </div>
+                <div className="evolution-allocation-track" aria-hidden="true">
+                  <i style={{ background: CLASS_COLORS[item.key], width: `${Math.min(item.share * 100, 100)}%` }} />
+                </div>
+                <span className="evolution-allocation-share">{formatPercent(item.share, 1)} do patrimônio</span>
+              </article>
+            ))}
+          </div>
+        ) : <EmptyState title="Composição indisponível" description="O detalhamento aparecerá assim que houver um ponto patrimonial válido." />}
+      </Section>
+
       <Section
         title="Calendário patrimonial"
         subtitle={`Aportes e fechamento mensal em ${currency}`}
@@ -361,56 +411,6 @@ export function Evolution({
             );
           })}
         </div>
-      </Section>
-
-      <Section title="Evolução do patrimônio" subtitle={`Valores históricos consolidados em ${currency}`} className="evolution-chart-panel">
-        {chartData.length > 0 ? (
-          <div className="evolution-chart" onMouseMoveCapture={() => setHoveredSeries(null)} onMouseLeave={() => setHoveredSeries(null)}>
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={chartData} margin={{ top: 12, right: 10, left: 4, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#24334a" vertical={false} />
-                <XAxis dataKey="label" tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} minTickGap={30} />
-                <YAxis tickFormatter={(value) => formatValue(Number(value), true)} tick={{ fill: "#8495ad", fontSize: 12 }} axisLine={false} tickLine={false} width={75} />
-                <Tooltip content={(props) => <EvolutionTooltip {...props} hoveredSeries={hoveredSeries} formatValue={formatValue} />} />
-                {EVOLUTION_SERIES.map((series) => (
-                  <Area key={`area-${series.key}`} type="monotone" dataKey={series.key} name={series.name} stroke="none" fill={CLASS_COLORS[series.key]} fillOpacity={0.1} activeDot={false} pointerEvents="none" />
-                ))}
-                {EVOLUTION_SERIES.map((series) => (
-                  <Line key={`series-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeWidth={2} dot={false} activeDot={shouldShowEvolutionMarker(hoveredSeries, series.key) ? { r: 5, fill: CLASS_COLORS[series.key], stroke: "#f7fbff", strokeWidth: 2 } : false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="none" />
-                ))}
-                {EVOLUTION_SERIES.map((series) => (
-                  <Line key={`hit-area-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeOpacity={0} strokeWidth={18} dot={false} activeDot={false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="stroke" onMouseEnter={() => setHoveredSeries(series.key)} onMouseMove={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
-                ))}
-                <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={hoveredSeries === null ? { r: 5 } : false} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        ) : <EmptyState title="Nenhum ponto disponível" description="O primeiro ponto aparecerá assim que as bases atuais estiverem prontas." />}
-        <div className="evolution-legend" aria-label="Legenda das classes">
-          <span><i style={{ background: CLASS_COLORS.stocks }} />Ações</span>
-          <span><i style={{ background: CLASS_COLORS.fiis }} />FIIs</span>
-          <span><i style={{ background: CLASS_COLORS.crypto }} />Cripto</span>
-          <span><i style={{ background: CLASS_COLORS.fixedIncome }} />Renda fixa</span>
-        </div>
-      </Section>
-
-      <Section title="Composição do patrimônio" subtitle={last ? `Distribuição por classe em ${last.label}` : "Distribuição por classe no ponto mais recente"} className="evolution-allocation-panel">
-        {allocation.length > 0 ? (
-          <div className="evolution-allocation" role="list" aria-label="Composição patrimonial por classe">
-            {allocation.map((item) => (
-              <article className="evolution-allocation-item" role="listitem" key={item.key}>
-                <div className="evolution-allocation-head">
-                  <span><i style={{ background: CLASS_COLORS[item.key] }} />{item.name}</span>
-                  <strong>{formatValue(item.value)}</strong>
-                </div>
-                <div className="evolution-allocation-track" aria-hidden="true">
-                  <i style={{ background: CLASS_COLORS[item.key], width: `${Math.min(item.share * 100, 100)}%` }} />
-                </div>
-                <span className="evolution-allocation-share">{formatPercent(item.share, 1)} do patrimônio</span>
-              </article>
-            ))}
-          </div>
-        ) : <EmptyState title="Composição indisponível" description="O detalhamento aparecerá assim que houver um ponto patrimonial válido." />}
       </Section>
 
       <div className="evolution-disclaimer">
