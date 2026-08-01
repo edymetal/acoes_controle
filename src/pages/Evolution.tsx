@@ -406,7 +406,6 @@ export function Evolution({
                     <em>{month.closingDate ? `Em ${formatDate(month.closingDate)}` : month.isFuture ? "Aguardando fechamento" : "Histórico indisponível"}</em>
                   </span>
                 </div>
-                {month.reconstructed && <footer>Valor reconstruído a partir das movimentações</footer>}
               </article>
             );
           })}

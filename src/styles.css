@@ -115,8 +115,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .content--protected .strategy-levels-list__money strong { filter: blur(8px); user-select: none; }
 .content--protected .evolution-year-summary strong,
 .content--protected .evolution-month__value strong,
-.content--protected .evolution-month__value em,
-.content--protected .evolution-month footer { filter: blur(8px); user-select: none; }
+.content--protected .evolution-month__value em { filter: blur(8px); user-select: none; }
 .content--protected .chart-box .recharts-wrapper,
 .content--protected .overview-allocation__chart .recharts-wrapper { filter: blur(10px); opacity: .35; pointer-events: none; user-select: none; }
 .content--protected .recharts-tooltip-wrapper { visibility: hidden !important; }
@@ -670,7 +669,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .evolution-month__value em { margin-top: 4px; color: var(--muted-2); font-size: 11px; font-style: normal; }
 .evolution-month__value--invested small, .evolution-month__value--invested strong { color: var(--green); }
 .evolution-month__value--patrimony small { color: var(--indigo); }
-.evolution-month > footer { padding: 9px 14px; border-top: 1px solid rgba(255, 184, 107, .13); color: #d9bb7c; background: rgba(255, 184, 107, .045); font-size: 10px; line-height: 1.35; }
 .evolution-month--current { border-color: rgba(86, 216, 255, .48); box-shadow: 0 0 0 1px rgba(86, 216, 255, .08), 0 16px 38px rgba(24, 122, 164, .13); }
 .evolution-month--current > header { background: linear-gradient(90deg, rgba(86, 216, 255, .11), rgba(124, 140, 255, .035)); }
 .evolution-month--future { border-style: dashed; box-shadow: none; opacity: .62; }
