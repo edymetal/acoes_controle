@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDays, HandCoins, Layers3, ListChecks, X } from "lucide-react";
 import type {
   EvolutionContributionClass,
@@ -13,6 +13,16 @@ const CLASS_LABELS: Record<EvolutionContributionClass, string> = {
   crypto: "Cripto",
   fixedIncome: "Renda fixa",
 };
+
+type ContributionClassFilter = EvolutionContributionClass | "all";
+
+const CLASS_FILTERS: Array<{ value: ContributionClassFilter; label: string }> = [
+  { value: "all", label: "Todas" },
+  { value: "stocks", label: "Ações" },
+  { value: "fiis", label: "FIIs" },
+  { value: "crypto", label: "Cripto" },
+  { value: "fixedIncome", label: "Renda fixa" },
+];
 
 interface EvolutionMonthModalProps {
   monthLabel: string;
@@ -29,6 +39,7 @@ export function EvolutionMonthModal({
   contributions,
   onClose,
 }: EvolutionMonthModalProps) {
+  const [classFilter, setClassFilter] = useState<ContributionClassFilter>("all");
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -37,9 +48,12 @@ export function EvolutionMonthModal({
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [onClose]);
 
-  const classes = new Set(contributions.map((item) => item.assetClass)).size;
-  const totalAvailable = contributions.every((item) => item.value !== null);
-  const total = contributions.reduce((sum, item) => sum + (item.value ?? 0), 0);
+  const visibleContributions = classFilter === "all"
+    ? contributions
+    : contributions.filter((item) => item.assetClass === classFilter);
+  const classes = new Set(visibleContributions.map((item) => item.assetClass)).size;
+  const totalAvailable = visibleContributions.every((item) => item.value !== null);
+  const total = visibleContributions.reduce((sum, item) => sum + (item.value ?? 0), 0);
 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={(event) => {
@@ -73,7 +87,7 @@ export function EvolutionMonthModal({
           </article>
           <article>
             <ListChecks size={18} />
-            <span><small>Quantidade</small><strong>{contributions.length} {contributions.length === 1 ? "aporte" : "aportes"}</strong></span>
+            <span><small>Quantidade</small><strong>{visibleContributions.length} {visibleContributions.length === 1 ? "aporte" : "aportes"}</strong></span>
           </article>
           <article>
             <Layers3 size={18} />
@@ -81,9 +95,38 @@ export function EvolutionMonthModal({
           </article>
         </div>
 
-        {contributions.length > 0 ? (
+        <section className="evolution-contribution-filter" aria-labelledby="evolution-contribution-filter-title">
+          <div className="evolution-contribution-filter__title">
+            <Layers3 size={18} />
+            <span>
+              <strong id="evolution-contribution-filter-title">Classes</strong>
+              <small>Filtre os aportes por tipo de investimento</small>
+            </span>
+          </div>
+          <div className="evolution-contribution-filter__options" role="group" aria-label="Filtrar aportes por classe">
+            {CLASS_FILTERS.map((filter) => {
+              const count = filter.value === "all"
+                ? contributions.length
+                : contributions.filter((item) => item.assetClass === filter.value).length;
+              return (
+                <button
+                  type="button"
+                  className={classFilter === filter.value ? "active" : ""}
+                  aria-pressed={classFilter === filter.value}
+                  onClick={() => setClassFilter(filter.value)}
+                  key={filter.value}
+                >
+                  <span>{filter.label}</span>
+                  <b className="privacy-value">{count}</b>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {visibleContributions.length > 0 ? (
           <div className="evolution-contribution-list" role="list" aria-label="Lista de aportes do mês">
-            {contributions.map((contribution) => (
+            {visibleContributions.map((contribution) => (
               <article
                 className={`evolution-contribution evolution-contribution--${contribution.assetClass}`}
                 role="listitem"
@@ -117,8 +160,10 @@ export function EvolutionMonthModal({
         ) : (
           <div className="evolution-contribution-empty">
             <span><HandCoins size={27} /></span>
-            <strong>Nenhum aporte neste mês</strong>
-            <p>Não foram encontradas compras de ativos nem aplicações em renda fixa no período.</p>
+            <strong>{classFilter === "all" ? "Nenhum aporte neste mês" : `Nenhum aporte em ${CLASS_LABELS[classFilter]}`}</strong>
+            <p>{classFilter === "all"
+              ? "Não foram encontradas compras de ativos nem aplicações em renda fixa no período."
+              : "Esta classe não possui compras ou aplicações registradas no mês selecionado."}</p>
           </div>
         )}
 

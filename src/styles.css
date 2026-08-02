@@ -689,6 +689,18 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .evolution-contribution-summary article > span { min-width: 0; display: flex; flex-direction: column; }
 .evolution-contribution-summary small, .evolution-contribution-list small { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .045em; text-transform: uppercase; }
 .evolution-contribution-summary strong { margin-top: 4px; overflow-wrap: anywhere; font-size: 16px; }
+.evolution-contribution-filter { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 16px; padding: 12px 13px; border: 1px solid rgba(124, 140, 255, .16); border-radius: 12px; background: linear-gradient(90deg, rgba(124, 140, 255, .07), rgba(86, 216, 255, .035)); }
+.evolution-contribution-filter__title { flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
+.evolution-contribution-filter__title > svg { color: var(--indigo); }
+.evolution-contribution-filter__title > span { display: flex; flex-direction: column; }
+.evolution-contribution-filter__title strong { color: var(--text); font-size: 13px; }
+.evolution-contribution-filter__title small { margin-top: 2px; color: var(--muted); font-size: 10px; }
+.evolution-contribution-filter__options { min-width: 0; display: flex; align-items: center; gap: 5px; }
+.evolution-contribution-filter__options button { min-height: 34px; display: inline-flex; align-items: center; gap: 7px; padding: 0 9px 0 11px; border: 1px solid transparent; border-radius: 9px; color: var(--muted); background: rgba(7, 16, 29, .42); cursor: pointer; font-size: 11px; font-weight: 800; white-space: nowrap; transition: .18s ease; }
+.evolution-contribution-filter__options button:hover { color: var(--text); border-color: rgba(86, 216, 255, .18); }
+.evolution-contribution-filter__options button.active { color: #e9fbff; border-color: rgba(86, 216, 255, .28); background: linear-gradient(135deg, rgba(86, 216, 255, .15), rgba(124, 140, 255, .12)); }
+.evolution-contribution-filter__options b { min-width: 21px; height: 21px; display: grid; place-items: center; padding-inline: 5px; border-radius: 999px; color: var(--blue); background: rgba(86, 216, 255, .09); font-size: 9px; }
+.evolution-contribution-filter__options button.active b { color: #07101d; background: var(--blue); }
 .evolution-contribution-list { display: flex; flex-direction: column; gap: 9px; margin-top: 16px; }
 .evolution-contribution { --contribution-color: var(--blue); display: grid; grid-template-columns: minmax(112px, .68fr) minmax(160px, 1.2fr) minmax(180px, 1.25fr) minmax(170px, .9fr); align-items: center; gap: 15px; min-width: 0; padding: 14px 15px; border: 1px solid color-mix(in srgb, var(--contribution-color) 19%, var(--border-soft)); border-left: 3px solid var(--contribution-color); border-radius: 12px; background: linear-gradient(100deg, color-mix(in srgb, var(--contribution-color) 5%, rgba(8, 20, 34, .94)), rgba(8, 20, 34, .94)); }
 .evolution-contribution--fiis { --contribution-color: var(--indigo); }
@@ -739,6 +751,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
 @media (max-width: 900px) {
   .evolution-calendar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .evolution-contribution-filter { align-items: stretch; flex-direction: column; }
+  .evolution-contribution-filter__options { overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .evolution-contribution-filter__options::-webkit-scrollbar { display: none; }
   .evolution-contribution { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .evolution-contribution__amount { text-align: left; }
 }
@@ -756,6 +771,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .evolution-contribution-modal__header > div { align-items: flex-start; }
   .evolution-contribution-modal__header h2 { font-size: 21px; }
   .evolution-contribution-summary { grid-template-columns: 1fr; }
+  .evolution-contribution-filter__options button { flex: 0 0 auto; }
   .evolution-contribution { grid-template-columns: 1fr; gap: 11px; }
   .evolution-chart { height: 320px; margin-left: -8px; width: calc(100% + 8px); }
   .evolution-allocation { grid-template-columns: 1fr; }
