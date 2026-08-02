@@ -5,6 +5,7 @@ import {
   calculateEvolution,
   filterEvolutionPeriod,
   getEvolutionCalendarYears,
+  getEvolutionMonthContributions,
 } from "./evolution";
 import { buildEvolutionHistoryData } from "./evolutionHistory";
 
@@ -252,5 +253,43 @@ describe("calendário patrimonial", () => {
     const points = [{ date: "2024-08-10" }, { date: "2026-01-03" }] as ReturnType<typeof calculateEvolution>;
 
     expect(getEvolutionCalendarYears(points, inputs)).toEqual([2024, 2025, 2026]);
+  });
+
+  it("detalha todos os aportes do mês com identificação e conversão de moeda", () => {
+    const history = buildEvolutionHistoryData([], "2026-01-03T12:00:00.000Z");
+    const inputs = { stocks, fiis, crypto, fixedIncome, brlPerUsd: 5 };
+    const points = calculateEvolution({ history, ...inputs });
+
+    const contributions = getEvolutionMonthContributions(points, inputs, 2026, 0, "USD");
+
+    expect(contributions).toHaveLength(4);
+    expect(contributions.find((item) => item.assetClass === "stocks")).toMatchObject({
+      title: "AAA",
+      subtitle: "AAA",
+      quantity: 10,
+      unitPrice: 10,
+      nativeCurrency: "USD",
+      nativeValue: 100,
+      currency: "USD",
+      value: 100,
+    });
+    expect(contributions.find((item) => item.assetClass === "fiis")).toMatchObject({
+      title: "FII11",
+      subtitle: "FII",
+      nativeCurrency: "BRL",
+      nativeValue: 200,
+      value: 40,
+    });
+    expect(contributions.find((item) => item.assetClass === "fixedIncome")).toMatchObject({
+      title: "Banco",
+      subtitle: "CDB",
+      quantity: null,
+      nativeValue: 1_000,
+      value: 200,
+    });
+    const contributionsBrl = getEvolutionMonthContributions(points, inputs, 2026, 0, "BRL");
+    expect(contributionsBrl.find((item) => item.assetClass === "stocks")?.value).toBe(500);
+    expect(contributionsBrl.find((item) => item.assetClass === "fiis")?.value).toBe(200);
+    expect(getEvolutionMonthContributions(points, inputs, 2026, 1, "USD")).toEqual([]);
   });
 });

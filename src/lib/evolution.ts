@@ -52,6 +52,22 @@ export interface EvolutionCalendarMonth {
   isFuture: boolean;
 }
 
+export type EvolutionContributionClass = EvolutionAssetClass | "fixedIncome";
+
+export interface EvolutionMonthContribution {
+  id: string;
+  date: string;
+  assetClass: EvolutionContributionClass;
+  title: string;
+  subtitle: string;
+  quantity: number | null;
+  unitPrice: number | null;
+  nativeCurrency: EvolutionCurrency;
+  nativeValue: number;
+  currency: EvolutionCurrency;
+  value: number | null;
+}
+
 type EvolutionCalendarInputs = Pick<
   EvolutionInputs,
   "stocks" | "fiis" | "crypto" | "fixedIncome" | "brlPerUsd"
@@ -60,24 +76,48 @@ type EvolutionCalendarInputs = Pick<
 function contributionRecords(inputs: EvolutionCalendarInputs) {
   return [
     ...inputs.stocks.purchases.map((item) => ({
+      id: `stocks:${item.id}`,
       date: item.date,
       value: item.total,
       currency: "USD" as const,
+      assetClass: "stocks" as const,
+      title: item.ticker,
+      subtitle: inputs.stocks.assets.find((asset) => asset.ticker === item.ticker)?.name ?? item.ticker,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
     })),
     ...(inputs.fiis?.purchases ?? []).map((item) => ({
+      id: `fiis:${item.id}`,
       date: item.date,
       value: item.total,
       currency: "BRL" as const,
+      assetClass: "fiis" as const,
+      title: item.ticker,
+      subtitle: inputs.fiis?.assets.find((asset) => asset.ticker === item.ticker)?.name ?? item.ticker,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
     })),
     ...(inputs.crypto?.purchases ?? []).map((item) => ({
+      id: `crypto:${item.id}`,
       date: item.date,
       value: item.total,
       currency: "USD" as const,
+      assetClass: "crypto" as const,
+      title: item.ticker,
+      subtitle: inputs.crypto?.assets.find((asset) => asset.ticker === item.ticker)?.name ?? item.ticker,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
     })),
     ...(inputs.fixedIncome?.investments ?? []).map((item) => ({
+      id: `fixedIncome:${item.id}`,
       date: item.purchaseDate,
       value: item.investedAmount,
       currency: "BRL" as const,
+      assetClass: "fixedIncome" as const,
+      title: item.name,
+      subtitle: item.type,
+      quantity: null,
+      unitPrice: null,
     })),
   ];
 }
@@ -99,6 +139,37 @@ function contributionInCurrency(
   if (nativeCurrency === currency) return value;
   if (!rate) return null;
   return nativeCurrency === "USD" ? value * rate : value / rate;
+}
+
+export function getEvolutionMonthContributions(
+  points: EvolutionPoint[],
+  inputs: EvolutionCalendarInputs,
+  year: number,
+  month: number,
+  currency: EvolutionCurrency,
+): EvolutionMonthContribution[] {
+  const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+  return contributionRecords(inputs)
+    .filter((item) => item.date.startsWith(monthKey))
+    .map((item) => ({
+      id: item.id,
+      date: item.date,
+      assetClass: item.assetClass,
+      title: item.title,
+      subtitle: item.subtitle,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      nativeCurrency: item.currency,
+      nativeValue: item.value,
+      currency,
+      value: contributionInCurrency(
+        item.value,
+        item.currency,
+        currency,
+        rateAtDate(points, item.date, inputs.brlPerUsd),
+      ),
+    }))
+    .sort((left, right) => left.date.localeCompare(right.date) || left.id.localeCompare(right.id));
 }
 
 export function getEvolutionCalendarYears(

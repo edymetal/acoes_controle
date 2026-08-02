@@ -31,6 +31,7 @@ import {
   calculateEvolution,
   filterEvolutionPeriod,
   getEvolutionCalendarYears,
+  getEvolutionMonthContributions,
   type EvolutionInputs,
   type EvolutionPeriod,
 } from "../lib/evolution";
@@ -41,6 +42,7 @@ import {
 } from "../lib/evolutionTooltip";
 import { formatCurrency, formatDate, formatPercent } from "../lib/format";
 import type { EvolutionCurrency, EvolutionHistoryData } from "../types";
+import { EvolutionMonthModal } from "./EvolutionMonthModal";
 
 interface EvolutionProps extends Omit<EvolutionInputs, "history"> {
   history: EvolutionHistoryData | null;
@@ -144,6 +146,7 @@ export function Evolution({
   const [period, setPeriod] = useState<EvolutionPeriod>("max");
   const [currency, setCurrency] = useState<EvolutionCurrency>("USD");
   const [calendarYear, setCalendarYear] = useState<number | null>(null);
+  const [selectedCalendarMonth, setSelectedCalendarMonth] = useState<number | null>(null);
   const [hoveredSeries, setHoveredSeries] = useState<EvolutionSeriesKey | null>(null);
   const points = useMemo(() => history ? calculateEvolution({
     history,
@@ -171,6 +174,18 @@ export function Evolution({
   const calendarMonths = useMemo(
     () => buildEvolutionCalendar(points, calendarInputs, selectedCalendarYear, currency),
     [points, calendarInputs, selectedCalendarYear, currency],
+  );
+  const selectedMonthContributions = useMemo(
+    () => selectedCalendarMonth === null
+      ? []
+      : getEvolutionMonthContributions(
+          points,
+          calendarInputs,
+          selectedCalendarYear,
+          selectedCalendarMonth,
+          currency,
+        ),
+    [points, calendarInputs, selectedCalendarYear, selectedCalendarMonth, currency],
   );
   const chartData = useMemo(() => visiblePoints.map((point) => {
     const rate = point.brlPerUsd;
@@ -228,7 +243,8 @@ export function Evolution({
   const calendarDataMonths = calendarMonths.filter((month) => month.patrimony !== null).length;
 
   return (
-    <div className="page-stack evolution-page">
+    <>
+      <div className="page-stack evolution-page">
       <section className="evolution-toolbar panel">
         <div className="evolution-filter" role="group" aria-label="Período da evolução">
           {PERIODS.map((item) => <button type="button" key={item.value} className={period === item.value ? "active" : ""} onClick={() => setPeriod(item.value)}>{item.label}</button>)}
@@ -386,36 +402,53 @@ export function Evolution({
             ].filter(Boolean).join(" ");
             return (
               <article className={monthClassName} role="listitem" key={month.month}>
-                <header>
-                  <span className="evolution-month__number">{String(month.month + 1).padStart(2, "0")}</span>
-                  <span>
-                    <strong>{MONTHS[month.month]}</strong>
-                    <small>{monthStatus}</small>
-                  </span>
-                  <CalendarDays size={19} aria-hidden="true" />
-                </header>
-                <div className="evolution-month__values">
-                  <span className="evolution-month__value evolution-month__value--invested">
-                    <small><HandCoins size={15} />Investido no mês</small>
-                    <strong>{month.isFuture ? "—" : month.invested === null ? "Indisponível" : formatValue(month.invested)}</strong>
-                    <em>{month.isFuture ? "Ainda não iniciado" : `${month.investmentCount} ${month.investmentCount === 1 ? "aporte" : "aportes"}`}</em>
-                  </span>
-                  <span className="evolution-month__value evolution-month__value--patrimony">
-                    <small><Landmark size={15} />Patrimônio</small>
-                    <strong>{month.patrimony === null ? "—" : formatValue(month.patrimony)}</strong>
-                    <em>{month.closingDate ? `Em ${formatDate(month.closingDate)}` : month.isFuture ? "Aguardando fechamento" : "Histórico indisponível"}</em>
-                  </span>
-                </div>
+                <button
+                  type="button"
+                  className="evolution-month__button"
+                  aria-label={`Ver ${month.investmentCount} ${month.investmentCount === 1 ? "aporte" : "aportes"} de ${MONTHS[month.month]} de ${selectedCalendarYear}`}
+                  onClick={() => setSelectedCalendarMonth(month.month)}
+                >
+                  <header>
+                    <span className="evolution-month__number">{String(month.month + 1).padStart(2, "0")}</span>
+                    <span>
+                      <strong>{MONTHS[month.month]}</strong>
+                      <small>{monthStatus}</small>
+                    </span>
+                    <ChevronRight className="evolution-month__open" size={19} aria-hidden="true" />
+                  </header>
+                  <div className="evolution-month__values">
+                    <span className="evolution-month__value evolution-month__value--invested">
+                      <small><HandCoins size={15} />Investido no mês</small>
+                      <strong>{month.isFuture ? "—" : month.invested === null ? "Indisponível" : formatValue(month.invested)}</strong>
+                      <em>{month.isFuture ? "Ainda não iniciado" : `${month.investmentCount} ${month.investmentCount === 1 ? "aporte" : "aportes"}`}</em>
+                    </span>
+                    <span className="evolution-month__value evolution-month__value--patrimony">
+                      <small><Landmark size={15} />Patrimônio</small>
+                      <strong>{month.patrimony === null ? "—" : formatValue(month.patrimony)}</strong>
+                      <em>{month.closingDate ? `Em ${formatDate(month.closingDate)}` : month.isFuture ? "Aguardando fechamento" : "Histórico indisponível"}</em>
+                    </span>
+                  </div>
+                </button>
               </article>
             );
           })}
         </div>
       </Section>
 
-      <div className="evolution-disclaimer">
-        <AlertTriangle size={17} />
-        <p><strong>Leitura patrimonial.</strong> A variação inclui o efeito de compras e vendas e ainda não representa TWR ou XIRR. A renda fixa usa o principal aplicado, sem antecipar o lucro projetado.</p>
+        <div className="evolution-disclaimer">
+          <AlertTriangle size={17} />
+          <p><strong>Leitura patrimonial.</strong> A variação inclui o efeito de compras e vendas e ainda não representa TWR ou XIRR. A renda fixa usa o principal aplicado, sem antecipar o lucro projetado.</p>
+        </div>
       </div>
-    </div>
+      {selectedCalendarMonth !== null && (
+        <EvolutionMonthModal
+          monthLabel={MONTHS[selectedCalendarMonth]}
+          year={selectedCalendarYear}
+          currency={currency}
+          contributions={selectedMonthContributions}
+          onClose={() => setSelectedCalendarMonth(null)}
+        />
+      )}
+    </>
   );
 }
