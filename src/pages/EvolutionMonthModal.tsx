@@ -111,7 +111,7 @@ export function EvolutionMonthModal({
               return (
                 <button
                   type="button"
-                  className={classFilter === filter.value ? "active" : ""}
+                  className={`evolution-contribution-filter__option evolution-contribution-filter__option--${filter.value}${classFilter === filter.value ? " active" : ""}`}
                   aria-pressed={classFilter === filter.value}
                   onClick={() => setClassFilter(filter.value)}
                   key={filter.value}
