@@ -6,7 +6,7 @@ import { getStrategySignal } from "../lib/portfolio";
 import { getStrategyLevelValues } from "../lib/settings";
 import type { Asset, PortfolioData, PortfolioModel, StrategyKind, StrategySettings, StrategySignal } from "../types";
 
-type FilterKind = "all" | StrategyKind;
+type FilterKind = "all" | "actionable" | StrategyKind;
 
 function getRangeDetails(asset: Asset, signal: StrategySignal, settings: StrategySettings) {
   const annual = asset.annual;
@@ -59,7 +59,11 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return signals
-      .filter(({ asset, signal }) => (filter === "all" || signal.kind === filter) && (!query || asset.ticker.toLowerCase().includes(query) || asset.name.toLowerCase().includes(query)))
+      .filter(({ asset, signal }) => {
+        const matchesFilter = filter === "all" || (filter === "actionable" ? signal.actionAmount > 0 : signal.kind === filter);
+        const matchesSearch = !query || asset.ticker.toLowerCase().includes(query) || asset.name.toLowerCase().includes(query);
+        return matchesFilter && matchesSearch;
+      })
       .sort((a, b) => b.signal.strength - a.signal.strength || a.asset.ticker.localeCompare(b.asset.ticker));
   }, [signals, filter, search]);
   const buyCount = signals.filter(({ signal }) => signal.kind === "buy").length;
@@ -100,7 +104,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
         <div className="strategy-toolbar">
           <label className="search-field"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar ativo" /></label>
           <div className="segmented-control" role="group" aria-label="Filtrar sinais">
-            {([['all', 'Todos'], ['buy', 'Compra'], ['sell', 'Venda'], ['breakout', 'Rompimento'], ['neutral', 'Neutros']] as Array<[FilterKind, string]>).map(([id, label]) => <button type="button" className={filter === id ? "active" : ""} onClick={() => setFilter(id)} key={id}>{label}</button>)}
+            {([['all', 'Todos'], ['actionable', 'Com operação'], ['buy', 'Compra'], ['sell', 'Venda'], ['breakout', 'Rompimento'], ['neutral', 'Neutros']] as Array<[FilterKind, string]>).map(([id, label]) => <button type="button" className={filter === id ? "active" : ""} aria-pressed={filter === id} onClick={() => setFilter(id)} key={id}>{label}</button>)}
           </div>
         </div>
 
