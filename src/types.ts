@@ -133,8 +133,12 @@ export interface EvolutionHistoryData {
 export interface EvolutionPoint {
   date: string;
   stocksUsd: number;
+  stocksBrl: number;
+  fiisUsd: number;
   fiisBrl: number;
   cryptoUsd: number;
+  cryptoBrl: number;
+  fixedIncomeUsd: number;
   fixedIncomeBrl: number;
   brlPerUsd: number | null;
   totalUsd: number;

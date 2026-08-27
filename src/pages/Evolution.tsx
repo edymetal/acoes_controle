@@ -188,19 +188,13 @@ export function Evolution({
     [points, calendarInputs, selectedCalendarYear, selectedCalendarMonth, currency],
   );
   const chartData = useMemo(() => visiblePoints.map((point) => {
-    const rate = point.brlPerUsd;
-    const toDisplay = (value: number, nativeCurrency: EvolutionCurrency) => {
-      if (currency === nativeCurrency) return value;
-      if (!rate) return 0;
-      return nativeCurrency === "USD" ? value * rate : value / rate;
-    };
     return {
       date: point.date,
       label: formatDate(point.date),
-      stocks: toDisplay(point.stocksUsd, "USD"),
-      fiis: toDisplay(point.fiisBrl, "BRL"),
-      crypto: toDisplay(point.cryptoUsd, "USD"),
-      fixedIncome: toDisplay(point.fixedIncomeBrl, "BRL"),
+      stocks: currency === "USD" ? point.stocksUsd : point.stocksBrl,
+      fiis: currency === "USD" ? point.fiisUsd : point.fiisBrl,
+      crypto: currency === "USD" ? point.cryptoUsd : point.cryptoBrl,
+      fixedIncome: currency === "USD" ? point.fixedIncomeUsd : point.fixedIncomeBrl,
       total: currency === "USD" ? point.totalUsd : point.totalBrl,
       complete: point.complete,
       isLive: point.isLive,
@@ -238,9 +232,9 @@ export function Evolution({
   const calendarInvestmentAvailable = calendarMonths
     .filter((month) => !month.isFuture)
     .every((month) => month.invested !== null);
-  const calendarLastMonth = calendarMonths.filter((month) => month.patrimony !== null).at(-1) ?? null;
-  const calendarLastPatrimony = calendarLastMonth?.patrimony ?? null;
-  const calendarDataMonths = calendarMonths.filter((month) => month.patrimony !== null).length;
+  const calendarLastMonth = calendarMonths.filter((month) => month.capital !== null).at(-1) ?? null;
+  const calendarLastCapital = calendarLastMonth?.capital ?? null;
+  const calendarDataMonths = calendarMonths.filter((month) => month.capital !== null).length;
 
   return (
     <>
@@ -259,9 +253,9 @@ export function Evolution({
           <Database size={17} />
           <span>
             {hasStoredHistory
-              ? `A série combina os fechamentos disponíveis com ${reconstructedCount} ponto(s) reconstruído(s) das movimentações da planilha.`
-              : `Exibindo ${reconstructedCount} ponto(s) reconstruído(s) das movimentações já registradas nas planilhas históricas.`}
-            {" "}Preços entre operações e câmbio histórico são estimados até existirem fechamentos diários.
+              ? `A série combina as datas de fechamento com ${reconstructedCount} ponto(s) calculado(s) diretamente das movimentações da planilha.`
+              : `Exibindo ${reconstructedCount} ponto(s) calculado(s) das movimentações já registradas nas planilhas históricas.`}
+            {" "}As cotações não alteram o capital investido; conversões preservam o câmbio disponível na data de cada operação.
           </span>
         </div>
       )}
@@ -285,13 +279,13 @@ export function Evolution({
       )}
 
       <div className="metrics-grid">
-        <MetricCard label="Patrimônio no período" value={last ? formatValue(last.total) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={last?.isLive ? "Ponto atual calculado agora" : "Último fechamento registrado"} accent="blue" />
-        <MetricCard label="Variação patrimonial" value={formatValue(change)} icon={<TrendingUp size={19} />} helper={chartData.length > 1 ? formatPercent(changePercent) : "Aguardando o segundo ponto"} change={chartData.length > 1 ? change : undefined} accent="green" />
+        <MetricCard label="Capital investido no período" value={last ? formatValue(last.total) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={last?.isLive ? "Saldo investido calculado agora" : "Último saldo investido registrado"} accent="blue" />
+        <MetricCard label="Variação do capital" value={formatValue(change)} icon={<TrendingUp size={19} />} helper={chartData.length > 1 ? formatPercent(changePercent) : "Aguardando o segundo ponto"} change={chartData.length > 1 ? change : undefined} accent="green" />
         <MetricCard label="Cobertura completa" value={formatPercent(coverage, 0)} icon={<Activity size={19} />} helper={`${completeCount} de ${visiblePoints.length} pontos completos`} accent="violet" />
         <MetricCard label="Período disponível" value={visiblePoints.length > 1 ? `${visiblePoints.length} pontos` : "Iniciando"} icon={<CalendarDays size={19} />} helper={first && last ? `${first.label} — ${last.label}` : "Sem fechamentos anteriores"} accent="amber" />
       </div>
 
-      <Section title="Evolução do patrimônio" subtitle={`Valores históricos consolidados em ${currency}`} className="evolution-chart-panel">
+      <Section title="Evolução do capital investido" subtitle={`Aportes líquidos acumulados, sem oscilações de mercado, em ${currency}`} className="evolution-chart-panel">
         {chartData.length > 0 ? (
           <div className="evolution-chart" onMouseMoveCapture={() => setHoveredSeries(null)} onMouseLeave={() => setHoveredSeries(null)}>
             <ResponsiveContainer width="100%" height="100%">
@@ -309,7 +303,7 @@ export function Evolution({
                 {EVOLUTION_SERIES.map((series) => (
                   <Line key={`hit-area-${series.key}`} type="monotone" dataKey={series.key} stroke={CLASS_COLORS[series.key]} strokeOpacity={0} strokeWidth={18} dot={false} activeDot={false} tooltipType="none" legendType="none" isAnimationActive={false} pointerEvents="stroke" onMouseEnter={() => setHoveredSeries(series.key)} onMouseMove={() => setHoveredSeries(series.key)} onMouseLeave={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(series.key)} />
                 ))}
-                <Line type="monotone" dataKey="total" name="Patrimônio" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={hoveredSeries === null ? { r: 5 } : false} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
+                <Line type="monotone" dataKey="total" name="Total investido" stroke="#f7fbff" strokeWidth={2.5} dot={false} activeDot={hoveredSeries === null ? { r: 5 } : false} onMouseEnter={() => setHoveredSeries(null)} onClick={() => setHoveredSeries(null)} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -322,9 +316,9 @@ export function Evolution({
         </div>
       </Section>
 
-      <Section title="Composição do patrimônio" subtitle={last ? `Distribuição por classe em ${last.label}` : "Distribuição por classe no ponto mais recente"} className="evolution-allocation-panel">
+      <Section title="Composição do capital investido" subtitle={last ? `Distribuição por classe em ${last.label}` : "Distribuição por classe no ponto mais recente"} className="evolution-allocation-panel">
         {allocation.length > 0 ? (
-          <div className="evolution-allocation" role="list" aria-label="Composição patrimonial por classe">
+          <div className="evolution-allocation" role="list" aria-label="Composição do capital investido por classe">
             {allocation.map((item) => (
               <article className="evolution-allocation-item" role="listitem" key={item.key}>
                 <div className="evolution-allocation-head">
@@ -334,19 +328,19 @@ export function Evolution({
                 <div className="evolution-allocation-track" aria-hidden="true">
                   <i style={{ background: CLASS_COLORS[item.key], width: `${Math.min(item.share * 100, 100)}%` }} />
                 </div>
-                <span className="evolution-allocation-share">{formatPercent(item.share, 1)} do patrimônio</span>
+                <span className="evolution-allocation-share">{formatPercent(item.share, 1)} do capital investido</span>
               </article>
             ))}
           </div>
-        ) : <EmptyState title="Composição indisponível" description="O detalhamento aparecerá assim que houver um ponto patrimonial válido." />}
+        ) : <EmptyState title="Composição indisponível" description="O detalhamento aparecerá assim que houver um ponto de capital investido válido." />}
       </Section>
 
       <Section
-        title="Calendário patrimonial"
-        subtitle={`Aportes e fechamento mensal em ${currency}`}
+        title="Calendário do capital investido"
+        subtitle={`Aportes e saldo investido mensal em ${currency}`}
         className="evolution-calendar-panel"
         action={(
-          <div className="evolution-year-selector" role="group" aria-label="Ano do calendário patrimonial">
+          <div className="evolution-year-selector" role="group" aria-label="Ano do calendário do capital investido">
             <button
               type="button"
               aria-label="Ver ano anterior"
@@ -375,8 +369,8 @@ export function Evolution({
           </span>
           <span>
             <Landmark size={17} />
-            <small>Último patrimônio</small>
-            <strong>{calendarLastPatrimony === null ? "Indisponível" : formatValue(calendarLastPatrimony)}</strong>
+            <small>Capital acumulado</small>
+            <strong>{calendarLastCapital === null ? "Indisponível" : formatValue(calendarLastCapital)}</strong>
           </span>
           <span>
             <CalendarDays size={17} />
@@ -385,7 +379,7 @@ export function Evolution({
           </span>
         </div>
 
-        <div className="evolution-calendar" role="list" aria-label={`Calendário patrimonial de ${selectedCalendarYear}`}>
+        <div className="evolution-calendar" role="list" aria-label={`Calendário do capital investido de ${selectedCalendarYear}`}>
           {calendarMonths.map((month) => {
             const monthStatus = month.isFuture
               ? "Aguardando o mês"
@@ -398,7 +392,7 @@ export function Evolution({
               "evolution-month",
               month.isCurrent ? "evolution-month--current" : "",
               month.isFuture ? "evolution-month--future" : "",
-              !month.isFuture && month.patrimony === null ? "evolution-month--missing" : "",
+              !month.isFuture && month.capital === null ? "evolution-month--missing" : "",
             ].filter(Boolean).join(" ");
             return (
               <article className={monthClassName} role="listitem" key={month.month}>
@@ -423,8 +417,8 @@ export function Evolution({
                       <em>{month.isFuture ? "Ainda não iniciado" : `${month.investmentCount} ${month.investmentCount === 1 ? "aporte" : "aportes"}`}</em>
                     </span>
                     <span className="evolution-month__value evolution-month__value--patrimony">
-                      <small><Landmark size={15} />Patrimônio</small>
-                      <strong>{month.patrimony === null ? "—" : formatValue(month.patrimony)}</strong>
+                      <small><Landmark size={15} />Capital acumulado</small>
+                      <strong>{month.capital === null ? "—" : formatValue(month.capital)}</strong>
                       <em>{month.closingDate ? `Em ${formatDate(month.closingDate)}` : month.isFuture ? "Aguardando fechamento" : "Histórico indisponível"}</em>
                     </span>
                   </div>
@@ -437,7 +431,7 @@ export function Evolution({
 
         <div className="evolution-disclaimer">
           <AlertTriangle size={17} />
-          <p><strong>Leitura patrimonial.</strong> A variação inclui o efeito de compras e vendas e ainda não representa TWR ou XIRR. A renda fixa usa o principal aplicado, sem antecipar o lucro projetado.</p>
+          <p><strong>Leitura do capital investido.</strong> Compras e novos aportes aumentam a curva; vendas reduzem somente o custo médio retirado da posição. Cotações de mercado não alteram a série. A renda fixa usa o principal aplicado até o vencimento, sem antecipar o lucro projetado.</p>
         </div>
       </div>
       {selectedCalendarMonth !== null && (

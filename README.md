@@ -21,7 +21,7 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 - Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
 - Área independente de Cripto em dólares para Bitcoin, Ethereum e BNB, com visão geral, carteira e movimentações.
 - Área independente de Renda Fixa, com valores em reais, total projetado de imposto de renda, prazo total em dias, conversão secundária em dólares, carteira com detalhes completos de cada ativo e escada de vencimentos para os 12 meses.
-- Evolução patrimonial consolidada em USD ou BRL, com períodos configuráveis, composição histórica por classe, cobertura dos dados e suporte a benchmarks normalizados.
+- Evolução do capital investido consolidado em USD ou BRL, com períodos configuráveis, composição histórica por classe, cobertura dos dados e suporte a benchmarks normalizados.
 - Carregamento privado direto da planilha após autorização Google de somente leitura.
 - Sincronização imediata pelo botão de atualizar, sem publicar uma cópia dos dados no GitHub Pages.
 - Indicadores explícitos de avaliação parcial quando uma posição está sem cotação, sem converter o custo da posição em prejuízo fictício.
@@ -104,13 +104,13 @@ Quando há compra e venda do mesmo ativo no mesmo dia, a data é suficiente para
 - Antes dos cálculos, os quatro contratos são validados em runtime tanto no carregamento via backend quanto na leitura direta da planilha. A validação rejeita datas e horários impossíveis, números fora do domínio, IDs/tickers duplicados, contagens divergentes e relações financeiras essenciais incoerentes.
 - Na renda fixa, uma inconsistência isolada entre os campos complementares bruto/IR e o valor líquido não bloqueia toda a carteira: esses campos são ignorados no registro afetado, o valor líquido conciliado com principal e lucro é preservado e um aviso claro oferece detalhes sobre a linha, as células e a correção necessária.
 
-## Evolução patrimonial
+## Evolução do capital investido
 
 O módulo de evolução é opcional e isolado das quatro bases atuais. Ele só lê o histórico quando a página **Evolução** é aberta; uma aba ausente ou inválida não interfere no restante do aplicativo.
 
-As posições de cada data são reconstruídas pelo mesmo motor financeiro usado nas telas atuais. Mesmo antes da primeira captura diária, o sistema cria uma série inicial com as datas, quantidades e preços unitários já registrados em `Ações Hist`, `FII Hist`, `Cripto` e `Fixa Hist`. Esses pontos são identificados como reconstruídos porque reutilizam o último preço de movimentação disponível e o câmbio atual quando não existe câmbio histórico.
+As posições de cada data são reconstruídas pelo custo efetivamente mantido. Compras e novos aportes aumentam a curva; vendas reduzem somente o custo médio baixado da posição; e vencimentos retiram o principal da renda fixa. Cotações de mercado não alteram a série. Mesmo antes da primeira captura diária, o sistema cria pontos com as datas e movimentações já registradas em `Ações Hist`, `FII Hist`, `Cripto` e `Fixa Hist`.
 
-A aba `Evolução Hist` complementa essa série inicial com fechamentos reais de cotações, câmbio e benchmarks, evitando duplicar totais ou regras financeiras na planilha. Quando há um fechamento para a mesma data, ele tem prioridade sobre o preço da movimentação. O ponto mais recente é calculado em memória com os dados atuais. A renda fixa entra pelo principal que estava ativo em cada data, sem incluir lucros futuros.
+A aba `Evolução Hist` complementa a linha do tempo com datas de fechamento, câmbio e benchmarks, evitando duplicar totais ou regras financeiras na planilha. Cada aporte convertido preserva o câmbio disponível na data da operação, portanto uma oscilação cambial posterior também não reduz o capital já registrado. O ponto mais recente é calculado em memória com as movimentações atuais. A renda fixa entra pelo principal ativo em cada data, sem incluir lucros futuros.
 
 Para iniciar a captura:
 
@@ -123,7 +123,7 @@ O acionador roda diariamente por volta de 23h30 no fuso `America/Sao_Paulo`. Uma
 
 Benchmarks são opcionais. Para registrá-los, crie a aba `Evolução Benchmarks` com as colunas `Código`, `Moeda` e `Valor` a partir da linha 2. Cada código válido será capturado diariamente e normalizado em 100 pela interface.
 
-A variação exibida nesta primeira etapa é patrimonial e inclui o efeito de compras e vendas. Ela não é apresentada como TWR ou XIRR. O histórico permanece apenas na planilha privada, não é publicado, persistido pelo aplicativo ou armazenado no cache do PWA.
+A variação exibida representa capital investido, não valor de mercado, TWR ou XIRR. O histórico permanece apenas na planilha privada, não é publicado, persistido pelo aplicativo ou armazenado no cache do PWA.
 
 ## Estratégia anual
 

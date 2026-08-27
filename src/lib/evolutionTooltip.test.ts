@@ -9,7 +9,7 @@ const entries = [
   { dataKey: "fiis", name: "FIIs", value: 200 },
   { dataKey: "crypto", name: "Cripto", value: 300 },
   { dataKey: "fixedIncome", name: "Renda fixa", value: 400 },
-  { dataKey: "total", name: "Patrimônio", value: 1_000 },
+  { dataKey: "total", name: "Total investido", value: 1_000 },
 ];
 
 describe("filterEvolutionTooltipEntries", () => {
