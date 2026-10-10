@@ -15,7 +15,7 @@ const data: PortfolioData = {
 };
 
 describe("getStockMarketLinks", () => {
-  it("abre o ativo na bolsa correta e limita o gráfico ao período de um ano", () => {
+  it("abre o ativo na bolsa correta com o período inicial de um ano", () => {
     const links = getStockMarketLinks(asset);
     const chartUrl = new URL(links.chartUrl!);
     const config = JSON.parse(decodeURIComponent(chartUrl.hash.slice(1)));
@@ -27,6 +27,16 @@ describe("getStockMarketLinks", () => {
     expect(links.googleFinanceUrl).toBe("https://www.google.com/finance/quote/T%3ANYSE?window=1Y");
     expect(config).not.toHaveProperty("currentPrice");
     expect(config).not.toHaveProperty("name");
+  });
+
+  it("altera o período do gráfico e da consulta no Google Finance juntos", () => {
+    const monthly = getStockMarketLinks(asset, "pt-BR", "1m");
+    const monthlyConfig = JSON.parse(decodeURIComponent(new URL(monthly.chartUrl!).hash.slice(1)));
+    expect(monthlyConfig.dateRanges).toEqual(["1m|30"]);
+    expect(monthly.googleFinanceUrl).toContain("window=1M");
+    const fiveYears = getStockMarketLinks(asset, "pt-BR", "5y");
+    expect(JSON.parse(decodeURIComponent(new URL(fiveYears.chartUrl!).hash.slice(1))).dateRanges).toEqual(["60m|1W"]);
+    expect(fiveYears.googleFinanceUrl).toContain("window=5Y");
   });
 
   it("normaliza bolsas e preserva códigos de classes de ações", () => {

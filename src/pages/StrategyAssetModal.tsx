@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, ExternalLink, RotateCcw, X } from "lucide-react"
 import { EmptyState, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatDateTime, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
 import { loadAppLanguage } from "../lib/i18n";
-import { getStockActivity, getStockMarketLinks } from "../lib/stockDetails";
+import { getStockActivity, getStockMarketLinks, STOCK_CHART_PERIODS, type StockChartPeriod } from "../lib/stockDetails";
 import type { Asset, PortfolioModel } from "../types";
 
 const PAGE_SIZE = 10;
@@ -17,8 +17,10 @@ export function StrategyAssetModal({ asset, model, generatedAt, onClose }: {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [page, setPage] = useState(1);
   const [chartRevision, setChartRevision] = useState(0);
+  const [chartPeriod, setChartPeriod] = useState<StockChartPeriod>("1y");
+  const selectedPeriod = STOCK_CHART_PERIODS.find((item) => item.id === chartPeriod)!;
   const activity = useMemo(() => getStockActivity(model, asset.ticker), [model, asset.ticker]);
-  const links = getStockMarketLinks(asset, loadAppLanguage());
+  const links = getStockMarketLinks(asset, loadAppLanguage(), chartPeriod);
   const { position, accountingReliable } = activity;
   const quoteAvailable = asset.currentPrice > 0;
   const openResultAvailable = accountingReliable && (!position || position.quoteAvailable);
@@ -53,15 +55,18 @@ export function StrategyAssetModal({ asset, model, generatedAt, onClose }: {
 
       <section className="stock-market-chart" aria-labelledby="stock-market-chart-title">
         <header>
-          <div><h3 id="stock-market-chart-title">Cotação nos últimos 12 meses</h3><p>Gráfico interativo de preços e variação do ativo</p></div>
+          <div><h3 id="stock-market-chart-title">Histórico de cotações</h3><p>{selectedPeriod.description} · preços e variação do ativo</p></div>
           <a className="stock-market-link" href={links.googleFinanceUrl} target="_blank" rel="noopener noreferrer">Google Finance <ExternalLink size={15} /></a>
         </header>
         {links.chartUrl ? <>
+          <div className="stock-chart-periods" role="group" aria-label="Período do gráfico">
+            {STOCK_CHART_PERIODS.map((period) => <button key={period.id} type="button" className={chartPeriod === period.id ? "active" : ""} aria-pressed={chartPeriod === period.id} onClick={() => setChartPeriod(period.id)}>{period.label}</button>)}
+          </div>
           <iframe
-            key={chartRevision}
+            key={`${chartPeriod}-${chartRevision}`}
             className="stock-market-chart__frame"
             src={links.chartUrl}
-            title={`Gráfico de cotação de ${asset.ticker} no período de um ano`}
+            title={`Gráfico de cotação de ${asset.ticker}: ${selectedPeriod.description.toLowerCase()}`}
             sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
             referrerPolicy="no-referrer"
           />

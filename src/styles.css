@@ -328,6 +328,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .stock-market-chart header p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
 .stock-market-link { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid rgba(86, 216, 255, .25); border-radius: 8px; color: var(--blue); font-size: 12px; text-decoration: none; }
 .stock-market-link:hover { border-color: var(--blue); background: rgba(86, 216, 255, .08); }
+.stock-chart-periods { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.stock-chart-periods button { padding: 7px 12px; border: 1px solid transparent; border-radius: 8px; color: var(--muted); background: transparent; font-size: 12px; font-weight: 700; cursor: pointer; }
+.stock-chart-periods button:hover { color: var(--text); background: rgba(86, 216, 255, .06); }
+.stock-chart-periods button.active { border-color: rgba(86, 216, 255, .3); color: var(--blue); background: rgba(86, 216, 255, .1); }
 .stock-market-chart__frame { display: block; width: 100%; height: 390px; margin-top: 20px; border: 0; border-radius: 8px; }
 .stock-market-chart > footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; }
 .stock-market-chart footer a { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; text-decoration: none; }
