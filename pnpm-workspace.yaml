@@ -1,3 +1,7 @@
 allowBuilds:
   '@firebase/util': false
   protobufjs: false
+
+overrides:
+  # Fix GHSA-m9gg-hp2v-232j in Firebase's Node.js Firestore dependency.
+  '@firebase/firestore>@grpc/grpc-js': 1.13.6
