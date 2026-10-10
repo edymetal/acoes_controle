@@ -5,6 +5,7 @@ import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
 import { getStrategyLevelValues } from "../lib/settings";
 import type { Asset, PortfolioData, PortfolioModel, StrategyKind, StrategySettings, StrategySignal } from "../types";
+import { StrategyAssetModal } from "./StrategyAssetModal";
 
 type FilterKind = "all" | "actionable" | StrategyKind;
 
@@ -47,6 +48,8 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
   const [filter, setFilter] = useState<FilterKind>("all");
   const [search, setSearch] = useState("");
   const [showLevels, setShowLevels] = useState(false);
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
+  const selectedAsset = data.assets.find((asset) => asset.ticker === selectedTicker);
   const levelValues = useMemo(() => getStrategyLevelValues(settings), [settings]);
   const signals = useMemo(() => {
     const positions = new Map(model.positions.map((position) => [position.ticker, position]));
@@ -119,7 +122,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
             const style = { "--signal-strength": signal.strength } as CSSProperties;
             return (
               <article className={`strategy-card strategy-card--${signal.kind}`} style={style} key={asset.ticker}>
-                <header><StockLogo ticker={asset.ticker} /><span><strong>{asset.ticker}</strong><small>{asset.name}</small></span><SignalBadge signal={signal} /></header>
+                <header><StockLogo ticker={asset.ticker} /><span><button className="ticker-link strategy-asset-link" type="button" aria-haspopup="dialog" aria-label={`Abrir gráfico e movimentações de ${asset.ticker}`} onClick={() => setSelectedTicker(asset.ticker)}>{asset.ticker}</button><small>{asset.name}</small></span><SignalBadge signal={signal} /></header>
                 <div className="strategy-card__price"><span><small>Cotação atual</small><strong>{formatCurrency(asset.currentPrice)}</strong></span>{signal.rangePositionPercent !== null && <span><small>No intervalo anual</small><strong>{formatPercent(signal.rangePositionPercent / 100)}</strong></span>}</div>
                 <div className={`strategy-action strategy-action--${signal.actionAmount > 0 ? signal.kind : "waiting"}`}>
                   <span><small>{signal.kind === "buy" ? "Valor para atingir o nível" : "Próxima operação"}</small><strong>{signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR" : "VENDER") : "AGUARDAR"}</strong></span>
@@ -142,6 +145,8 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
           })}
         </div> : <EmptyState title="Nenhum sinal encontrado" description="Altere o filtro ou a busca para ver outros ativos." />}
       </section>
+
+      {selectedAsset && <StrategyAssetModal key={selectedAsset.ticker} asset={selectedAsset} model={model} generatedAt={data.generatedAt} onClose={() => setSelectedTicker(null)} />}
 
       {showLevels && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowLevels(false); }}>
