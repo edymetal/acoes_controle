@@ -1,12 +1,37 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ExternalLink, RotateCcw, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ArrowDownLeft, ArrowDownRight, ArrowDownToLine, ArrowLeft, ArrowLeftRight, ArrowRight, ArrowUpRight, ArrowUpToLine, BadgeDollarSign, Banknote, CalendarDays, ChartCandlestick, ChartNoAxesCombined, Clock3, Database, ExternalLink, Minus, RotateCcw, TrendingDown, TrendingUp, Wallet, X, type LucideIcon } from "lucide-react";
 import { EmptyState, StockLogo, Value } from "./Ui";
-import { formatCurrency, formatDate, formatDateTime, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
+import { formatCurrency, formatDate, formatDateTime, formatNumber, formatPercent, formatTransactionDate, toneForValue } from "../lib/format";
 import { loadAppLanguage } from "../lib/i18n";
 import { getStockActivity, getStockMarketLinks, STOCK_CHART_PERIODS, type StockChartPeriod } from "../lib/stockDetails";
 import type { Asset, PortfolioModel } from "../types";
 
 const PAGE_SIZE = 10;
+
+type CardTone = "blue" | "violet" | "amber" | "green" | "rose" | "neutral";
+
+function StockMetricCard({ label, value, helper, icon: Icon, tone, featured = false, unavailable = false }: {
+  label: string;
+  value: ReactNode;
+  helper: ReactNode;
+  icon: LucideIcon;
+  tone: CardTone;
+  featured?: boolean;
+  unavailable?: boolean;
+}) {
+  return (
+    <article className={`stock-metric-card stock-metric-card--${unavailable ? "neutral" : tone}${featured ? " stock-metric-card--featured" : ""}`}>
+      <div className="stock-metric-card__header"><span className="stock-metric-card__icon" aria-hidden="true"><Icon size={19} strokeWidth={1.8} /></span><span className="stock-metric-card__label">{label}</span></div>
+      <strong className={`stock-metric-card__value privacy-value${unavailable ? " stock-metric-card__value--unavailable" : ""}`}>{value}</strong>
+      <div className="stock-metric-card__helper">{helper}</div>
+    </article>
+  );
+}
+
+function resultCardTone(value: number | null): CardTone {
+  const tone = value === null ? "neutral" : toneForValue(value);
+  return tone === "positive" ? "green" : tone === "negative" ? "rose" : "neutral";
+}
 
 export function StockAssetModal({ asset, model, generatedAt, contextLabel, onClose }: {
   asset: Asset;
@@ -25,6 +50,9 @@ export function StockAssetModal({ asset, model, generatedAt, contextLabel, onClo
   const { position, accountingReliable } = activity;
   const quoteAvailable = asset.currentPrice > 0;
   const openResultAvailable = accountingReliable && (!position || position.quoteAvailable);
+  const openResult = openResultAvailable ? position?.unrealized ?? 0 : null;
+  const OpenResultIcon = openResult === null || toneForValue(openResult) === "neutral" ? Minus : openResult > 0 ? TrendingUp : TrendingDown;
+  const OpenChangeIcon = openResult === null || toneForValue(openResult) === "neutral" ? Minus : openResult < 0 ? ArrowDownRight : ArrowUpRight;
   const annual = asset.annual;
   const totalPages = Math.max(1, Math.ceil(activity.transactions.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -76,26 +104,40 @@ export function StockAssetModal({ asset, model, generatedAt, contextLabel, onClo
         </> : <p className="asset-modal__note">A bolsa deste ativo não está disponível no gráfico integrado. Consulte o histórico pelo link do Google Finance.</p>}
       </section>
 
-      <section className="stock-annual-stats" aria-label="Preços anuais">
-        <article><small>Cotação na planilha</small><strong className="privacy-value">{quoteAvailable ? formatCurrency(asset.currentPrice) : "Indisponível"}</strong></article>
-        <article><small>Mínima anual</small><strong className="privacy-value">{annual ? formatCurrency(annual.min) : "Indisponível"}</strong></article>
-        <article><small>Média anual</small><strong className="privacy-value">{annual ? formatCurrency(annual.average) : "Indisponível"}</strong></article>
-        <article><small>Máxima anual</small><strong className="privacy-value">{annual ? formatCurrency(annual.max) : "Indisponível"}</strong></article>
+      <section className="stock-price-summary" aria-labelledby="stock-prices-title">
+        <header className="stock-summary-heading"><div><ChartNoAxesCombined size={19} aria-hidden="true" /><h3 id="stock-prices-title">Preços do ativo</h3></div><span>USD · referência anual</span></header>
+        <div className="stock-annual-stats">
+          <StockMetricCard label="Cotação na planilha" icon={ChartCandlestick} tone="blue" featured unavailable={!quoteAvailable} value={quoteAvailable ? formatCurrency(asset.currentPrice) : "Indisponível"} helper="Última cotação informada" />
+          <StockMetricCard label="Mínima anual" icon={ArrowDownToLine} tone="amber" unavailable={!annual} value={annual ? formatCurrency(annual.min) : "Indisponível"} helper="Menor fechamento em 12 meses" />
+          <StockMetricCard label="Média anual" icon={ChartNoAxesCombined} tone="violet" unavailable={!annual} value={annual ? formatCurrency(annual.average) : "Indisponível"} helper="Média dos fechamentos diários" />
+          <StockMetricCard label="Máxima anual" icon={ArrowUpToLine} tone="green" unavailable={!annual} value={annual ? formatCurrency(annual.max) : "Indisponível"} helper="Maior fechamento em 12 meses" />
+        </div>
+        {annual?.source === "massive" && <div className="stock-history-meta">
+          <div className="stock-history-meta__source"><Database size={16} aria-hidden="true" /><div><span>Histórico por <a href="https://massive.com/" target="_blank" rel="noopener noreferrer">Massive</a> · {annual.observations} pregões</span><small>Fechamentos diários ajustados por desdobramentos</small></div></div>
+          <div className="stock-history-meta__dates"><span><CalendarDays size={14} aria-hidden="true" />{formatDate(annual.periodStart!)} a {formatDate(annual.periodEnd!)}</span><span><Clock3 size={14} aria-hidden="true" />Atualizado em {formatDateTime(annual.asOf!)}</span></div>
+        </div>}
+        {!annual && <p className="stock-details-updated">Histórico anual indisponível. A integração Massive preenche esses preços na próxima atualização válida.</p>}
+        <p className="stock-details-updated"><RotateCcw size={13} aria-hidden="true" /><span>Planilha atualizada em {formatDateTime(generatedAt)}.{annual?.isFallback && ` Preços anuais preservados da última leitura válida${annual.asOf ? ` de ${formatDateTime(annual.asOf)}` : ""}.`}</span></p>
       </section>
-      {annual?.source === "massive" && <p className="stock-details-updated">Histórico por <a href="https://massive.com/" target="_blank" rel="noopener noreferrer">Massive</a> · fechamentos diários ajustados por desdobramentos · {annual.observations} pregões · de {formatDate(annual.periodStart!)} a {formatDate(annual.periodEnd!)}. Atualizado em {formatDateTime(annual.asOf!)}.</p>}
-      {!annual && <p className="stock-details-updated">Histórico anual indisponível. A integração Massive preenche esses preços na próxima atualização válida.</p>}
-      <p className="stock-details-updated">Planilha atualizada em {formatDateTime(generatedAt)}.{annual?.isFallback && ` Preços anuais preservados da última leitura válida${annual.asOf ? ` de ${formatDateTime(annual.asOf)}` : ""}.`}</p>
 
       <section className="stock-activity" aria-labelledby="stock-activity-title">
-        <h3 id="stock-activity-title">Sua posição e movimentações</h3>
+        <header className="stock-summary-heading"><div><Wallet size={19} aria-hidden="true" /><h3 id="stock-activity-title">Sua posição e movimentações</h3></div></header>
         {!accountingReliable && <p className="asset-modal__note">Os resultados e a posição estão indisponíveis porque a ordem das operações deste ativo precisa ser esclarecida.</p>}
-        <div className="stock-activity__metrics">
-          <article><small>Posição atual</small><strong>{accountingReliable ? `${formatNumber(position?.quantity ?? 0, 6)} ações` : "Indisponível"}</strong><em>{openResultAvailable ? `${formatCurrency(position?.marketValue ?? 0)} em valor de mercado` : "Valor de mercado indisponível"}</em></article>
-          <article><small>Custo em aberto</small><strong>{accountingReliable ? formatCurrency(position?.costBasis ?? 0) : "Indisponível"}</strong><em>{accountingReliable && position ? `Preço médio ${formatCurrency(position.averageCost)}` : ""}</em></article>
-          <article><small>Resultado em aberto</small>{openResultAvailable ? <Value value={position?.unrealized ?? 0}><strong>{formatCurrency(position?.unrealized ?? 0)}</strong></Value> : <strong>Indisponível</strong>}<em>{openResultAvailable && position ? formatPercent(position.unrealizedPercent) : ""}</em></article>
-          <article><small>Total comprado</small><strong>{formatCurrency(activity.purchaseTotal)}</strong><em>{activity.purchaseCount} {activity.purchaseCount === 1 ? "compra" : "compras"}</em></article>
-          <article><small>Total vendido</small><strong>{formatCurrency(activity.saleTotal)}</strong><em>{activity.saleCount} {activity.saleCount === 1 ? "venda" : "vendas"}</em></article>
-          <article><small>Lucro realizado</small>{activity.realizedProfit !== null ? <Value value={activity.realizedProfit}><strong>{formatCurrency(activity.realizedProfit)}</strong></Value> : <strong>Indisponível</strong>}<em>Resultado das vendas concluídas</em></article>
+        <div className="stock-activity__group" role="group" aria-labelledby="stock-position-title">
+          <div className="stock-activity__group-heading"><h4 id="stock-position-title">Posição em carteira</h4><span>Valores atuais</span></div>
+          <div className="stock-activity__metrics">
+            <StockMetricCard label="Posição atual" icon={Wallet} tone="blue" featured unavailable={!accountingReliable} value={accountingReliable ? `${formatNumber(position?.quantity ?? 0, 6)} ações` : "Indisponível"} helper={<span className="privacy-value">{openResultAvailable ? `${formatCurrency(position?.marketValue ?? 0)} em valor de mercado` : "Valor de mercado indisponível"}</span>} />
+            <StockMetricCard label="Custo em aberto" icon={Banknote} tone="violet" unavailable={!accountingReliable} value={accountingReliable ? formatCurrency(position?.costBasis ?? 0) : "Indisponível"} helper={<span className="privacy-value">{accountingReliable && position ? `Preço médio ${formatCurrency(position.averageCost)}` : accountingReliable ? "Sem posição em aberto" : "Custo indisponível"}</span>} />
+            <StockMetricCard label="Resultado em aberto" icon={OpenResultIcon} tone={resultCardTone(openResult)} unavailable={!openResultAvailable} value={openResult !== null ? <Value value={openResult}>{formatCurrency(openResult)}</Value> : "Indisponível"} helper={openResultAvailable && position ? <span className="stock-metric-card__change privacy-value"><OpenChangeIcon size={14} aria-hidden="true" />{formatPercent(position.unrealizedPercent)} sobre o custo</span> : openResultAvailable ? "Sem posição em aberto" : "Resultado indisponível"} />
+          </div>
+        </div>
+        <div className="stock-activity__group" role="group" aria-labelledby="stock-totals-title">
+          <div className="stock-activity__group-heading"><h4 id="stock-totals-title"><ArrowLeftRight size={14} aria-hidden="true" />Movimentações acumuladas</h4><span>Todo o histórico</span></div>
+          <div className="stock-activity__metrics">
+            <StockMetricCard label="Total comprado" icon={ArrowDownLeft} tone="blue" value={formatCurrency(activity.purchaseTotal)} helper={<span className="stock-metric-card__count privacy-value">{activity.purchaseCount} {activity.purchaseCount === 1 ? "compra registrada" : "compras registradas"}</span>} />
+            <StockMetricCard label="Total vendido" icon={ArrowUpRight} tone="amber" value={formatCurrency(activity.saleTotal)} helper={<span className="stock-metric-card__count privacy-value">{activity.saleCount} {activity.saleCount === 1 ? "venda registrada" : "vendas registradas"}</span>} />
+            <StockMetricCard label="Lucro realizado" icon={BadgeDollarSign} tone={resultCardTone(activity.realizedProfit)} unavailable={activity.realizedProfit === null} value={activity.realizedProfit !== null ? <Value value={activity.realizedProfit}>{formatCurrency(activity.realizedProfit)}</Value> : "Indisponível"} helper="Resultado das vendas concluídas" />
+          </div>
         </div>
         {visibleTransactions.length ? <>
           <div className="stock-activity__heading"><h4>Histórico de operações</h4><span>{activity.transactions.length} operações · todo o histórico</span></div>
