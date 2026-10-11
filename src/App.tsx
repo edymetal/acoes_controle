@@ -312,8 +312,8 @@ export default function App() {
         {page === "overview" && <Overview stockModel={model} fiiModel={fiiModel} cryptoModel={cryptoModel} fixedIncomeModel={fixedIncomeModel} brlPerUsd={fiiData?.exchangeRate.brlPerUsd ?? fixedIncomeData?.exchangeRate.brlPerUsd ?? null} errors={{ fiis: fiiError, crypto: cryptoError, fixedIncome: fixedIncomeError }} onNavigate={navigate} />}
         {page === "evolution" && <Evolution history={evolutionData} stocks={data} fiis={fiiData} crypto={cryptoData} fixedIncome={fixedIncomeData} brlPerUsd={fiiData?.exchangeRate.brlPerUsd ?? fixedIncomeData?.exchangeRate.brlPerUsd ?? null} isLoading={isEvolutionLoading} error={evolutionError} onRetry={() => setEvolutionReload((value) => value + 1)} />}
         {page === "dashboard" && <Dashboard data={data} model={model} settings={settings} onNavigate={navigate} />}
-        {page === "portfolio" && <Portfolio model={model} />}
-        {page === "history" && <History model={model} />}
+        {page === "portfolio" && <Portfolio data={data} model={model} />}
+        {page === "history" && <History data={data} model={model} />}
         {page === "strategy" && <Strategy data={data} model={model} settings={settings} />}
         {page === "settings" && <Settings settings={settings} onSave={updateSettings} language={language} onLanguageChange={updateLanguage} />}
         {page === "fii-dashboard" && fiiModel && <FiiDashboard model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} onNavigate={navigate} />}

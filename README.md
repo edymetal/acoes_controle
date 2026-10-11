@@ -14,8 +14,9 @@ Quando o GitHub Pages estiver ativo, o endereço será:
 
 - Dashboard com patrimônio, custo atual, compras acumuladas, lucro realizado, resultado em aberto e resultado total.
 - Carteira atual com quantidade, preço médio, cotação, custo, valor de mercado, participação e rentabilidade.
-- Histórico pesquisável e paginado, com lucro por venda, agrupamento por ação e resumo detalhado ao clicar no ticker.
-- Estratégia anual com intensidade de compra abaixo da média, proximidade da máxima e rompimentos; clique no código do ativo para ver o gráfico de um ano, a posição e suas movimentações.
+- Histórico pesquisável e paginado, com lucro por venda e agrupamento por ação.
+- Estratégia anual com intensidade de compra abaixo da média, proximidade da máxima e rompimentos.
+- Detalhes padronizados ao clicar no código do ativo em Carteira, Movimentações e Estratégia anual, com gráfico de períodos selecionáveis, posição e histórico de operações.
 - Gráficos de distribuição da carteira e impacto por posição.
 - Interface responsiva para desktop, tablet e celular.
 - Área independente de FIIs com visão geral, carteira em reais e histórico de compras e vendas.
@@ -125,13 +126,15 @@ Benchmarks são opcionais. Para registrá-los, crie a aba `Evolução Benchmarks
 
 A variação exibida representa capital investido, não valor de mercado, TWR ou XIRR. O histórico permanece apenas na planilha privada, não é publicado, persistido pelo aplicativo ou armazenado no cache do PWA.
 
-## Estratégia anual
+## Detalhes do ativo
 
-O código de cada ativo abre uma janela com o gráfico interativo de cotações, os preços anuais da planilha, a posição atual, os totais comprados/vendidos, os resultados e o histórico de operações paginado. O gráfico começa em um ano e permite escolher 1 dia, 5 dias, 1 mês, 6 meses, o ano corrente, 1 ano, 5 anos ou todo o histórico disponível. O link do Google Finance acompanha o período escolhido. Os preços anuais da planilha e o histórico de operações mantêm seus próprios períodos. Ativos sem operações também podem ser consultados. Resultados com contabilidade ambígua ou cotação ausente permanecem identificados como indisponíveis.
+Em Carteira, Movimentações e Estratégia anual, o código de cada ativo abre a mesma janela com o gráfico interativo de cotações, os preços anuais da planilha, a posição atual, os totais comprados/vendidos, os resultados e o histórico de operações paginado. O gráfico começa em um ano e permite escolher 1 dia, 5 dias, 1 mês, 6 meses, o ano corrente, 1 ano, 5 anos ou todo o histórico disponível. O link do Google Finance acompanha o período escolhido. Os preços anuais da planilha e o histórico de operações mantêm seus próprios períodos. Em Movimentações, a consulta também funciona nas linhas agrupadas e para posições encerradas, incluindo todas as operações do ativo independentemente dos filtros da tabela. Ativos sem operações podem ser consultados na Estratégia anual. Resultados com contabilidade ambígua ou cotação ausente permanecem identificados como indisponíveis.
 
 O gráfico usa o widget Symbol Overview da TradingView em um iframe de outra origem, carregado somente ao abrir os detalhes. Apenas o código público, a bolsa e o período do ativo são enviados ao provedor; movimentações, valores da carteira e tokens de autenticação não são enviados. A integração preserva a atribuição da TradingView e pode exibir cotações com atraso ou diferentes da planilha. O gráfico do Google Finance bloqueia incorporação em outros sites (`X-Frame-Options: SAMEORIGIN`), por isso a janela oferece um link direto para o ativo no Google Finance. Bolsas não reconhecidas oferecem consulta pelo Google sem selecionar outro mercado automaticamente.
 
 Referência do gráfico: [TradingView Symbol Overview](https://www.tradingview.com/widget-docs/widgets/charts/symbol-overview/).
+
+## Estratégia anual
 
 Para cotação `P`, média `M`, mínima `L` e máxima `H`:
 

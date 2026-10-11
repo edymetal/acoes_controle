@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ExternalLink, RotateCcw, X } from "lucide-react";
-import { EmptyState, StockLogo, Value } from "../components/Ui";
+import { EmptyState, StockLogo, Value } from "./Ui";
 import { formatCurrency, formatDateTime, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
 import { loadAppLanguage } from "../lib/i18n";
 import { getStockActivity, getStockMarketLinks, STOCK_CHART_PERIODS, type StockChartPeriod } from "../lib/stockDetails";
@@ -8,10 +8,11 @@ import type { Asset, PortfolioModel } from "../types";
 
 const PAGE_SIZE = 10;
 
-export function StrategyAssetModal({ asset, model, generatedAt, onClose }: {
+export function StockAssetModal({ asset, model, generatedAt, contextLabel, onClose }: {
   asset: Asset;
   model: PortfolioModel;
   generatedAt: string;
+  contextLabel: string;
   onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -43,13 +44,13 @@ export function StrategyAssetModal({ asset, model, generatedAt, onClose }: {
   }, []);
 
   return (
-    <dialog className="asset-modal strategy-asset-modal" ref={dialogRef} aria-labelledby="strategy-asset-title" onCancel={onClose} onClick={(event) => {
+    <dialog className="asset-modal stock-asset-modal" ref={dialogRef} aria-labelledby="stock-asset-title" onCancel={onClose} onClick={(event) => {
       if (event.target !== event.currentTarget) return;
       const bounds = event.currentTarget.getBoundingClientRect();
       if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) onClose();
     }}>
       <header className="asset-modal__header">
-        <div><StockLogo ticker={asset.ticker} /><span><small>ESTRATÉGIA ANUAL · {asset.exchange}</small><h2 id="strategy-asset-title">{asset.ticker} · {asset.name}</h2></span></div>
+        <div><StockLogo ticker={asset.ticker} /><span><small>{contextLabel} · {asset.exchange}</small><h2 id="stock-asset-title">{asset.ticker} · {asset.name}</h2></span></div>
         <button type="button" aria-label="Fechar detalhes do ativo" autoFocus onClick={onClose}><X size={21} /></button>
       </header>
 

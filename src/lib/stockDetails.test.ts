@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calculatePortfolio } from "./portfolio";
-import { getStockActivity, getStockMarketLinks } from "./stockDetails";
+import { getStockActivity, getStockDetailsAsset, getStockMarketLinks } from "./stockDetails";
 import type { Asset, PortfolioData } from "../types";
 
 const asset: Asset = { ticker: "T", name: "AT&T", sector: "Telecom", exchange: "NYSE", currentPrice: 25, annual: null };
@@ -13,6 +13,30 @@ const data: PortfolioData = {
   assets: [asset],
   integrity: { purchaseRows: 1, saleRows: 1, assetRows: 1, annualRows: 0, warnings: [] },
 };
+
+describe("getStockDetailsAsset", () => {
+  it("preserva nome, bolsa e cotação da planilha para posições encerradas", () => {
+    const model = calculatePortfolio({ ...data, sales: [{ ...data.sales[0], quantity: 10, total: 200 }] });
+    expect(model.positions).toEqual([]);
+    const details = getStockDetailsAsset(data, model, "T");
+    expect(details).toEqual(asset);
+    expect(getStockMarketLinks(details!).chartUrl).not.toBeNull();
+  });
+
+  it("mantém os detalhes de uma posição quando o cadastro do ativo está ausente", () => {
+    const details = getStockDetailsAsset({ assets: [] }, calculatePortfolio(data), "T");
+    expect(details).toMatchObject({ ticker: "T", name: "AT&T", exchange: "NYSE", currentPrice: 25 });
+  });
+
+  it("permite consultar operações antigas sem inventar uma cotação ou bolsa", () => {
+    const missingAsset = { ...data, assets: [], sales: [{ ...data.sales[0], quantity: 10, total: 200 }] };
+    const details = getStockDetailsAsset(missingAsset, calculatePortfolio(missingAsset), "T");
+    expect(details).toMatchObject({ ticker: "T", currentPrice: 0, exchange: "Não informada", annual: null });
+    expect(getStockMarketLinks(details!).chartUrl).toBeNull();
+    expect(getStockActivity(calculatePortfolio(missingAsset), details!.ticker).realizedProfit).toBe(100);
+    expect(getStockDetailsAsset(data, calculatePortfolio(data), null)).toBeNull();
+  });
+});
 
 describe("getStockMarketLinks", () => {
   it("abre o ativo na bolsa correta com o período inicial de um ano", () => {

@@ -1,4 +1,11 @@
-import type { Asset, PortfolioModel } from "../types";
+import type { Asset, PortfolioData, PortfolioModel } from "../types";
+
+export function getStockDetailsAsset(data: Pick<PortfolioData, "assets">, model: PortfolioModel, ticker: string | null): Asset | null {
+  if (!ticker) return null;
+  return data.assets.find((item) => item.ticker === ticker)
+    ?? model.positions.find((item) => item.ticker === ticker)
+    ?? { ticker, name: ticker, sector: "Não informado", currentPrice: 0, exchange: "Não informada", annual: null };
+}
 
 export const STOCK_CHART_PERIODS = [
   { id: "1d", label: "1 dia", description: "Último dia", range: "1d|1", googleWindow: "1D" },

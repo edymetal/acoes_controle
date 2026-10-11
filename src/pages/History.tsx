@@ -8,13 +8,13 @@ import {
   Layers3,
   Search,
   ShoppingCart,
-  WalletCards,
-  X,
 } from "lucide-react";
+import { StockAssetModal } from "../components/StockAssetModal";
 import { SortableHeader, useSortableTable, type SortValue } from "../components/SortableTable";
 import { EmptyState, MetricCard, Section, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatDate, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
-import type { PortfolioModel, ProcessedTransaction, TransactionType } from "../types";
+import { getStockDetailsAsset } from "../lib/stockDetails";
+import type { PortfolioData, PortfolioModel, ProcessedTransaction, TransactionType } from "../types";
 
 function StackedHeader({ label }: { label: string }) {
   return (
@@ -49,7 +49,7 @@ function getHistorySortValue(item: HistoryRow, key: HistorySortKey): SortValue {
   return item[key];
 }
 
-export function History({ model }: { model: PortfolioModel }) {
+export function History({ data, model }: { data: PortfolioData; model: PortfolioModel }) {
   const [ticker, setTicker] = useState("");
   const [type, setType] = useState<"all" | TransactionType>("all");
   const [search, setSearch] = useState("");
@@ -139,31 +139,7 @@ export function History({ model }: { model: PortfolioModel }) {
     (item) => !model.health.ambiguousTransactionTickers.includes(item.ticker),
   );
 
-  const selectedSummary = useMemo(() => {
-    if (!selectedTicker) return null;
-    const items = model.transactions.filter((item) => item.ticker === selectedTicker);
-    const purchases = items.filter((item) => item.type === "buy");
-    const sales = items.filter((item) => item.type === "sell");
-    const position = model.positions.find((item) => item.ticker === selectedTicker);
-    const accountingReliable = !model.health.ambiguousTransactionTickers.includes(selectedTicker);
-    return {
-      ticker: selectedTicker,
-      name: position?.name ?? selectedTicker,
-      purchaseTotal: purchases.reduce((sum, item) => sum + item.total, 0),
-      saleTotal: sales.reduce((sum, item) => sum + item.total, 0),
-      realizedProfit: accountingReliable
-        ? sales.reduce((sum, item) => sum + (item.realizedProfit ?? 0), 0)
-        : null,
-      accountingReliable,
-      purchaseQuantity: purchases.reduce((sum, item) => sum + item.quantity, 0),
-      saleQuantity: sales.reduce((sum, item) => sum + item.quantity, 0),
-      purchaseCount: purchases.length,
-      saleCount: sales.length,
-      openQuantity: position?.quantity ?? 0,
-      marketValue: accountingReliable ? position?.marketValue ?? 0 : 0,
-      quoteAvailable: accountingReliable && (position?.quoteAvailable ?? true),
-    };
-  }, [model.health.ambiguousTransactionTickers, model.positions, model.transactions, selectedTicker]);
+  const selectedAsset = getStockDetailsAsset(data, model, selectedTicker);
 
   const totalPages = Math.max(1, Math.ceil(displayRows.length / PAGE_SIZE));
   const visible = sortedDisplayRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -173,20 +149,6 @@ export function History({ model }: { model: PortfolioModel }) {
   };
 
   useEffect(() => setPage(1), [ticker, type, search, startDate, endDate, grouped]);
-
-  useEffect(() => {
-    if (!selectedTicker) return;
-    const previousOverflow = document.body.style.overflow;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelectedTicker(null);
-    };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [selectedTicker]);
 
   const formatPeriod = (item: HistoryRow) => item.operationCount === 1
     ? formatTransactionDate(item.endDate, item.time)
@@ -237,7 +199,7 @@ export function History({ model }: { model: PortfolioModel }) {
                 <tr key={item.id}>
                   <td>{formatPeriod(item)}</td>
                   <td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td>
-                  <td><button className="ticker-link history-asset-link" type="button" aria-label={`Abrir resumo de ${item.ticker}`} onClick={() => setSelectedTicker(item.ticker)}><StockLogo ticker={item.ticker} /><span>{item.ticker}</span></button></td>
+                  <td><button className="ticker-link history-asset-link" type="button" aria-haspopup="dialog" aria-label={`Abrir gráfico e movimentações de ${item.ticker}`} onClick={() => setSelectedTicker(item.ticker)}><StockLogo ticker={item.ticker} /><span>{item.ticker}</span></button></td>
                   {grouped && <td><span className="operation-count">{item.operationCount}</span></td>}
                   <td>{formatNumber(item.quantity, 8)}</td>
                   <td>{formatCurrency(item.unitPrice)}</td>
@@ -253,23 +215,7 @@ export function History({ model }: { model: PortfolioModel }) {
         <footer className="pagination"><span>Página {page} de {totalPages}</span><div><button type="button" disabled={page === 1} onClick={() => setPage((value) => value - 1)}><ArrowLeft size={16} /> Anterior</button><button type="button" disabled={page === totalPages} onClick={() => setPage((value) => value + 1)}>Próxima <ArrowRight size={16} /></button></div></footer>
       </Section>
 
-      {selectedSummary && (
-        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedTicker(null); }}>
-          <section className="asset-modal" role="dialog" aria-modal="true" aria-labelledby="asset-modal-title">
-            <header className="asset-modal__header">
-              <div><StockLogo ticker={selectedSummary.ticker} /><span><small>RESUMO HISTÓRICO</small><h2 id="asset-modal-title">{selectedSummary.ticker} · {selectedSummary.name}</h2></span></div>
-              <button type="button" aria-label="Fechar resumo da ação" onClick={() => setSelectedTicker(null)}><X size={21} /></button>
-            </header>
-            <div className="asset-modal__metrics">
-              <article><ShoppingCart size={20} /><span><small>Total comprado</small><strong>{formatCurrency(selectedSummary.purchaseTotal)}</strong><em>{selectedSummary.purchaseCount} operações · {formatNumber(selectedSummary.purchaseQuantity, 6)} ações</em></span></article>
-              <article><HandCoins size={20} /><span><small>Total vendido</small><strong>{formatCurrency(selectedSummary.saleTotal)}</strong><em>{selectedSummary.saleCount} operações · {formatNumber(selectedSummary.saleQuantity, 6)} ações</em></span></article>
-              <article className="asset-modal__profit"><BadgeDollarSign size={20} /><span><small>Lucro realizado</small>{selectedSummary.accountingReliable && selectedSummary.realizedProfit !== null ? <Value value={selectedSummary.realizedProfit}><strong>{formatCurrency(selectedSummary.realizedProfit)}</strong></Value> : <strong>Indisponível</strong>}<em>{selectedSummary.accountingReliable ? "Valor já descontado do custo de compra" : "Informe a ordem das operações do mesmo dia"}</em></span></article>
-              <article><WalletCards size={20} /><span><small>Posição atual</small><strong>{selectedSummary.accountingReliable ? `${formatNumber(selectedSummary.openQuantity, 6)} ações` : "Indisponível"}</strong><em>{selectedSummary.quoteAvailable ? `${formatCurrency(selectedSummary.marketValue)} em valor de mercado` : selectedSummary.accountingReliable ? "Cotação atual indisponível" : "Ordem das operações do mesmo dia não informada"}</em></span></article>
-            </div>
-            <p className="asset-modal__note">O lucro realizado usa o custo médio disponível na data de cada venda. A posição atual não interfere no resultado das vendas já concluídas.</p>
-          </section>
-        </div>
-      )}
+      {selectedAsset && <StockAssetModal key={selectedAsset.ticker} asset={selectedAsset} model={model} generatedAt={data.generatedAt} contextLabel="MOVIMENTAÇÕES" onClose={() => setSelectedTicker(null)} />}
     </div>
   );
 }

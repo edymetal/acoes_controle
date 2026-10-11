@@ -317,11 +317,11 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .asset-modal__profit > svg { color: var(--green) !important; }
 .asset-modal__note { margin: 18px 0 0; padding: 12px 14px; border-radius: 10px; color: var(--muted); background: rgba(86, 216, 255, .045); font-size: 13px; line-height: 1.5; }
 .strategy-asset-link { font-size: 16px; text-align: left; }
-.strategy-asset-modal { position: fixed; inset: 0; width: min(1040px, calc(100% - 32px)); max-height: calc(100dvh - 32px); margin: auto; color: var(--text); }
-.strategy-asset-modal::backdrop { background: rgba(2, 8, 16, .78); backdrop-filter: blur(8px); }
-.strategy-asset-modal .asset-modal__header > div { min-width: 0; }
-.strategy-asset-modal .asset-modal__header h2 { overflow-wrap: anywhere; }
-.strategy-asset-modal .asset-modal__header > button { flex: 0 0 auto; }
+.stock-asset-modal { position: fixed; inset: 0; width: min(1040px, calc(100% - 32px)); max-height: calc(100dvh - 32px); margin: auto; color: var(--text); }
+.stock-asset-modal::backdrop { background: rgba(2, 8, 16, .78); backdrop-filter: blur(8px); }
+.stock-asset-modal .asset-modal__header > div { min-width: 0; }
+.stock-asset-modal .asset-modal__header h2 { overflow-wrap: anywhere; }
+.stock-asset-modal .asset-modal__header > button { flex: 0 0 auto; }
 .stock-market-chart { margin-top: 22px; padding: 18px; border: 1px solid var(--border-soft); border-radius: 14px; background: rgba(7, 16, 29, .46); }
 .stock-market-chart > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .stock-market-chart h3, .stock-activity h3 { margin: 0; font-size: 17px; }
@@ -351,8 +351,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .stock-activity__table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .stock-activity__table th:first-child, .stock-activity__table td:first-child { text-align: left; }
 @media (max-width: 640px) {
-  .strategy-asset-modal { width: calc(100% - 16px); max-height: calc(100dvh - 16px); padding: 16px; }
-  .strategy-asset-modal .asset-modal__header h2 { font-size: 18px; }
+  .stock-asset-modal { width: calc(100% - 16px); max-height: calc(100dvh - 16px); padding: 16px; }
+  .stock-asset-modal .asset-modal__header h2 { font-size: 18px; }
   .stock-market-chart { padding: 12px; }
   .stock-market-chart__frame { height: 320px; }
   .stock-annual-stats, .stock-activity__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }

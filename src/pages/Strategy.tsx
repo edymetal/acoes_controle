@@ -5,7 +5,7 @@ import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
 import { getStrategyLevelValues } from "../lib/settings";
 import type { Asset, PortfolioData, PortfolioModel, StrategyKind, StrategySettings, StrategySignal } from "../types";
-import { StrategyAssetModal } from "./StrategyAssetModal";
+import { StockAssetModal } from "../components/StockAssetModal";
 
 type FilterKind = "all" | "actionable" | StrategyKind;
 
@@ -146,7 +146,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
         </div> : <EmptyState title="Nenhum sinal encontrado" description="Altere o filtro ou a busca para ver outros ativos." />}
       </section>
 
-      {selectedAsset && <StrategyAssetModal key={selectedAsset.ticker} asset={selectedAsset} model={model} generatedAt={data.generatedAt} onClose={() => setSelectedTicker(null)} />}
+      {selectedAsset && <StockAssetModal key={selectedAsset.ticker} asset={selectedAsset} model={model} generatedAt={data.generatedAt} contextLabel="ESTRATÉGIA ANUAL" onClose={() => setSelectedTicker(null)} />}
 
       {showLevels && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowLevels(false); }}>
