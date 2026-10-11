@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { PortfolioData } from "../types";
-import { buildSpreadsheetData, isGoogleSheetsAuthorizationError } from "./sheetSync";
+import { buildSpreadsheetData, isGoogleSheetsAuthorizationError, syncSpreadsheetData } from "./sheetSync";
+import { vi } from "vitest";
+import { calculatePortfolio, getStrategySignal } from "./portfolio";
 
 const previousPortfolio: PortfolioData = {
   schemaVersion: 1,
@@ -24,6 +26,33 @@ const previousPortfolio: PortfolioData = {
 };
 
 describe("buildSpreadsheetData", () => {
+  it("preenche o histórico via Massive quando GOOGLEFINANCE retorna erro e libera o sinal anual", () => {
+    const ranges = Array.from({ length: 11 }, () => ({ values: [] as Array<Array<string | number | null>> }));
+    ranges[2].values = [["AAA", "Empresa", "", "Tecnologia", "", 11, "#N/A", "#N/A", "#N/A", "NYSE"]];
+    const row = ["AAA", 8, 10, 15, 250, "2025-10-11", "2026-10-09", "2026-10-11T18:00:00.000Z", "massive", "USD"];
+    const result = buildSpreadsheetData(ranges, null, "2026-10-11T18:05:00.000Z", [row]);
+    expect(result.portfolio.assets[0].annual).toMatchObject({ min: 8, average: 10, max: 15, source: "massive", isFallback: false });
+    expect(result.portfolio.integrity.annualRows).toBe(1);
+    expect(result.portfolio.integrity.warnings).toEqual([]);
+    expect(getStrategySignal(result.portfolio.assets[0]).kind).not.toBe("unavailable");
+    const stale = buildSpreadsheetData(ranges, null, "2026-10-16T18:05:00.000Z", [row]);
+    expect(calculatePortfolio(stale.portfolio).health.staleAnnualTickers).toEqual(["AAA"]);
+    expect(getStrategySignal(stale.portfolio.assets[0]).kind).toBe("unavailable");
+  });
+
+  it("mantém a planilha utilizável se a aba auxiliar estiver indisponível", async () => {
+    const fetch = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({ valueRanges: Array.from({ length: 11 }, () => ({ values: [] })) }))).mockResolvedValueOnce(new Response(null, { status: 400 }));
+    vi.stubGlobal("fetch", fetch);
+    try {
+      const result = await syncSpreadsheetData("test-google-token");
+      expect(result.portfolio.assets).toEqual([]);
+      expect(result.portfolio.integrity.warnings).toContain("Não foi possível ler o histórico anual Massive; os demais dados da planilha foram carregados.");
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(fetch.mock.calls[1][0]).toContain("sheets.googleapis.com");
+      expect(fetch.mock.calls[1][0]).not.toContain("test-google-token");
+    } finally { vi.unstubAllGlobals(); }
+  });
+
   it("constrói todas as bases com o mesmo horário da atualização direta", () => {
     const generatedAt = "2026-07-23T21:30:00.000Z";
     const result = buildSpreadsheetData([

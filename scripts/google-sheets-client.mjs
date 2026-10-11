@@ -85,13 +85,13 @@ export async function loadCredential() {
   return JSON.parse(await readFile(credentialPath, "utf8"));
 }
 
-async function createAccessToken(credential) {
+async function createAccessToken(credential, scope = SHEETS_SCOPE) {
   const issuedAt = Math.floor(Date.now() / 1000);
   const header = encodeBase64Url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
   const payload = encodeBase64Url(
     JSON.stringify({
       iss: credential.client_email,
-      scope: SHEETS_SCOPE,
+      scope,
       aud: TOKEN_URL,
       iat: issuedAt,
       exp: issuedAt + 3600,
@@ -146,5 +146,18 @@ export async function batchGetValues({
     throw new Error(`Falha ao ler a planilha: ${message}`);
   }
 
+  return response.json();
+}
+
+export async function sheetsRequest({ spreadsheetId, resource = "", method = "GET", body }) {
+  const credential = await loadCredential();
+  const scope = method === "GET" ? SHEETS_SCOPE : "https://www.googleapis.com/auth/spreadsheets";
+  const accessToken = await createAccessToken(credential, scope);
+  const response = await fetchWithRetry(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}${resource}`, {
+    method,
+    headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  }, { timeoutMs: 60_000 });
+  if (!response.ok) throw new Error(`Falha na operação da planilha (HTTP ${response.status}).`);
   return response.json();
 }

@@ -73,6 +73,11 @@ function isAnnualStats(value: unknown) {
     && /^[A-Z]{3}$/.test(value.currency)
     && (value.asOf === undefined || isIsoDateTime(value.asOf))
     && (value.isFallback === undefined || typeof value.isFallback === "boolean")
+    && (value.source === undefined || value.source === "google-sheets" || value.source === "massive")
+    && (value.periodStart === undefined || isIsoDate(value.periodStart))
+    && (value.periodEnd === undefined || isIsoDate(value.periodEnd))
+    && (value.periodStart === undefined || value.periodEnd === undefined || (value.periodStart as string) <= (value.periodEnd as string))
+    && (value.source !== "massive" || (isIsoDateTime(value.asOf) && isIsoDate(value.periodStart) && isIsoDate(value.periodEnd)))
     && (value.isFallback !== true || isIsoDateTime(value.asOf));
 }
 

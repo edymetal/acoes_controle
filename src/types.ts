@@ -25,6 +25,9 @@ export interface AnnualStats {
   currency: string;
   asOf?: string;
   isFallback?: boolean;
+  source?: "google-sheets" | "massive";
+  periodStart?: string;
+  periodEnd?: string;
 }
 
 export interface Asset {

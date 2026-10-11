@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ExternalLink, RotateCcw, X } from "lucide-react";
 import { EmptyState, StockLogo, Value } from "./Ui";
-import { formatCurrency, formatDateTime, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
+import { formatCurrency, formatDate, formatDateTime, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
 import { loadAppLanguage } from "../lib/i18n";
 import { getStockActivity, getStockMarketLinks, STOCK_CHART_PERIODS, type StockChartPeriod } from "../lib/stockDetails";
 import type { Asset, PortfolioModel } from "../types";
@@ -76,12 +76,14 @@ export function StockAssetModal({ asset, model, generatedAt, contextLabel, onClo
         </> : <p className="asset-modal__note">A bolsa deste ativo não está disponível no gráfico integrado. Consulte o histórico pelo link do Google Finance.</p>}
       </section>
 
-      <section className="stock-annual-stats" aria-label="Preços anuais da planilha">
+      <section className="stock-annual-stats" aria-label="Preços anuais">
         <article><small>Cotação na planilha</small><strong className="privacy-value">{quoteAvailable ? formatCurrency(asset.currentPrice) : "Indisponível"}</strong></article>
         <article><small>Mínima anual</small><strong className="privacy-value">{annual ? formatCurrency(annual.min) : "Indisponível"}</strong></article>
         <article><small>Média anual</small><strong className="privacy-value">{annual ? formatCurrency(annual.average) : "Indisponível"}</strong></article>
         <article><small>Máxima anual</small><strong className="privacy-value">{annual ? formatCurrency(annual.max) : "Indisponível"}</strong></article>
       </section>
+      {annual?.source === "massive" && <p className="stock-details-updated">Histórico por <a href="https://massive.com/" target="_blank" rel="noopener noreferrer">Massive</a> · fechamentos diários ajustados por desdobramentos · {annual.observations} pregões · de {formatDate(annual.periodStart!)} a {formatDate(annual.periodEnd!)}. Atualizado em {formatDateTime(annual.asOf!)}.</p>}
+      {!annual && <p className="stock-details-updated">Histórico anual indisponível. A integração Massive preenche esses preços na próxima atualização válida.</p>}
       <p className="stock-details-updated">Planilha atualizada em {formatDateTime(generatedAt)}.{annual?.isFallback && ` Preços anuais preservados da última leitura válida${annual.asOf ? ` de ${formatDateTime(annual.asOf)}` : ""}.`}</p>
 
       <section className="stock-activity" aria-labelledby="stock-activity-title">

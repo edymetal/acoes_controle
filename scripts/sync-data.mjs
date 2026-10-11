@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { batchGetValues } from "./google-sheets-client.mjs";
+import { ANNUAL_MARKET_HISTORY_RANGE, mapAnnualMarketHistory } from "../src/lib/annualMarketHistoryCore.mjs";
 
 const SPREADSHEET_ID = "1cdPXA3O0DoSfOILOpc7GZjWHI7tHnhgRH9aMXdU-_F0";
 const RANGES = {
@@ -118,7 +119,7 @@ function mapSales(rows, warnings) {
   });
 }
 
-function mapAssets(rows, warnings, previousAnnualByTicker, generatedAt) {
+function mapAssets(rows, warnings, previousAnnualByTicker, generatedAt, marketAnnualByTicker) {
   const seen = new Set();
   return rows.flatMap((row, index) => {
     if (!row?.length) return [];
@@ -149,7 +150,9 @@ function mapAssets(rows, warnings, previousAnnualByTicker, generatedAt) {
       && annualMin <= annualAverage
       && annualAverage <= annualMax;
     const previousAnnual = previousAnnualByTicker.get(symbol) ?? null;
-    if (!hasAnnualStats) warnings.push(
+    const marketAnnual = marketAnnualByTicker.get(symbol) ?? null;
+    if (marketAnnual?.isFallback && !hasAnnualStats) warnings.push(`Preços anuais Massive desatualizados para ${symbol}; mantidos os últimos valores válidos.`);
+    else if (!hasAnnualStats && !marketAnnual) warnings.push(
       previousAnnual
         ? `Preços anuais indisponíveis para ${symbol}; mantidos os últimos valores válidos.`
         : `Preços anuais inválidos para ${symbol} na linha ${index + 12} da aba Ações Base.`,
@@ -161,7 +164,7 @@ function mapAssets(rows, warnings, previousAnnualByTicker, generatedAt) {
       sector: text(row[3]) || "Não informado",
       currentPrice,
       exchange: text(row[9]) || "Não informada",
-      annual: hasAnnualStats ? {
+      annual: marketAnnual && !marketAnnual.isFallback ? marketAnnual : hasAnnualStats ? {
         min: annualMin,
         average: annualAverage,
         max: annualMax,
@@ -169,7 +172,8 @@ function mapAssets(rows, warnings, previousAnnualByTicker, generatedAt) {
         currency: "USD",
         asOf: generatedAt,
         isFallback: false,
-      } : previousAnnual ? { ...previousAnnual, isFallback: true } : null,
+        source: "google-sheets",
+      } : marketAnnual ?? (previousAnnual ? { ...previousAnnual, isFallback: true } : null),
     }];
   });
 }
@@ -419,7 +423,14 @@ async function main() {
   const [purchaseRange, saleRange, assetRange, fiiPurchaseRange, fiiSaleRange, fiiAssetRange, usdRateRange, cryptoTransactionRange, cryptoAssetRange, fixedIncomeRange, fixedIncomeUsdRateRange] = response.valueRanges;
   const purchases = mapPurchases(purchaseRange?.values ?? [], warnings);
   const sales = mapSales(saleRange?.values ?? [], warnings);
-  const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker, generatedAt);
+  let annualRows = [];
+  try {
+    const annualResponse = await batchGetValues({ spreadsheetId: SPREADSHEET_ID, ranges: [ANNUAL_MARKET_HISTORY_RANGE], valueRenderOption: "UNFORMATTED_VALUE" });
+    annualRows = annualResponse.valueRanges?.[0]?.values ?? [];
+  } catch {
+    warnings.push("Não foi possível ler o histórico anual Massive; os demais dados da planilha foram carregados.");
+  }
+  const assets = mapAssets(assetRange?.values ?? [], warnings, previousAnnualByTicker, generatedAt, mapAnnualMarketHistory(annualRows, generatedAt, warnings));
   const fiiWarnings = [];
   const fiiPurchases = mapFiiPurchases(fiiPurchaseRange?.values ?? [], fiiWarnings);
   const fiiSales = mapFiiSales(fiiSaleRange?.values ?? [], fiiWarnings);
@@ -439,9 +450,9 @@ async function main() {
     generatedAt,
     source: {
       spreadsheetId: SPREADSHEET_ID,
-      ranges: RANGES,
+      ranges: { ...RANGES, annualMarketHistory: ANNUAL_MARKET_HISTORY_RANGE },
       currentQuotes: "Google Sheets",
-      annualHistory: "Google Sheets — mínimo, média e máximo dos últimos 365 dias",
+      annualHistory: "Massive e Google Sheets — mínimo, média e máximo dos fechamentos diários dos últimos 365 dias",
     },
     purchases,
     sales,

@@ -277,4 +277,12 @@ describe("validação dos dados privados", () => {
 
     expect(() => parsePortfolioData(invalid)).toThrow("valores inconsistentes");
   });
+
+  it("exige origem, período e data consistentes no histórico Massive", () => {
+    const enriched = structuredClone(portfolio);
+    Object.assign(enriched.assets[0].annual!, { source: "massive", periodStart: "2025-07-27", periodEnd: "2026-07-24" });
+    expect(parsePortfolioData(enriched).assets[0].annual?.source).toBe("massive");
+    enriched.assets[0].annual!.periodStart = "2026-07-25";
+    expect(() => parsePortfolioData(enriched)).toThrow("valores inconsistentes");
+  });
 });

@@ -63,6 +63,7 @@ Os JSONs foram removidos da branch atual e do artefato publicado. O aplicativo t
 | Compras | `Ações Hist` | `F25:J1000` |
 | Vendas | `Ações Hist` | `AJ25:AM1000` |
 | Ativos, cotações e preços dos últimos 365 dias | `Ações Base` | `H12:Q1000` |
+| Fechamentos anuais obtidos pela Massive | `Ações Anual API` | `A2:J1000` |
 | Compras de FIIs | `FII Hist` | `F24:I1000` |
 | Vendas de FIIs | `FII Hist` | `AJ85:AN1000` |
 | Fundos e cotações atuais | `FII BASE` | `A16:G1000` |
@@ -133,6 +134,18 @@ Em Carteira, Movimentações e Estratégia anual, o código de cada ativo abre a
 O gráfico usa o widget Symbol Overview da TradingView em um iframe de outra origem, carregado somente ao abrir os detalhes. Apenas o código público, a bolsa e o período do ativo são enviados ao provedor; movimentações, valores da carteira e tokens de autenticação não são enviados. A integração preserva a atribuição da TradingView e pode exibir cotações com atraso ou diferentes da planilha. O gráfico do Google Finance bloqueia incorporação em outros sites (`X-Frame-Options: SAMEORIGIN`), por isso a janela oferece um link direto para o ativo no Google Finance. Bolsas não reconhecidas oferecem consulta pelo Google sem selecionar outro mercado automaticamente.
 
 Referência do gráfico: [TradingView Symbol Overview](https://www.tradingview.com/widget-docs/widgets/charts/symbol-overview/).
+
+### Histórico anual gratuito
+
+O Google bloqueia o acesso pela API aos históricos calculados com `GOOGLEFINANCE`, mesmo quando as fórmulas funcionam dentro da planilha. A integração Massive contorna essa ausência consultando os fechamentos diários dos últimos 365 dias concluídos, ajustados por desdobramentos. Mínima, média aritmética e máxima usam os fechamentos, preservando o cálculo das fórmulas originais; máximas e mínimas intradiárias não entram no cálculo. A cotação atual continua vindo da aba `Ações Base`.
+
+O workflow `Atualizar histórico anual privado` atualiza a aba auxiliar `Ações Anual API` de terça a sábado, após o encerramento do pregão anterior nos EUA. A chave `MASSIVE_API_KEY` e a credencial já existente `GOOGLE_SERVICE_ACCOUNT_JSON` ficam nos secrets do repositório. A conta de serviço precisa poder editar a planilha. O navegador continua com autorização Google de somente leitura; nenhum token Massive, valor da carteira ou arquivo de histórico é publicado no GitHub Pages. Os logs da atualização mostram apenas contagens.
+
+O plano Stocks Basic permite cinco consultas por minuto e dois anos de histórico. O script espaça as chamadas em pelo menos 13 segundos, aguarda após um limite HTTP 429 e reaproveita consultas válidas do mesmo dia. Falhas parciais preservam os últimos registros e fazem o workflow sinalizar falha. Históricos incompletos, com menos de 200 pregões, sem cobertura anual ou com dados inconsistentes são recusados. Dados sem atualização por mais de 72 horas, ou com o último pregão há mais de sete dias, aparecem como contingência e suspendem os sinais da estratégia até uma leitura válida.
+
+Para atualizar localmente, configure `MASSIVE_API_KEY` ou coloque a chave em `auth/massive-api-key.txt` (pasta ignorada pelo Git) e execute `npm run sync:annual`. A execução escreve apenas a aba auxiliar privada e preserva as fórmulas originais. Também é possível executar o workflow manualmente no GitHub Actions.
+
+Referências: [Histórico Massive](https://www.massive.com/docs/rest/stocks/aggregates/custom-bars), [plano Stocks Basic](https://massive.com/pricing?product=stocks) e [restrição do GOOGLEFINANCE](https://support.google.com/docs/answer/3093281?hl=pt-BR).
 
 ## Estratégia anual
 

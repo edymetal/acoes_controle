@@ -1,0 +1,31 @@
+name: Atualizar histórico anual privado
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Tuesday through Saturday, after the previous US trading day's close.
+    - cron: "35 6 * * 2-6"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: annual-market-history
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - name: Configurar Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        with:
+          node-version: 24
+      - name: Atualizar preços anuais na planilha privada
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+        run: node scripts/sync-annual-history.mjs
