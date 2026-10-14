@@ -49,16 +49,17 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
   const [search, setSearch] = useState("");
   const [showLevels, setShowLevels] = useState(false);
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
-  const selectedAsset = data.assets.find((asset) => asset.ticker === selectedTicker);
   const levelValues = useMemo(() => getStrategyLevelValues(settings), [settings]);
   const signals = useMemo(() => {
     const positions = new Map(model.positions.map((position) => [position.ticker, position]));
-    return data.assets.map((asset) => {
+    return data.assets.flatMap((asset) => {
       const holding = positions.get(asset.ticker);
+      if (!holding || holding.quantity <= 0 || holding.marketValue <= 0) return [];
       const accountingReliable = !model.health.ambiguousTransactionTickers.includes(asset.ticker);
-      return { asset, holding, signal: getStrategySignal(asset, settings, holding?.marketValue ?? 0, holding?.costBasis ?? 0, accountingReliable) };
+      return [{ asset, holding, signal: getStrategySignal(asset, settings, holding.marketValue, holding.costBasis, accountingReliable) }];
     });
   }, [data.assets, model.health.ambiguousTransactionTickers, model.positions, settings]);
+  const selectedAsset = signals.find(({ asset }) => asset.ticker === selectedTicker)?.asset;
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return signals
