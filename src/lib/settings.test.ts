@@ -37,19 +37,30 @@ describe("getStrategyLevelValues", () => {
       breakoutSellPercent: 25,
     })).toEqual({
       positionRange: 80,
-      breakdownBuyPositionValue: 115,
-      strongBuyPositionValue: 140,
-      moderateBuyPositionValue: 150,
+      breakdownBuyPositionValue: 150,
+      strongBuyPositionValue: 135,
+      moderateBuyPositionValue: 110,
       initialSellAmount: 60,
       breakoutSellAmount: 20,
     });
   });
 
-  it("soma as parcelas ao valor mínimo e limita a posição acumulada ao máximo", () => {
+  it("aumenta o alvo acumulado conforme a cotação entra nas faixas mais baixas", () => {
     expect(getStrategyLevelValues(DEFAULT_STRATEGY_SETTINGS)).toMatchObject({
-      breakdownBuyPositionValue: 80,
-      strongBuyPositionValue: 105,
-      moderateBuyPositionValue: 115,
+      moderateBuyPositionValue: 75,
+      strongBuyPositionValue: 100,
+      breakdownBuyPositionValue: 115,
+    });
+  });
+
+  it("limita os alvos ao máximo mesmo quando as parcelas excedem a faixa negociável", () => {
+    expect(getStrategyLevelValues({
+      ...DEFAULT_STRATEGY_SETTINGS,
+      maximumPositionValue: 90,
+    })).toMatchObject({
+      moderateBuyPositionValue: 75,
+      strongBuyPositionValue: 90,
+      breakdownBuyPositionValue: 90,
     });
   });
 });

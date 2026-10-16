@@ -94,7 +94,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
     <div className="page-stack">
       <DataHealthNotice model={model} />
       <section className="strategy-intro">
-        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão separa a parcela sugerida do total necessário para completar a posição.</p></div>
+        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Nas compras, cada cartão mostra o valor que falta para atingir o alvo da faixa atual.</p></div>
         <button className="strategy-levels-button" type="button" aria-haspopup="dialog" onClick={() => setShowLevels(true)}><SlidersHorizontal size={18} /> Ver níveis e valores</button>
       </section>
 
@@ -168,13 +168,13 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
             </div>
 
             <section className="strategy-levels-section">
-              <header><TrendingDown size={19} /><span><h3>Níveis de compra</h3><p>A mínima anual representa 0% e a máxima anual representa 100%.</p></span></header>
+              <header><TrendingDown size={19} /><span><h3>Níveis de compra</h3><p>A mínima anual representa 0% e a máxima anual representa 100%. O alvo acumulado aumenta nas faixas de menor cotação.</p></span></header>
               <div className="strategy-levels-list strategy-levels-list--buy">
                 <article>
-                  <span><small>Nível</small><strong>Abaixo da mínima anual</strong></span>
-                  <span><small>Faixa da cotação</small><strong>Abaixo de 0%</strong></span>
-                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(settings.breakdownBuyAmount)}</strong></span>
-                  <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.breakdownBuyPositionValue)}</strong></span>
+                  <span><small>Nível</small><strong>Compra</strong></span>
+                  <span><small>Faixa da cotação</small><strong>{formatPercent(settings.buyZoneMiddlePercent / 100)} – {formatPercent(settings.buyZoneUpperPercent / 100)}</strong></span>
+                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(settings.moderateBuyAmount)}</strong></span>
+                  <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.moderateBuyPositionValue)}</strong></span>
                 </article>
                 <article>
                   <span><small>Nível</small><strong>Compra forte</strong></span>
@@ -183,13 +183,13 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                   <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.strongBuyPositionValue)}</strong></span>
                 </article>
                 <article>
-                  <span><small>Nível</small><strong>Compra</strong></span>
-                  <span><small>Faixa da cotação</small><strong>{formatPercent(settings.buyZoneMiddlePercent / 100)} – {formatPercent(settings.buyZoneUpperPercent / 100)}</strong></span>
-                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(settings.moderateBuyAmount)}</strong></span>
-                  <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.moderateBuyPositionValue)}</strong></span>
+                  <span><small>Nível</small><strong>Abaixo da mínima anual</strong></span>
+                  <span><small>Faixa da cotação</small><strong>Abaixo de 0%</strong></span>
+                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(settings.breakdownBuyAmount)}</strong></span>
+                  <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.breakdownBuyPositionValue)}</strong></span>
                 </article>
               </div>
-              <p className="strategy-levels-section__note">A posição acumulada parte do mínimo de {formatCurrency(settings.minimumPositionValue)}, soma cada parcela sugerida e nunca ultrapassa o máximo de {formatCurrency(settings.maximumPositionValue)}. Entre 0% e {formatPercent(settings.buyZoneLowerPercent / 100)}, e depois de {formatPercent(settings.buyZoneUpperPercent / 100)} até a zona de venda, a estratégia aguarda.</p>
+              <p className="strategy-levels-section__note">A posição acumulada parte do mínimo de {formatCurrency(settings.minimumPositionValue)} e soma as parcelas na ordem Compra, Compra forte e Abaixo da mínima anual, até o máximo de {formatCurrency(settings.maximumPositionValue)}. O cartão sugere apenas o que falta comprar para atingir o alvo da faixa atual. Entre 0% e {formatPercent(settings.buyZoneLowerPercent / 100)}, e depois de {formatPercent(settings.buyZoneUpperPercent / 100)} até a zona de venda, a estratégia aguarda.</p>
             </section>
 
             <section className="strategy-levels-section">

@@ -196,52 +196,86 @@ describe("getStrategySignal", () => {
     annual: { min: 8, average: 18, max: 30, observations: 250, currency: "USD" },
   };
 
-  it("completa o alvo de US$ 115 entre 20% e 35% do intervalo anual", () => {
+  it("completa o alvo de US$ 75 entre 20% e 35% do intervalo anual", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 14 });
+    expect(signal.kind).toBe("buy");
+    expect(signal.targetPositionValue).toBe(75);
+    expect(signal.actionAmount).toBe(75);
+  });
+
+  it("completa o alvo de US$ 100 entre 10% e 20% do intervalo anual", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 11 });
+    expect(signal.kind).toBe("buy");
+    expect(signal.targetPositionValue).toBe(100);
+    expect(signal.actionAmount).toBe(100);
+  });
+
+  it("completa o alvo máximo de US$ 115 quando rompe a mínima", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 7 });
     expect(signal.kind).toBe("buy");
     expect(signal.targetPositionValue).toBe(115);
     expect(signal.actionAmount).toBe(115);
-  });
-
-  it("completa o alvo de US$ 105 entre 10% e 20% do intervalo anual", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 11 });
-    expect(signal.kind).toBe("buy");
-    expect(signal.targetPositionValue).toBe(105);
-    expect(signal.actionAmount).toBe(105);
-  });
-
-  it("completa o alvo de US$ 80 quando rompe a mínima", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 7 });
-    expect(signal.kind).toBe("buy");
-    expect(signal.targetPositionValue).toBe(80);
-    expect(signal.actionAmount).toBe(80);
-    expect(signal.remainingToTarget).toBe(80);
+    expect(signal.remainingToTarget).toBe(115);
     expect(signal.remainingToMaximum).toBe(115);
   });
 
   it("subtrai o valor comprado do alvo acumulado do nível", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 11 }, DEFAULT_STRATEGY_SETTINGS, 41.52, 40.37);
     expect(signal.kind).toBe("buy");
-    expect(signal.targetPositionValue).toBe(105);
+    expect(signal.targetPositionValue).toBe(100);
     expect(signal.positionCost).toBeCloseTo(40.37);
-    expect(signal.actionAmount).toBeCloseTo(64.63);
-    expect(signal.remainingToTarget).toBeCloseTo(64.63);
+    expect(signal.actionAmount).toBeCloseTo(59.63);
+    expect(signal.remainingToTarget).toBeCloseTo(59.63);
   });
 
   it("não recomenda nova compra quando o valor comprado já atingiu o alvo do nível", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 82.17, 82.17);
+    const signal = getStrategySignal({ ...base, currentPrice: 11 }, DEFAULT_STRATEGY_SETTINGS, 82.17, 100);
     expect(signal.kind).toBe("neutral");
-    expect(signal.targetPositionValue).toBe(80);
+    expect(signal.targetPositionValue).toBe(100);
     expect(signal.actionAmount).toBe(0);
     expect(signal.remainingToTarget).toBe(0);
   });
 
   it("compra somente o valor exato que falta para o alvo máximo", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 14 }, DEFAULT_STRATEGY_SETTINGS, 97.17, 111.22);
+    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 97.17, 111.22);
     expect(signal.kind).toBe("buy");
     expect(signal.actionAmount).toBeCloseTo(3.78);
     expect(signal.remainingToTarget).toBeCloseTo(3.78);
     expect(signal.remainingToMaximum).toBeCloseTo(3.78);
+  });
+
+  it("libera novos aportes com as quedas e encerra as compras ao atingir US$ 115", () => {
+    let positionCost = 65;
+    for (const { price, amount, target } of [
+      { price: 14, amount: 10, target: 75 },
+      { price: 11, amount: 25, target: 100 },
+      { price: 7, amount: 15, target: 115 },
+    ]) {
+      const signal = getStrategySignal({ ...base, currentPrice: price }, DEFAULT_STRATEGY_SETTINGS, 50, positionCost);
+      expect(signal.kind).toBe("buy");
+      expect(signal.actionAmount).toBe(amount);
+      expect(signal.targetPositionValue).toBe(target);
+      positionCost += signal.actionAmount;
+    }
+
+    const completed = getStrategySignal({ ...base, currentPrice: 6 }, DEFAULT_STRATEGY_SETTINGS, 40, positionCost);
+    expect(completed.kind).toBe("neutral");
+    expect(completed.label).toBe("Nível completo");
+    expect(completed.actionAmount).toBe(0);
+  });
+
+  it("completa diretamente o alvo abaixo da mínima quando as faixas anteriores foram puladas", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 7 }, DEFAULT_STRATEGY_SETTINGS, 50, 65);
+    expect(signal.kind).toBe("buy");
+    expect(signal.actionAmount).toBe(50);
+    expect(signal.targetPositionValue).toBe(115);
+  });
+
+  it("não acrescenta compras na recuperação após completar uma faixa mais baixa", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 14 }, DEFAULT_STRATEGY_SETTINGS, 110, 100);
+    expect(signal.kind).toBe("neutral");
+    expect(signal.targetPositionValue).toBe(75);
+    expect(signal.actionAmount).toBe(0);
   });
 
   it("indica a primeira venda de 80% da faixa negociável", () => {

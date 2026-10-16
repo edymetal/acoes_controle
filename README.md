@@ -149,12 +149,18 @@ Referências: [Histórico Massive](https://www.massive.com/docs/rest/stocks/aggr
 
 ## Estratégia anual
 
-Para cotação `P`, média `M`, mínima `L` e máxima `H`:
+Para cotação `P`, mínima `L` e máxima `H`, a posição no intervalo anual é `(P - L) / (H - L) × 100`: a mínima representa 0% e a máxima representa 100%.
 
-- abaixo da média: intensidade `clamp((M - P) / (M - L), 0, 1)`;
-- até 5% abaixo da máxima: alerta de proximidade;
-- acima da máxima: sinal de rompimento com intensidade crescente;
-- histórico ausente ou inválido: “dados insuficientes”.
+Os alvos de compra aumentam conforme a cotação entra nas faixas mais baixas. Com as configurações padrão:
+
+- de 20% a 35%, inclusive: compra até o custo acumulado de US$ 75 (mínimo de US$ 65 + parcela de US$ 10);
+- de 10% até menos de 20%: compra forte até US$ 100 (alvo anterior + US$ 25);
+- abaixo da mínima anual: compra até US$ 115 (alvo anterior + US$ 15);
+- da mínima até menos de 10%, e acima de 35% até a zona de venda: aguarda;
+- até 5% abaixo da máxima: sinal de venda; acima da máxima: sinal de venda no rompimento;
+- histórico ausente, inválido ou reaproveitado de uma atualização anterior: sinal suspenso.
+
+A compra sugerida corresponde ao alvo da faixa atual menos o custo da posição em aberto, nunca abaixo de zero nem acima do teto configurado. Uma queda no valor de mercado não reduz esse custo. Se a cotação pular faixas, o sistema sugere diretamente o valor necessário para completar o alvo atual; se o custo já alcançou esse alvo, aguarda. Os alvos são recalculados com as parcelas e limites salvos em Configurações.
 
 Os sinais são indicadores matemáticos e não constituem recomendação de investimento.
 
