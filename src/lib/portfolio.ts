@@ -10,7 +10,7 @@ import type {
   StrategySignal,
   Transaction,
 } from "../types";
-import { DEFAULT_STRATEGY_SETTINGS, getStrategyLevelValues } from "./settings";
+import { DEFAULT_STRATEGY_SETTINGS, getAssetStrategySettings, getStrategyLevelValues } from "./settings";
 
 const EPSILON = 0.0000001;
 
@@ -199,6 +199,7 @@ export function getStrategySignal(
   positionCost = positionValue,
   accountingReliable = true,
 ): StrategySignal {
+  settings = getAssetStrategySettings(settings, asset.ticker);
   const annual = asset.annual;
   const remainingToMaximum = Math.max(0, settings.maximumPositionValue - positionCost);
   if (!accountingReliable) {

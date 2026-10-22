@@ -248,6 +248,7 @@ export interface Position {
 export type StrategyKind = "buy" | "sell" | "breakout" | "neutral" | "unavailable";
 
 export interface StrategySettings {
+  positionSizeByTicker: Record<string, number>;
   sellDistanceFromHighPercent: number;
   initialSellPercent: number;
   breakoutSellPercent: number;

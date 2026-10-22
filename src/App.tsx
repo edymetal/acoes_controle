@@ -315,7 +315,7 @@ export default function App() {
         {page === "portfolio" && <Portfolio data={data} model={model} />}
         {page === "history" && <History data={data} model={model} />}
         {page === "strategy" && <Strategy data={data} model={model} settings={settings} />}
-        {page === "settings" && <Settings settings={settings} onSave={updateSettings} language={language} onLanguageChange={updateLanguage} />}
+        {page === "settings" && <Settings assets={data.assets} settings={settings} onSave={updateSettings} language={language} onLanguageChange={updateLanguage} />}
         {page === "fii-dashboard" && fiiModel && <FiiDashboard model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} onNavigate={navigate} />}
         {page === "fii-portfolio" && fiiModel && <FiiPortfolio model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} />}
         {page === "fii-history" && fiiModel && <FiiHistory model={fiiModel} usdRate={fiiData?.exchangeRate.brlPerUsd ?? null} />}

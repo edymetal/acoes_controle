@@ -203,6 +203,33 @@ describe("getStrategySignal", () => {
     expect(signal.actionAmount).toBe(75);
   });
 
+  it("recalcula as compras somente para a ação com peso personalizado", () => {
+    const settings = { ...DEFAULT_STRATEGY_SETTINGS, positionSizeByTicker: { AAA: 200 } };
+    const signal = getStrategySignal({ ...base, currentPrice: 14 }, settings, 70, 65);
+    expect(signal).toMatchObject({ kind: "buy", targetPositionValue: 150, actionAmount: 85, remainingToMaximum: 165 });
+    expect(getStrategySignal({ ...base, ticker: "BBB", currentPrice: 14 }, settings, 70, 65)).toMatchObject({ targetPositionValue: 75, actionAmount: 10 });
+    expect(getStrategySignal({ ...base, currentPrice: 7 }, settings, 220, 225)).toMatchObject({ targetPositionValue: 230, actionAmount: 5 });
+    expect(getStrategySignal({ ...base, currentPrice: 7 }, settings, 220, 230).actionAmount).toBe(0);
+  });
+
+  it("reduz alvos e limites sem sugerir novas compras acima do teto personalizado", () => {
+    const settings = { ...DEFAULT_STRATEGY_SETTINGS, positionSizeByTicker: { AAA: 50 } };
+    expect(getStrategySignal({ ...base, currentPrice: 11 }, settings, 40, 40)).toMatchObject({ targetPositionValue: 50, actionAmount: 10 });
+    expect(getStrategySignal({ ...base, currentPrice: 7 }, settings, 70, 65)).toMatchObject({ kind: "neutral", targetPositionValue: 57.5, actionAmount: 0 });
+  });
+
+  it("dimensiona as duas vendas e preserva piso e venda mínima personalizados", () => {
+    const settings = { ...DEFAULT_STRATEGY_SETTINGS, positionSizeByTicker: { AAA: 200 } };
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 230).actionAmount).toBe(80);
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, settings, 150).actionAmount).toBe(20);
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 145).actionAmount).toBe(0);
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 155).actionAmount).toBe(25);
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, settings, 300).actionAmount).toBe(70);
+    const smaller = { ...settings, positionSizeByTicker: { AAA: 50 } };
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, smaller, 57.5).actionAmount).toBe(20);
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, smaller, 37.5).actionAmount).toBe(5);
+  });
+
   it("completa o alvo de US$ 100 entre 10% e 20% do intervalo anual", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 11 });
     expect(signal.kind).toBe("buy");

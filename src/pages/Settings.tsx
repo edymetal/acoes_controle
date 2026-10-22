@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Check, CheckCircle2, DollarSign, Languages, RotateCcw, Save, Settings2, Target, TrendingDown, TrendingUp, WalletCards } from "lucide-react";
 import { translate, type AppLanguage } from "../lib/i18n";
 import { DEFAULT_STRATEGY_SETTINGS } from "../lib/settings";
-import type { StrategySettings } from "../types";
+import type { Asset, StrategySettings } from "../types";
+import { StockPositionSettings } from "../components/StockPositionSettings";
 
 interface SettingsProps {
+  assets: Asset[];
   settings: StrategySettings;
   onSave: (settings: StrategySettings) => void;
   language: AppLanguage;
@@ -33,13 +35,13 @@ function SettingField({ label, description, value, min, max, step = 0.5, suffix,
   );
 }
 
-export function Settings({ settings, onSave, language, onLanguageChange }: SettingsProps) {
+export function Settings({ assets, settings, onSave, language, onLanguageChange }: SettingsProps) {
   const [draft, setDraft] = useState(settings);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => setDraft(settings), [settings]);
 
-  const update = (key: keyof StrategySettings, value: number) => {
+  const update = <K extends keyof StrategySettings,>(key: K, value: StrategySettings[K]) => {
     setSaved(false);
     setDraft((current) => ({ ...current, [key]: value }));
   };
@@ -71,6 +73,7 @@ export function Settings({ settings, onSave, language, onLanguageChange }: Setti
         <div className="settings-index__items">
           <button type="button" onClick={() => scrollToSection("settings-language")}><Languages size={18} /><span>{translate(language, "settings.language.title")}</span></button>
           <button type="button" onClick={() => scrollToSection("settings-position")}><WalletCards size={18} /><span>{translate(language, "settings.position.title")}</span></button>
+          <button type="button" onClick={() => scrollToSection("settings-stock-position")}><Target size={18} /><span>{translate(language, "settings.sizing.title")}</span></button>
           <button type="button" onClick={() => scrollToSection("settings-sell")}><TrendingUp size={18} /><span>{translate(language, "settings.sell.title")}</span></button>
           <button type="button" onClick={() => scrollToSection("settings-buy")}><TrendingDown size={18} /><span>{translate(language, "settings.buy.title")}</span></button>
         </div>
@@ -107,6 +110,8 @@ export function Settings({ settings, onSave, language, onLanguageChange }: Setti
           <SettingField label={translate(language, "settings.maximumValue")} description={translate(language, "settings.maximumValue.description")} value={draft.maximumPositionValue} min={draft.minimumPositionValue} max={20000} step={1} suffix="US$" icon={<WalletCards size={20} />} onChange={(value) => update("maximumPositionValue", value)} />
         </div>
       </section>
+
+      <StockPositionSettings assets={assets} settings={draft} language={language} onChange={(sizes) => update("positionSizeByTicker", sizes)} />
 
       <section className="panel settings-panel settings-anchor" id="settings-sell">
         <div className="panel__header"><div><h2>{translate(language, "settings.sell.title")}</h2><p>{translate(language, "settings.sell.description")}</p></div></div>

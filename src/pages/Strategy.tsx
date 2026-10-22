@@ -3,7 +3,7 @@ import { ArrowUpRight, Search, SlidersHorizontal, Sparkles, Target, TrendingDown
 import { DataHealthNotice, EmptyState, MetricCard, SignalBadge, StockLogo } from "../components/Ui";
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
-import { getStrategyLevelValues } from "../lib/settings";
+import { getAssetStrategySettings, getPositionSizePercent, getStrategyLevelValues } from "../lib/settings";
 import type { Asset, PortfolioData, PortfolioModel, StrategyKind, StrategySettings, StrategySignal } from "../types";
 import { StockAssetModal } from "../components/StockAssetModal";
 
@@ -48,8 +48,10 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
   const [filter, setFilter] = useState<FilterKind>("all");
   const [search, setSearch] = useState("");
   const [showLevels, setShowLevels] = useState(false);
+  const [levelsTicker, setLevelsTicker] = useState("");
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
-  const levelValues = useMemo(() => getStrategyLevelValues(settings), [settings]);
+  const levelSettings = useMemo(() => getAssetStrategySettings(settings, levelsTicker), [settings, levelsTicker]);
+  const levelValues = useMemo(() => getStrategyLevelValues(levelSettings), [levelSettings]);
   const signals = useMemo(() => {
     const positions = new Map(model.positions.map((position) => [position.ticker, position]));
     return data.assets.flatMap((asset) => {
@@ -120,6 +122,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
             const rangePosition = annual && range > 0 ? Math.max(0, Math.min(100, ((asset.currentPrice - annual.min) / range) * 100)) : 0;
             const profit = holding?.unrealized ?? 0;
             const rangeDetails = getRangeDetails(asset, signal, settings);
+            const assetSettings = getAssetStrategySettings(settings, asset.ticker);
             const style = { "--signal-strength": signal.strength } as CSSProperties;
             return (
               <article className={`strategy-card strategy-card--${signal.kind}`} style={style} key={asset.ticker}>
@@ -134,6 +137,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                   <span><small>Atual</small><strong>{formatCurrency(holding?.marketValue ?? 0)}</strong></span>
                   <span className={accountingReliable ? (profit > 0 ? "value--positive" : profit < 0 ? "value--negative" : "") : ""}><small>Lucro</small><strong>{accountingReliable ? formatCurrency(profit) : "Indisponível"}</strong></span>
                 </div>
+                <div className="strategy-sizing"><span>Peso {getPositionSizePercent(settings, asset.ticker)}%</span><span className="privacy-value">Piso {formatCurrency(assetSettings.minimumPositionValue)} · Teto {formatCurrency(assetSettings.maximumPositionValue)}</span></div>
                 {annual ? <>
                   <div className="range-track"><i style={{ left: `${rangePosition}%` }} /><span className="range-track__fill" style={{ width: `${rangePosition}%` }} /></div>
                   <div className="range-labels"><span><small>Mínima</small>{formatCurrency(annual.min)}</span><span><small>Média</small>{formatCurrency(annual.average)}</span><span><small>Máxima</small>{formatCurrency(annual.max)}</span></div>
@@ -160,11 +164,16 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
               <button type="button" aria-label="Fechar níveis da estratégia" onClick={() => setShowLevels(false)}><X size={21} /></button>
             </header>
 
+            <label className="strategy-levels-scope"><span>Exibir valores para</span><select value={levelsTicker} onChange={(event) => setLevelsTicker(event.target.value)}>
+              <option value="">Padrão geral</option>
+              {[...data.assets].sort((a, b) => a.ticker.localeCompare(b.ticker)).map((asset) => <option key={asset.ticker} value={asset.ticker}>{asset.ticker} · Peso {getPositionSizePercent(settings, asset.ticker)}%</option>)}
+            </select></label>
+
             <div className="strategy-levels-summary">
-              <article><WalletCards size={19} /><span><small>Valor mínimo da posição</small><strong>{formatCurrency(settings.minimumPositionValue)}</strong><em>Piso preservado nas vendas</em></span></article>
-              <article><WalletCards size={19} /><span><small>Valor máximo da posição</small><strong>{formatCurrency(settings.maximumPositionValue)}</strong><em>Teto considerado nas compras</em></span></article>
+              <article><WalletCards size={19} /><span><small>Valor mínimo da posição</small><strong>{formatCurrency(levelSettings.minimumPositionValue)}</strong><em>Piso preservado nas vendas</em></span></article>
+              <article><WalletCards size={19} /><span><small>Valor máximo da posição</small><strong>{formatCurrency(levelSettings.maximumPositionValue)}</strong><em>Teto considerado nas compras</em></span></article>
               <article><SlidersHorizontal size={19} /><span><small>Faixa negociável</small><strong>{formatCurrency(levelValues.positionRange)}</strong><em>Diferença entre máximo e mínimo</em></span></article>
-              <article><Target size={19} /><span><small>Venda mínima</small><strong>{formatCurrency(settings.minimumSaleAmount)}</strong><em>Menor ordem de venda exibida</em></span></article>
+              <article><Target size={19} /><span><small>Venda mínima</small><strong>{formatCurrency(levelSettings.minimumSaleAmount)}</strong><em>Menor ordem de venda exibida</em></span></article>
             </div>
 
             <section className="strategy-levels-section">
@@ -172,24 +181,24 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
               <div className="strategy-levels-list strategy-levels-list--buy">
                 <article>
                   <span><small>Nível</small><strong>Compra</strong></span>
-                  <span><small>Faixa da cotação</small><strong>{formatPercent(settings.buyZoneMiddlePercent / 100)} – {formatPercent(settings.buyZoneUpperPercent / 100)}</strong></span>
-                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(settings.moderateBuyAmount)}</strong></span>
+                  <span><small>Faixa da cotação</small><strong>{formatPercent(levelSettings.buyZoneMiddlePercent / 100)} – {formatPercent(levelSettings.buyZoneUpperPercent / 100)}</strong></span>
+                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(levelSettings.moderateBuyAmount)}</strong></span>
                   <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.moderateBuyPositionValue)}</strong></span>
                 </article>
                 <article>
                   <span><small>Nível</small><strong>Compra forte</strong></span>
-                  <span><small>Faixa da cotação</small><strong>{formatPercent(settings.buyZoneLowerPercent / 100)} – {formatPercent(settings.buyZoneMiddlePercent / 100)}</strong></span>
-                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(settings.strongBuyAmount)}</strong></span>
+                  <span><small>Faixa da cotação</small><strong>{formatPercent(levelSettings.buyZoneLowerPercent / 100)} – {formatPercent(levelSettings.buyZoneMiddlePercent / 100)}</strong></span>
+                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(levelSettings.strongBuyAmount)}</strong></span>
                   <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.strongBuyPositionValue)}</strong></span>
                 </article>
                 <article>
                   <span><small>Nível</small><strong>Abaixo da mínima anual</strong></span>
                   <span><small>Faixa da cotação</small><strong>Abaixo de 0%</strong></span>
-                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(settings.breakdownBuyAmount)}</strong></span>
+                  <span className="strategy-levels-list__money"><small>Parcela sugerida</small><strong>{formatCurrency(levelSettings.breakdownBuyAmount)}</strong></span>
                   <span className="strategy-levels-list__money strategy-levels-list__money--total"><small>Posição acumulada</small><strong>{formatCurrency(levelValues.breakdownBuyPositionValue)}</strong></span>
                 </article>
               </div>
-              <p className="strategy-levels-section__note">A posição acumulada parte do mínimo de {formatCurrency(settings.minimumPositionValue)} e soma as parcelas na ordem Compra, Compra forte e Abaixo da mínima anual, até o máximo de {formatCurrency(settings.maximumPositionValue)}. O cartão sugere apenas o que falta comprar para atingir o alvo da faixa atual. Entre 0% e {formatPercent(settings.buyZoneLowerPercent / 100)}, e depois de {formatPercent(settings.buyZoneUpperPercent / 100)} até a zona de venda, a estratégia aguarda.</p>
+              <p className="strategy-levels-section__note">A posição acumulada parte do mínimo de {formatCurrency(levelSettings.minimumPositionValue)} e soma as parcelas na ordem Compra, Compra forte e Abaixo da mínima anual, até o máximo de {formatCurrency(levelSettings.maximumPositionValue)}. O cartão sugere apenas o que falta comprar para atingir o alvo da faixa atual. Entre 0% e {formatPercent(levelSettings.buyZoneLowerPercent / 100)}, e depois de {formatPercent(levelSettings.buyZoneUpperPercent / 100)} até a zona de venda, a estratégia aguarda.</p>
             </section>
 
             <section className="strategy-levels-section">
@@ -197,16 +206,16 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
               <div className="strategy-levels-list strategy-levels-list--sell">
                 <article>
                   <span><small>Nível</small><strong>Próxima da máxima</strong></span>
-                  <span><small>Gatilho</small><strong>Até {formatPercent(settings.sellDistanceFromHighPercent / 100)} abaixo da máxima</strong></span>
-                  <span className="strategy-levels-list__money"><small>Vender {formatPercent(settings.initialSellPercent / 100)} da faixa</small><strong>{formatCurrency(levelValues.initialSellAmount)}</strong></span>
+                  <span><small>Gatilho</small><strong>Até {formatPercent(levelSettings.sellDistanceFromHighPercent / 100)} abaixo da máxima</strong></span>
+                  <span className="strategy-levels-list__money"><small>Vender {formatPercent(levelSettings.initialSellPercent / 100)} da faixa</small><strong>{formatCurrency(levelValues.initialSellAmount)}</strong></span>
                 </article>
                 <article>
                   <span><small>Nível</small><strong>Acima da máxima</strong></span>
                   <span><small>Gatilho</small><strong>Rompimento acima de 100%</strong></span>
-                  <span className="strategy-levels-list__money"><small>Vender {formatPercent(settings.breakoutSellPercent / 100)} da faixa</small><strong>{formatCurrency(levelValues.breakoutSellAmount)}</strong></span>
+                  <span className="strategy-levels-list__money"><small>Vender {formatPercent(levelSettings.breakoutSellPercent / 100)} da faixa</small><strong>{formatCurrency(levelValues.breakoutSellAmount)}</strong></span>
                 </article>
               </div>
-              <p className="strategy-levels-section__note">Os valores de venda são bases calculadas. A operação exibida preserva o piso de {formatCurrency(settings.minimumPositionValue)} e só aparece quando alcança a venda mínima de {formatCurrency(settings.minimumSaleAmount)}.</p>
+              <p className="strategy-levels-section__note">Os valores de venda são bases calculadas. A operação exibida preserva o piso de {formatCurrency(levelSettings.minimumPositionValue)} e só aparece quando alcança a venda mínima de {formatCurrency(levelSettings.minimumSaleAmount)}.</p>
             </section>
 
             <p className="asset-modal__note strategy-levels-note">Todos os valores desta tela são calculados com as configurações salvas no navegador. Ao alterar mínimo, máximo, percentuais ou parcelas em Configurações, estes níveis são atualizados automaticamente.</p>
