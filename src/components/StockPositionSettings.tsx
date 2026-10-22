@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { RotateCcw, SlidersHorizontal } from "lucide-react";
+import { useRef, useState } from "react";
+import { Check, RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import { formatCurrency } from "../lib/format";
 import { translate, type AppLanguage, type TranslationKey } from "../lib/i18n";
 import { getAssetStrategySettings, getPositionSizePercent, getStrategyLevelValues, normalizeStrategySettings } from "../lib/settings";
@@ -12,14 +12,23 @@ interface StockPositionSettingsProps {
   onChange: (sizes: Record<string, number>) => void;
 }
 
+const normalizeSearch = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
 export function StockPositionSettings({ assets, settings, language, onChange }: StockPositionSettingsProps) {
   const [ticker, setTicker] = useState("");
+  const [search, setSearch] = useState("");
+  const searchInput = useRef<HTMLInputElement>(null);
   const t = (key: TranslationKey) => translate(language, key);
   const normalized = normalizeStrategySettings(settings);
   const percent = ticker ? getPositionSizePercent(normalized, ticker) : 100;
   const customized = Object.keys(normalized.positionSizeByTicker).sort();
   const tickers = [...new Set([...assets.map((asset) => asset.ticker), ...customized])].sort();
   const assetNames = new Map(assets.map((asset) => [asset.ticker, asset.name]));
+  const searchTerms = normalizeSearch(search).split(/\s+/).filter(Boolean);
+  const matches = tickers.filter((symbol) => {
+    const text = normalizeSearch(`${symbol} ${assetNames.get(symbol) ?? ""}`);
+    return searchTerms.every((term) => text.includes(term));
+  });
   const adjusted = getAssetStrategySettings(normalized, ticker);
   const baseLevels = getStrategyLevelValues(normalized);
   const levels = getStrategyLevelValues(adjusted);
@@ -43,12 +52,29 @@ export function StockPositionSettings({ assets, settings, language, onChange }: 
 
   return <section className="panel settings-panel settings-anchor stock-position-settings" id="settings-stock-position">
     <div className="panel__header"><div><h2><SlidersHorizontal size={19} /> {t("settings.sizing.title")}</h2><p>{t("settings.sizing.description")}</p></div></div>
-    <label className="stock-position-settings__select"><span>{t("settings.sizing.asset")}</span>
-      <select value={ticker} onChange={(event) => setTicker(event.target.value)}>
-        <option value="">{t("settings.sizing.choose")}</option>
-        {tickers.map((symbol) => <option key={symbol} value={symbol}>{symbol}{assetNames.get(symbol) ? ` · ${assetNames.get(symbol)}` : ""}</option>)}
-      </select>
-    </label>
+    <label className="stock-position-settings__search-label" htmlFor="stock-position-search">{t("settings.sizing.asset")}</label>
+    <div className="stock-position-settings__search">
+      <Search size={18} aria-hidden="true" />
+      <input ref={searchInput} id="stock-position-search" type="search" autoComplete="off" value={search}
+        placeholder={t("settings.sizing.search")} aria-controls="stock-position-results" aria-describedby="stock-position-result-count"
+        onChange={(event) => setSearch(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && matches.length === 1) {
+            event.preventDefault();
+            setTicker(matches[0]);
+          }
+        }} />
+      {search && <button type="button" aria-label={t("settings.sizing.clearSearch")} onClick={() => { setSearch(""); searchInput.current?.focus(); }}><X size={16} /></button>}
+    </div>
+    <p className="stock-position-settings__result-count" id="stock-position-result-count" role="status">{matches.length} {t(matches.length === 1 ? "settings.sizing.result" : "settings.sizing.results")}</p>
+    <ul className="stock-position-settings__results" id="stock-position-results" aria-label={t("settings.sizing.asset")}>
+      {matches.length ? matches.map((symbol) => <li key={symbol}>
+        <button type="button" aria-pressed={ticker === symbol} onClick={() => setTicker(symbol)}>
+          <span><strong>{symbol}</strong><small>{assetNames.get(symbol) ?? t("settings.sizing.noName")}</small></span>
+          <span className="stock-position-settings__result-weight">{ticker === symbol && <Check size={15} aria-hidden="true" />}{getPositionSizePercent(normalized, symbol) === 100 ? t("settings.sizing.default") : `${getPositionSizePercent(normalized, symbol)}%`}</span>
+        </button>
+      </li>) : <li className="stock-position-settings__no-results"><Search size={20} aria-hidden="true" /><strong>{t("settings.sizing.noResults")}</strong><span>{t("settings.sizing.tryAgain")}</span></li>}
+    </ul>
     <p className="stock-position-settings__hint">{t("settings.sizing.explanation")}</p>
     {ticker && <>
       <div className="stock-position-settings__editor">
