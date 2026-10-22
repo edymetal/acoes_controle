@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowDownLeft, ArrowDownRight, ArrowDownToLine, ArrowLeft, ArrowLeftRight, ArrowRight, ArrowUpRight, ArrowUpToLine, BadgeDollarSign, Banknote, CalendarDays, ChartCandlestick, ChartNoAxesCombined, Clock3, Database, ExternalLink, Minus, RotateCcw, TrendingDown, TrendingUp, Wallet, X, type LucideIcon } from "lucide-react";
 import { EmptyState, StockLogo, Value } from "./Ui";
-import { formatCurrency, formatDate, formatDateTime, formatNumber, formatPercent, formatTransactionDate, toneForValue } from "../lib/format";
+import { formatCurrency, formatDate, formatDateTime, formatNumber, formatPercent, toneForValue } from "../lib/format";
 import { loadAppLanguage } from "../lib/i18n";
 import { getStockActivity, getStockMarketLinks, STOCK_CHART_PERIODS, type StockChartPeriod } from "../lib/stockDetails";
 import type { Asset, PortfolioModel } from "../types";
@@ -146,7 +146,7 @@ export function StockAssetModal({ asset, model, generatedAt, contextLabel, onClo
               <caption>Compras e vendas de {asset.ticker}, das mais recentes às mais antigas</caption>
               <thead><tr><th scope="col">Data</th><th scope="col">Tipo</th><th scope="col">Quantidade</th><th scope="col">Preço unitário</th><th scope="col">Valor total</th><th scope="col">Lucro realizado</th></tr></thead>
               <tbody>{visibleTransactions.map((item) => <tr key={item.id}>
-                <td>{formatTransactionDate(item.date, item.time)}</td>
+                <td>{formatDate(item.date)}</td>
                 <td><span className={`transaction-type transaction-type--${item.type}`}>{item.type === "buy" ? "Compra" : "Venda"}</span></td>
                 <td className="privacy-value">{formatNumber(item.quantity, 8)}</td><td>{formatCurrency(item.unitPrice)}</td><td><strong>{formatCurrency(item.total)}</strong></td>
                 <td>{item.type === "sell" ? accountingReliable && item.realizedProfit !== null ? <Value value={item.realizedProfit}><strong>{formatCurrency(item.realizedProfit)}</strong></Value> : <span className="data-unavailable">Indisponível</span> : <span className="table-dash">—</span>}</td>
