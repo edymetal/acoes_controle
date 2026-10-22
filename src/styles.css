@@ -243,6 +243,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .monthly-activity__table { width: 100%; border-collapse: separate; border-spacing: 0; white-space: nowrap; font-size: 11px; font-variant-numeric: tabular-nums; }
 .monthly-activity__table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .monthly-activity__table th, .monthly-activity__table td { padding: 12px 10px; border-bottom: 1px solid var(--border-soft); text-align: right; }
+.monthly-activity__table tr > :not(:last-child) { border-right: 1px solid var(--border); }
 .monthly-activity__table thead th { color: var(--muted); background: rgba(7, 16, 29, .45); font-weight: 600; text-transform: capitalize; }
 .monthly-activity__table tr > th:first-child { position: sticky; left: 0; z-index: 1; min-width: 120px; text-align: left; background: #101e30; }
 .monthly-activity__table tbody th { font-weight: 600; }
