@@ -1,6 +1,7 @@
 import { ArrowRight, BadgeDollarSign, CircleDollarSign, Landmark, Layers3, TrendingUp, WalletCards } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { PageId } from "../components/Shell";
+import { MonthlyActivityIndicator } from "../components/MonthlyActivityIndicator";
 import { DataHealthNotice, EmptyState, MetricCard, Section, SignalBadge, StockLogo, Value } from "../components/Ui";
 import { formatCurrency, formatNumber, formatPercent, formatTransactionDate } from "../lib/format";
 import { getAnnualRealizedProfit, getStrategySignal } from "../lib/portfolio";
@@ -63,6 +64,8 @@ export function Dashboard({ data, model, settings, onNavigate }: DashboardProps)
         <MetricCard label="Resultado em aberto" value={financialResultsComplete ? formatCurrency(metrics.unrealizedProfit) : "Indisponível"} icon={<TrendingUp size={19} />} helper={financialResultsComplete ? formatPercent(metrics.openReturn) : "Base financeira incompleta"} change={financialResultsComplete ? metrics.unrealizedProfit : undefined} accent="violet" />
         <MetricCard label="Resultado total" value={financialResultsComplete ? formatCurrency(metrics.totalProfit) : "Indisponível"} icon={<CircleDollarSign size={19} />} helper={financialResultsComplete ? `${formatPercent(metrics.totalReturnOnPurchases)} sobre compras` : "Base financeira incompleta"} change={financialResultsComplete ? metrics.totalProfit : undefined} accent="amber" />
       </section>
+
+      <MonthlyActivityIndicator model={model} />
 
       <section className="dashboard-grid">
         <Section title="Distribuição da carteira" subtitle="Participação por valor de mercado" className="chart-panel">
