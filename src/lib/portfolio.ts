@@ -262,7 +262,6 @@ export function getStrategySignal(
   const distanceToHigh = (price - annual.max) / annual.max;
   const rangePositionPercent = ((price - annual.min) / (annual.max - annual.min)) * 100;
   const sellDistance = settings.sellDistanceFromHighPercent / 100;
-  const allocationRange = Math.max(0, settings.maximumPositionValue - settings.minimumPositionValue);
   const sellableValue = Math.max(0, positionValue - settings.minimumPositionValue);
   const levelValues = getStrategyLevelValues(settings);
   const base = {
@@ -277,18 +276,18 @@ export function getStrategySignal(
   };
 
   if (price > annual.max) {
-    const scheduledAmount = allocationRange * (settings.breakoutSellPercent / 100);
-    const newExcess = Math.max(0, positionValue - settings.maximumPositionValue);
-    const actionAmount = Math.min(sellableValue, Math.max(scheduledAmount, newExcess));
+    const targetPositionValue = Math.max(settings.minimumPositionValue, settings.maximumPositionValue - levelValues.initialSellAmount - levelValues.breakoutSellAmount);
+    const actionAmount = Math.min(sellableValue, Math.max(0, positionValue - targetPositionValue));
     const canSell = actionAmount + EPSILON >= settings.minimumSaleAmount && actionAmount > EPSILON;
     return {
       kind: "breakout",
       label: canSell ? "Vender no rompimento" : "Rompimento",
       description: canSell
-        ? `Venda da parcela final de ${settings.breakoutSellPercent}% sem deixar a posição abaixo de ${formatStrategyMoney(settings.minimumPositionValue)}.`
-        : `Máxima anual rompida, mas ainda não há ${formatStrategyMoney(settings.minimumSaleAmount)} disponíveis para venda.`,
+        ? "Venda apenas do valor que falta para concluir o nível de rompimento na cotação atual."
+        : "Sem venda pendente neste nível ou valor restante abaixo da venda mínima.",
       strength: 0.75 + clamp(distanceToHigh / 0.1) * 0.25,
       ...base,
+      targetPositionValue,
       actionAmount: canSell ? actionAmount : 0,
       actionPercent: settings.breakoutSellPercent,
     };
@@ -296,18 +295,18 @@ export function getStrategySignal(
 
   if (price >= annual.max * (1 - sellDistance)) {
     const proximity = clamp((price - annual.max * (1 - sellDistance)) / (annual.max * sellDistance));
-    const scheduledAmount = allocationRange * (settings.initialSellPercent / 100);
-    const newExcess = Math.max(0, positionValue - settings.maximumPositionValue);
-    const actionAmount = Math.min(sellableValue, Math.max(scheduledAmount, newExcess));
+    const targetPositionValue = Math.max(settings.minimumPositionValue, settings.maximumPositionValue - levelValues.initialSellAmount);
+    const actionAmount = Math.min(sellableValue, Math.max(0, positionValue - targetPositionValue));
     const canSell = actionAmount + EPSILON >= settings.minimumSaleAmount && actionAmount > EPSILON;
     return {
       kind: "sell",
-      label: canSell ? `Vender ${settings.initialSellPercent}%` : "Próxima da máxima",
+      label: canSell ? "Vender" : "Próxima da máxima",
       description: canSell
-        ? `Faltam ${Math.abs(distanceToHigh * 100).toFixed(1)}% para a máxima anual; preserve o piso de ${formatStrategyMoney(settings.minimumPositionValue)}.`
-        : `Zona de venda atingida, mas a posição não permite vender ${formatStrategyMoney(settings.minimumSaleAmount)} sem romper o piso.`,
+        ? "Venda apenas do valor que falta para concluir o nível próximo da máxima na cotação atual."
+        : "Sem venda pendente neste nível ou valor restante abaixo da venda mínima.",
       strength: 0.45 + proximity * 0.25,
       ...base,
+      targetPositionValue,
       actionAmount: canSell ? actionAmount : 0,
       actionPercent: settings.initialSellPercent,
     };

@@ -223,8 +223,9 @@ describe("getStrategySignal", () => {
     expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 230).actionAmount).toBe(80);
     expect(getStrategySignal({ ...base, currentPrice: 31 }, settings, 150).actionAmount).toBe(20);
     expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 145).actionAmount).toBe(0);
-    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 155).actionAmount).toBe(25);
-    expect(getStrategySignal({ ...base, currentPrice: 31 }, settings, 300).actionAmount).toBe(70);
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 155).actionAmount).toBe(0);
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 175).actionAmount).toBe(25);
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, settings, 300).actionAmount).toBe(170);
     const smaller = { ...settings, positionSizeByTicker: { AAA: 50 } };
     expect(getStrategySignal({ ...base, currentPrice: 29 }, smaller, 57.5).actionAmount).toBe(20);
     expect(getStrategySignal({ ...base, currentPrice: 31 }, smaller, 37.5).actionAmount).toBe(5);
@@ -319,14 +320,55 @@ describe("getStrategySignal", () => {
     expect(signal.actionPercent).toBe(20);
   });
 
+  it("aguarda após concluir a venda atual sem antecipar a parcela de rompimento", () => {
+    const initial = getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, 115);
+    const remainingValue = 115 - initial.actionAmount;
+    const completed = getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, remainingValue);
+    expect(completed).toMatchObject({ kind: "sell", targetPositionValue: 75, actionAmount: 0 });
+
+    const breakout = getStrategySignal({ ...base, currentPrice: 31 }, DEFAULT_STRATEGY_SETTINGS, remainingValue);
+    expect(breakout).toMatchObject({ kind: "breakout", targetPositionValue: 65, actionAmount: 10 });
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, DEFAULT_STRATEGY_SETTINGS, remainingValue - breakout.actionAmount).actionAmount).toBe(0);
+  });
+
+  it("desconta vendas parciais e exige a venda mínima apenas sobre o que ainda falta", () => {
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, 95).actionAmount).toBe(20);
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, 85).actionAmount).toBe(10);
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, 84).actionAmount).toBe(0);
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, DEFAULT_STRATEGY_SETTINGS, 74).actionAmount).toBe(0);
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, DEFAULT_STRATEGY_SETTINGS, 65).actionAmount).toBe(0);
+  });
+
+  it("completa o alvo de venda do rompimento quando a faixa anterior foi pulada", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 31 }, DEFAULT_STRATEGY_SETTINGS, 115);
+    expect(signal).toMatchObject({ kind: "breakout", targetPositionValue: 65, actionAmount: 50 });
+  });
+
+  it("respeita os percentuais de venda salvos e limita os saldos alvo ao piso", () => {
+    const settings = { ...DEFAULT_STRATEGY_SETTINGS, initialSellPercent: 60, breakoutSellPercent: 25 };
+    expect(getStrategySignal({ ...base, currentPrice: 29 }, settings, 115)).toMatchObject({ targetPositionValue: 85, actionAmount: 30 });
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, settings, 85)).toMatchObject({ targetPositionValue: 72.5, actionAmount: 12.5 });
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, settings, 72.5).actionAmount).toBe(0);
+    expect(getStrategySignal({ ...base, currentPrice: 31 }, { ...settings, breakoutSellPercent: 80 }, 115)).toMatchObject({ targetPositionValue: 65, actionAmount: 50 });
+  });
+
+  it.each([
+    { price: 28.49, kind: "neutral", amount: 0 },
+    { price: 28.5, kind: "sell", amount: 40 },
+    { price: 30, kind: "sell", amount: 40 },
+    { price: 30.01, kind: "breakout", amount: 50 },
+  ])("mostra somente a operação da faixa da cotação $price", ({ price, kind, amount }) => {
+    expect(getStrategySignal({ ...base, currentPrice: price }, DEFAULT_STRATEGY_SETTINGS, 115)).toMatchObject({ kind, actionAmount: amount });
+  });
+
   it("preserva o piso de US$ 65 e exige venda mínima de US$ 10", () => {
     const signal = getStrategySignal({ ...base, currentPrice: 29 }, DEFAULT_STRATEGY_SETTINGS, 70);
     expect(signal.kind).toBe("sell");
     expect(signal.actionAmount).toBe(0);
   });
 
-  it("vende novo excesso acima do teto quando a ação continua subindo", () => {
-    const signal = getStrategySignal({ ...base, currentPrice: 33 }, DEFAULT_STRATEGY_SETTINGS, 135);
+  it("vende somente a nova valorização após concluir o alvo de rompimento", () => {
+    const signal = getStrategySignal({ ...base, currentPrice: 33 }, DEFAULT_STRATEGY_SETTINGS, 85);
     expect(signal.kind).toBe("breakout");
     expect(signal.actionAmount).toBe(20);
   });

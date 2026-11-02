@@ -96,13 +96,13 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
     <div className="page-stack">
       <DataHealthNotice model={model} />
       <section className="strategy-intro">
-        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Nas compras, cada cartão mostra o valor que falta para atingir o alvo da faixa atual.</p></div>
+        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão mostra somente o valor pendente de compra ou venda na faixa da cotação atual. Sem operação pendente, aguarde.</p></div>
         <button className="strategy-levels-button" type="button" aria-haspopup="dialog" onClick={() => setShowLevels(true)}><SlidersHorizontal size={18} /> Ver níveis e valores</button>
       </section>
 
       <section className="metrics-grid metrics-grid--three">
-        <MetricCard label="Comprar agora" value={String(buyCount)} secondaryValue={`Necessário ${formatCurrency(buyTotal)}`} icon={<TrendingDown size={19} />} helper="Alvo do nível menos o valor comprado" accent="green" />
-        <MetricCard label="Sinal de venda" value={String(sellCount)} secondaryValue={`Total ${formatCurrency(sellTotal)}`} icon={<Target size={19} />} helper={`Até ${settings.sellDistanceFromHighPercent}% da máxima anual e rompimentos`} accent="amber" />
+        <MetricCard label="Comprar agora" value={String(buyCount)} secondaryValue={`Total agora ${formatCurrency(buyTotal)}`} icon={<TrendingDown size={19} />} helper="Valor pendente no alvo da faixa atual" accent="green" />
+        <MetricCard label="Vender agora" value={String(sellCount)} secondaryValue={`Total agora ${formatCurrency(sellTotal)}`} icon={<Target size={19} />} helper="Somente vendas pendentes na faixa atual" accent="amber" />
         <MetricCard label="Em rompimento" value={String(breakoutCount)} icon={<ArrowUpRight size={19} />} helper="Acima da máxima anual" accent="violet" />
       </section>
 
@@ -129,7 +129,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                 <header><StockLogo ticker={asset.ticker} /><span><button className="ticker-link strategy-asset-link" type="button" aria-haspopup="dialog" aria-label={`Abrir gráfico e movimentações de ${asset.ticker}`} onClick={() => setSelectedTicker(asset.ticker)}>{asset.ticker}</button><small>{asset.name}</small></span><SignalBadge signal={signal} /></header>
                 <div className="strategy-card__price"><span><small>Cotação atual</small><strong>{formatCurrency(asset.currentPrice)}</strong></span>{signal.rangePositionPercent !== null && <span><small>No intervalo anual</small><strong>{formatPercent(signal.rangePositionPercent / 100)}</strong></span>}</div>
                 <div className={`strategy-action strategy-action--${signal.actionAmount > 0 ? signal.kind : "waiting"}`}>
-                  <span><small>{signal.kind === "buy" ? "Valor para atingir o nível" : "Próxima operação"}</small><strong>{signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR" : "VENDER") : "AGUARDAR"}</strong></span>
+                  <span><small>Operação agora</small><strong>{signal.kind === "unavailable" ? "INDISPONÍVEL" : signal.actionAmount > 0 ? (signal.kind === "buy" ? "COMPRAR AGORA" : "VENDER AGORA") : "AGUARDAR"}</strong></span>
                   <b>{signal.actionAmount > 0 ? formatCurrency(signal.actionAmount) : "—"}</b>
                 </div>
                 <div className="strategy-position">
@@ -215,7 +215,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
                   <span className="strategy-levels-list__money"><small>Vender {formatPercent(levelSettings.breakoutSellPercent / 100)} da faixa</small><strong>{formatCurrency(levelValues.breakoutSellAmount)}</strong></span>
                 </article>
               </div>
-              <p className="strategy-levels-section__note">Os valores de venda são bases calculadas. A operação exibida preserva o piso de {formatCurrency(levelSettings.minimumPositionValue)} e só aparece quando alcança a venda mínima de {formatCurrency(levelSettings.minimumSaleAmount)}.</p>
+              <p className="strategy-levels-section__note">Os valores acima são as parcelas de cada nível. O cartão mostra somente o valor que falta vender para atingir o saldo do nível atual: teto menos a primeira parcela próximo da máxima; teto menos as duas parcelas no rompimento. A operação preserva o piso de {formatCurrency(levelSettings.minimumPositionValue)} e só aparece quando alcança a venda mínima de {formatCurrency(levelSettings.minimumSaleAmount)}.</p>
             </section>
 
             <p className="asset-modal__note strategy-levels-note">Todos os valores desta tela são calculados com as configurações salvas no navegador. Ao alterar mínimo, máximo, percentuais ou parcelas em Configurações, estes níveis são atualizados automaticamente.</p>
