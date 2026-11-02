@@ -22,12 +22,12 @@ function renderStrategy(currentPrice: number, positionValue: number, positionCos
 
 describe("Strategy", () => {
   it.each([
-    { price: 14, value: 50, cost: 65, operation: "COMPRAR AGORA", amount: 10 },
+    { price: 14, value: 50, cost: 64.99, operation: "COMPRAR AGORA", amount: 10.01 },
     { price: 11, value: 41.52, cost: 40.37, operation: "COMPRAR AGORA", amount: 59.63 },
     { price: 7, value: 50, cost: 65, operation: "COMPRAR AGORA", amount: 50 },
     { price: 29, value: 115, cost: 115, operation: "VENDER AGORA", amount: 40 },
     { price: 29, value: 95, cost: 95, operation: "VENDER AGORA", amount: 20 },
-    { price: 31, value: 75, cost: 75, operation: "VENDER AGORA", amount: 10 },
+    { price: 31, value: 75.01, cost: 75.01, operation: "VENDER AGORA", amount: 10.01 },
   ])("exibe uma única operação atual de $amount para cotação $price e posição $value", ({ price, value, cost, operation, amount }) => {
     const html = renderStrategy(price, value, cost);
     const action = html.match(/<div class="strategy-action [^"]*">(.*?)<\/div>/)?.[1];
@@ -38,18 +38,26 @@ describe("Strategy", () => {
   });
 
   it.each([
+    { price: 14, value: 50, cost: 65 },
+    { price: 14, value: 50, cost: 65.01 },
+    { price: 14, value: 50, cost: 64.99999999999999 },
+    { price: 29, value: 85, cost: 85 },
+    { price: 31, value: 75, cost: 75 },
+    { price: 31, value: 74.99, cost: 74.99 },
     { price: 14, value: 110, cost: 100 },
     { price: 20, value: 115, cost: 115 },
     { price: 29, value: 75, cost: 75 },
     { price: 31, value: 65, cost: 65 },
-  ])("mostra aguardar sem valor passado ou futuro na cotação $price e posição $value", ({ price, value, cost }) => {
+  ])("oculta cards sem operação acima de US$ 10 na cotação $price e posição $value", ({ price, value, cost }) => {
     const html = renderStrategy(price, value, cost);
-    expect(html).toContain('<div class="strategy-action strategy-action--waiting"><span><small>Operação agora</small><strong>AGUARDAR</strong></span><b>—</b></div>');
+    expect(html).not.toContain('class="strategy-card ');
+    expect(html).toContain("Nenhuma operação acima de US$ 10");
+    expect(html.match(/Total agora US\$\u00a00,00/g)).toHaveLength(2);
     expect(html).not.toContain("COMPRAR AGORA");
     expect(html).not.toContain("VENDER AGORA");
   });
 
-  it("indica operação indisponível quando não há histórico anual válido", () => {
-    expect(renderStrategy(14, 65, 65, null)).toContain('<small>Operação agora</small><strong>INDISPONÍVEL</strong></span><b>—</b>');
+  it("oculta cards sem histórico anual válido", () => {
+    expect(renderStrategy(14, 65, 65, null)).not.toContain('class="strategy-card ');
   });
 });

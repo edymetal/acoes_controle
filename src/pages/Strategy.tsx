@@ -4,10 +4,10 @@ import { DataHealthNotice, EmptyState, MetricCard, SignalBadge, StockLogo } from
 import { formatCurrency, formatPercent } from "../lib/format";
 import { getStrategySignal } from "../lib/portfolio";
 import { getAssetStrategySettings, getPositionSizePercent, getStrategyLevelValues } from "../lib/settings";
-import type { Asset, PortfolioData, PortfolioModel, StrategyKind, StrategySettings, StrategySignal } from "../types";
+import type { Asset, PortfolioData, PortfolioModel, StrategySettings, StrategySignal } from "../types";
 import { StockAssetModal } from "../components/StockAssetModal";
 
-type FilterKind = "all" | "actionable" | StrategyKind;
+type FilterKind = "all" | "buy" | "sell" | "breakout";
 
 function getRangeDetails(asset: Asset, signal: StrategySignal, settings: StrategySettings) {
   const annual = asset.annual;
@@ -58,7 +58,10 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
       const holding = positions.get(asset.ticker);
       if (!holding || holding.quantity <= 0 || holding.marketValue <= 0) return [];
       const accountingReliable = !model.health.ambiguousTransactionTickers.includes(asset.ticker);
-      return [{ asset, holding, signal: getStrategySignal(asset, settings, holding.marketValue, holding.costBasis, accountingReliable) }];
+      const signal = getStrategySignal(asset, settings, holding.marketValue, holding.costBasis, accountingReliable);
+      // Compara em centavos para não exibir US$ 10,00 por imprecisão de ponto flutuante.
+      if (Math.round(signal.actionAmount * 100) <= 1_000) return [];
+      return [{ asset, holding, signal }];
     });
   }, [data.assets, model.health.ambiguousTransactionTickers, model.positions, settings]);
   const selectedAsset = signals.find(({ asset }) => asset.ticker === selectedTicker)?.asset;
@@ -66,7 +69,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
     const query = search.trim().toLowerCase();
     return signals
       .filter(({ asset, signal }) => {
-        const matchesFilter = filter === "all" || (filter === "actionable" ? signal.actionAmount > 0 : signal.kind === filter);
+        const matchesFilter = filter === "all" || signal.kind === filter;
         const matchesSearch = !query || asset.ticker.toLowerCase().includes(query) || asset.name.toLowerCase().includes(query);
         return matchesFilter && matchesSearch;
       })
@@ -96,7 +99,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
     <div className="page-stack">
       <DataHealthNotice model={model} />
       <section className="strategy-intro">
-        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Cada cartão mostra somente o valor pendente de compra ou venda na faixa da cotação atual. Sem operação pendente, aguarde.</p></div>
+        <div><span className="eyebrow"><Sparkles size={14} /> LEITURA DE 12 MESES</span><h2>Radar de compras e vendas</h2><p>Somente compras e vendas pendentes acima de US$ 10 na faixa da cotação atual.</p></div>
         <button className="strategy-levels-button" type="button" aria-haspopup="dialog" onClick={() => setShowLevels(true)}><SlidersHorizontal size={18} /> Ver níveis e valores</button>
       </section>
 
@@ -110,7 +113,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
         <div className="strategy-toolbar">
           <label className="search-field"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar ativo" /></label>
           <div className="segmented-control" role="group" aria-label="Filtrar sinais">
-            {([['all', 'Todos'], ['actionable', 'Com operação'], ['buy', 'Compra'], ['sell', 'Venda'], ['breakout', 'Rompimento'], ['neutral', 'Neutros']] as Array<[FilterKind, string]>).map(([id, label]) => <button type="button" className={filter === id ? "active" : ""} aria-pressed={filter === id} onClick={() => setFilter(id)} key={id}>{label}</button>)}
+            {([['all', 'Todos'], ['buy', 'Compra'], ['sell', 'Venda'], ['breakout', 'Rompimento']] as Array<[FilterKind, string]>).map(([id, label]) => <button type="button" className={filter === id ? "active" : ""} aria-pressed={filter === id} onClick={() => setFilter(id)} key={id}>{label}</button>)}
           </div>
         </div>
 
@@ -148,7 +151,7 @@ export function Strategy({ data, model, settings }: { data: PortfolioData; model
               </article>
             );
           })}
-        </div> : <EmptyState title="Nenhum sinal encontrado" description="Altere o filtro ou a busca para ver outros ativos." />}
+        </div> : <EmptyState title="Nenhuma operação acima de US$ 10" description="Somente compras e vendas pendentes maiores que US$ 10 aparecem aqui. Confira também o filtro e a busca." />}
       </section>
 
       {selectedAsset && <StockAssetModal key={selectedAsset.ticker} asset={selectedAsset} model={model} generatedAt={data.generatedAt} contextLabel="ESTRATÉGIA ANUAL" onClose={() => setSelectedTicker(null)} />}
